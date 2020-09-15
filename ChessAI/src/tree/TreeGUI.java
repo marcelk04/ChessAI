@@ -62,7 +62,7 @@ public class TreeGUI {
 		cp.add(rootsCB);
 
 		boardDisplay = new JTextArea();
-		boardDisplay.setBounds(270, 50, 100, 160);
+		boardDisplay.setBounds(270, 50, 90, 130);
 		boardDisplay.setBackground(new Color(128, 128, 128));
 		boardDisplay.setEditable(false);
 		cp.add(boardDisplay);
@@ -93,7 +93,7 @@ public class TreeGUI {
 		String[] listDataArray = new String[listData.size()];
 
 		for (int i = 0; i < listDataArray.length; i++)
-			listDataArray[i] = listData.get(i).getString();
+			listDataArray[i] = listData.get(i).toString();
 
 		rootsList.setListData(listDataArray);
 	}

@@ -18,15 +18,15 @@ public class Node<T> {
 	public String toString() {
 		return data.toString() + " | Depth: " + depth;
 	}
-	
+
 	public String getString() {
 		String text = "";
-		for(int i = 0; i < depth; i++)
+		for (int i = 0; i < depth; i++)
 			text += "   ";
-		
+
 		return text + "> " + depth
 //				+ "|" + data
-				;
+		;
 	}
 
 	public Node<T> addChild(Node<T> child) {
