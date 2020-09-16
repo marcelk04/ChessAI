@@ -26,6 +26,7 @@ public class MinimaxAlgorithm implements Runnable {
 	@Override
 	public void run() {
 		Node<ChessEvent> root = minimaxABTree(board, depth, -1000000000, 1000000000, true);
+		root.updateDepth();
 		Move bestMove = root.getData().getMove();
 		board.makeMove(bestMove);
 		gui.addTree(root);
@@ -38,12 +39,12 @@ public class MinimaxAlgorithm implements Runnable {
 	private Node<ChessEvent> minimaxABTree(ChessBoard board, int depth, int alpha, int beta, boolean isMaximizer) {
 		if (board.checkWin() || depth == 0) {
 			if (board.getWinner() == Team.black) {
-				return new Node<ChessEvent>(new ChessEvent(board, null, 10000 + depth));
+				return new Node<ChessEvent>(new ChessEvent(board.clone(), null, 10000 + depth));
 			} else if (board.getWinner() == Team.white) {
-				return new Node<ChessEvent>(new ChessEvent(board, null, -10000 - depth));
+				return new Node<ChessEvent>(new ChessEvent(board.clone(), null, -10000 - depth));
 			} else {
 				return new Node<ChessEvent>(
-						new ChessEvent(board, null, board.getValue(Team.black) - board.getValue(Team.white)));
+						new ChessEvent(board.clone(), null, board.getEvaluation()));
 			}
 		}
 

@@ -7,7 +7,7 @@ public class Node<T> {
 	private T data = null;
 	private List<Node<T>> children = new ArrayList<Node<T>>();
 	private Node<T> parent = null;
-	private int depth;
+	private int depth, degree;
 
 	public Node(T data) {
 		this.data = data;
@@ -16,7 +16,7 @@ public class Node<T> {
 
 	@Override
 	public String toString() {
-		return data.toString() + " | Depth: " + depth;
+		return data.toString() + "|Depth:" + depth + "|Degree:" + degree;
 	}
 
 	public String getString() {
@@ -32,14 +32,15 @@ public class Node<T> {
 	public Node<T> addChild(Node<T> child) {
 		child.setParent(this);
 		children.add(child);
+		degree = children.size();
 		return child;
 	}
 
 	public void addChildren(List<Node<T>> children) {
 		for (Node<T> child : children)
 			child.setParent(this);
-
-		this.children.addAll(children);
+		children.addAll(children);
+		degree = children.size();
 	}
 
 	public List<Node<T>> getChildren() {
@@ -88,5 +89,11 @@ public class Node<T> {
 			currentParent = currentParent.getParent();
 		}
 		return d;
+	}
+
+	public void updateDepth() {
+		for (Node<T> child : children)
+			child.updateDepth();
+		this.depth = calculateDepth();
 	}
 }

@@ -93,7 +93,7 @@ public class TreeGUI {
 		String[] listDataArray = new String[listData.size()];
 
 		for (int i = 0; i < listDataArray.length; i++)
-			listDataArray[i] = listData.get(i).toString();
+			listDataArray[i] = listData.get(i).getString();
 
 		rootsList.setListData(listDataArray);
 	}

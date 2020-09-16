@@ -129,6 +129,10 @@ public class ChessBoard {
 		return true;
 	}
 
+	public int getEvaluation() {
+		return getValue(Team.black) - getValue(Team.white);
+	}
+
 	public void reset() {
 		algorithm = null;
 		win = false;
