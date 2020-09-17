@@ -21,20 +21,24 @@ import javax.swing.JTextArea;
 import chess.board.ChessBoard;
 
 public class TreeGUI {
-	private Map<String, Node<ChessEvent>> roots;
 	private JFrame frame;
+
+	/* ===== Roots ===== */
+	private Map<String, Node<ChessEvent>> roots;
 	private JList<String> rootsList;
-	private JScrollPane sp;
+	private JScrollPane rootsSP;
 	private JComboBox<String> rootsCB;
+
+	/* ===== Node Inspector ===== */
 	private JTextArea boardDisplay;
 	private JButton viewData;
-	@SuppressWarnings("unused")
 	private JList<String> parentsList;
+	private JScrollPane parentsSP;
 
 	public TreeGUI() {
 		roots = new HashMap<String, Node<ChessEvent>>();
 
-		frame = new JFrame("Tree");
+		frame = new JFrame("Tree Inspector");
 		frame.setSize(600, 400);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,9 +48,9 @@ public class TreeGUI {
 		cp.setLayout(null);
 
 		rootsList = new JList<String>();
-		sp = new JScrollPane(rootsList);
-		sp.setBounds(10, 10, 250, 340);
-		cp.add(sp);
+		rootsSP = new JScrollPane(rootsList);
+		rootsSP.setBounds(10, 10, 250, 340);
+		cp.add(rootsSP);
 
 		rootsCB = new JComboBox<String>();
 		rootsCB.setBounds(270, 10, 180, 20);
@@ -55,7 +59,7 @@ public class TreeGUI {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					updateListData();
+					updateRootListData();
 				}
 			}
 		});
@@ -68,15 +72,21 @@ public class TreeGUI {
 		cp.add(boardDisplay);
 
 		viewData = new JButton("View Data");
-		viewData.setBounds(460, 10, 100, 20);
+		viewData.setBounds(460, 10, 110, 20);
 		viewData.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				updateBoardDisplay();
+				updateParentListData();
 			}
 		});
 		cp.add(viewData);
+
+		parentsList = new JList<String>();
+		parentsSP = new JScrollPane(parentsList);
+		parentsSP.setBounds(370, 50, 200, 130);
+		cp.add(parentsSP);
 
 		frame.setVisible(true);
 	}
@@ -87,7 +97,7 @@ public class TreeGUI {
 		rootsCB.addItem(key);
 	}
 
-	private void updateListData() {
+	private void updateRootListData() {
 		String key = (String) rootsCB.getSelectedItem();
 		List<Node<ChessEvent>> listData = getListData(roots.get(key));
 		String[] listDataArray = new String[listData.size()];
@@ -98,15 +108,37 @@ public class TreeGUI {
 		rootsList.setListData(listDataArray);
 	}
 
+	private void updateParentListData() {
+		Node<ChessEvent> selectedNode = getSelectedNode();
+		List<String> listData = new ArrayList<String>();
+		Node<ChessEvent> currentParent = selectedNode;
+		while(currentParent != null) {
+			listData.add(currentParent.getString());
+			currentParent = currentParent.getParent();
+		}
+		String[] listDataArray = new String[listData.size()];
+		for(int i = 0; i < listDataArray.length; i++) {
+			listDataArray[i] = listData.get(listDataArray.length - i - 1);
+		}
+		parentsList.setListData(listDataArray);
+	}
+
+	private Node<ChessEvent> getSelectedNode() {
+		String key = (String) rootsCB.getSelectedItem();
+		if (key != null) {
+			List<Node<ChessEvent>> listData = getListData(roots.get(key));
+			return listData.get(rootsList.getSelectedIndex());
+		}
+		return null;
+	}
+
 	/**
 	 * Gets the selected node in the List and updates the TextArea with the current
 	 * board.
 	 */
 	private void updateBoardDisplay() {
-		String key = (String) rootsCB.getSelectedItem();
-		if (key != null) {
-			List<Node<ChessEvent>> listData = getListData(roots.get(key));
-			Node<ChessEvent> selectedNode = listData.get(rootsList.getSelectedIndex());
+		Node<ChessEvent> selectedNode = getSelectedNode();
+		if (selectedNode != null) {
 			ChessBoard selectedBoard = selectedNode.getData().getBoard();
 			boardDisplay.setText(getBoardDisplayData(selectedBoard));
 		}

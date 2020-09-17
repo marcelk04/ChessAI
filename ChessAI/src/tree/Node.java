@@ -23,8 +23,12 @@ public class Node<T> {
 		String text = "";
 		for (int i = 0; i < depth; i++)
 			text += "   ";
+		if(getRoot() == this)
+			text += "Root|";
+		else
+			text += "> ";
 
-		return text + "> " + data;
+		return text + data;
 	}
 
 	public Node<T> addChild(Node<T> child) {
