@@ -25,8 +25,8 @@ public class MinimaxAlgorithm implements Runnable {
 
 	@Override
 	public void run() {
-		Node<ChessEvent> root = minimaxABTree(board, depth, -1000000000, 1000000000, true);
-		root.updateDepth();
+//		Node<ChessEvent> root = minimaxABTree(board, depth, -1000000000, 1000000000, true);
+		Node<ChessEvent> root = minimaxTree(board, depth, true);
 		Move bestMove = root.getData().getMove();
 		board.makeMove(bestMove);
 		gui.addTree(root);
@@ -43,19 +43,18 @@ public class MinimaxAlgorithm implements Runnable {
 			} else if (board.getWinner() == Team.white) {
 				return new Node<ChessEvent>(new ChessEvent(board.clone(), null, -10000 - depth));
 			} else {
-				return new Node<ChessEvent>(
-						new ChessEvent(board.clone(), null, board.getEvaluation()));
+				return new Node<ChessEvent>(new ChessEvent(board.clone(), null, board.getEvaluation()));
 			}
 		}
 
 		Node<ChessEvent> finalEval = new Node<ChessEvent>(new ChessEvent(board.clone(), null));
-		ChessBoard boardCopy = board.clone();
 
 		if (isMaximizer) {
 			Node<ChessEvent> maxEval = new Node<ChessEvent>(new ChessEvent(-1000000000));
 
 			pieces: for (Piece currentPossiblePiece : board.getPieces(Team.black)) {
 				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+					ChessBoard boardCopy = board.clone();
 					boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
 							currentPossibleMove.getNewX(), currentPossibleMove.getNewY());
 
@@ -79,6 +78,7 @@ public class MinimaxAlgorithm implements Runnable {
 
 			pieces: for (Piece currentPossiblePiece : board.getPieces(Team.white)) {
 				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+					ChessBoard boardCopy = board.clone();
 					boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
 							currentPossibleMove.getNewX(), currentPossibleMove.getNewY());
 
@@ -92,6 +92,66 @@ public class MinimaxAlgorithm implements Runnable {
 					beta = Math.min(eval.getData().getEval(), beta);
 					if (beta <= alpha)
 						break pieces;
+				}
+			}
+
+			finalEval.getData().setMove(minEval.getData().getMove());
+			finalEval.getData().setEval(minEval.getData().getEval());
+		}
+
+		return finalEval;
+	}
+
+	private Node<ChessEvent> minimaxTree(ChessBoard board, int depth, boolean isMaximizer) {
+		if (board.checkWin() || depth == 0) {
+			if (board.getWinner() == Team.black) {
+				return new Node<ChessEvent>(new ChessEvent(board.clone(), null, 10000 + depth));
+			} else if (board.getWinner() == Team.white) {
+				return new Node<ChessEvent>(new ChessEvent(board.clone(), null, -10000 - depth));
+			} else {
+				return new Node<ChessEvent>(new ChessEvent(board.clone(), null, board.getEvaluation()));
+			}
+		}
+
+		Node<ChessEvent> finalEval = new Node<ChessEvent>(new ChessEvent(board.clone(), null));
+
+		if (isMaximizer) {
+			Node<ChessEvent> maxEval = new Node<ChessEvent>(new ChessEvent(-1000000000));
+
+			for (Piece currentPossiblePiece : board.getPieces(Team.black)) {
+				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+					ChessBoard boardCopy = board.clone();
+					if (!boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
+							currentPossibleMove.getNewX(), currentPossibleMove.getNewY())) {
+						System.out.println("error");
+					}
+
+					Node<ChessEvent> eval = minimaxTree(boardCopy, depth - 1, false);
+					eval.getData().setMove(currentPossibleMove);
+					finalEval.addChild(eval);
+
+					if (eval.getData().getEval() > maxEval.getData().getEval())
+						maxEval = eval;
+				}
+			}
+
+			finalEval.getData().setMove(maxEval.getData().getMove());
+			finalEval.getData().setEval(maxEval.getData().getEval());
+		} else {
+			Node<ChessEvent> minEval = new Node<ChessEvent>(new ChessEvent(1000000000));
+
+			for (Piece currentPossiblePiece : board.getPieces(Team.white)) {
+				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+					ChessBoard boardCopy = board.clone();
+					boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
+							currentPossibleMove.getNewX(), currentPossibleMove.getNewY());
+
+					Node<ChessEvent> eval = minimaxTree(boardCopy, depth - 1, true);
+					eval.getData().setMove(currentPossibleMove);
+					finalEval.addChild(eval);
+
+					if (eval.getData().getEval() < minEval.getData().getEval())
+						minEval = eval;
 				}
 			}
 

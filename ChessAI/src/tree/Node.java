@@ -24,9 +24,7 @@ public class Node<T> {
 		for (int i = 0; i < depth; i++)
 			text += "   ";
 
-		return text + "> " + depth
-//				+ "|" + data
-		;
+		return text + "> " + data;
 	}
 
 	public Node<T> addChild(Node<T> child) {
@@ -57,7 +55,7 @@ public class Node<T> {
 
 	public void setParent(Node<T> parent) {
 		this.parent = parent;
-		this.depth = calculateDepth();
+		updateDepth();
 	}
 
 	public Node<T> getParent() {
