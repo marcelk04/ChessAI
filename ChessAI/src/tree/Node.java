@@ -24,11 +24,13 @@ public class Node<T> {
 		for (int i = 0; i < depth; i++)
 			text += "   ";
 		if(getRoot() == this)
-			text += "Root|";
+			text += "Root";
 		else
-			text += "> ";
+			text += "> " + data;
+		
+		text += "|Degree:" + degree;
 
-		return text + data;
+		return text;
 	}
 
 	public Node<T> addChild(Node<T> child) {

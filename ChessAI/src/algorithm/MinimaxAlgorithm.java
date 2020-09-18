@@ -143,8 +143,10 @@ public class MinimaxAlgorithm implements Runnable {
 			for (Piece currentPossiblePiece : board.getPieces(Team.white)) {
 				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
 					ChessBoard boardCopy = board.clone();
-					boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
-							currentPossibleMove.getNewX(), currentPossibleMove.getNewY());
+					if (!boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
+							currentPossibleMove.getNewX(), currentPossibleMove.getNewY())) {
+						System.out.println("error");
+					}
 
 					Node<ChessEvent> eval = minimaxTree(boardCopy, depth - 1, true);
 					eval.getData().setMove(currentPossibleMove);

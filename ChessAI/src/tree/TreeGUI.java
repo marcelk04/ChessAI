@@ -19,21 +19,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import chess.board.ChessBoard;
+import main.Utils;
 
 public class TreeGUI {
 	private JFrame frame;
 
-	/* ===== Roots ===== */
+	// ===== Roots ===== \\
 	private Map<String, Node<ChessEvent>> roots;
 	private JList<String> rootsList;
 	private JScrollPane rootsSP;
 	private JComboBox<String> rootsCB;
 
-	/* ===== Node Inspector ===== */
+	// ===== Node Inspector ===== \\
 	private JTextArea boardDisplay;
 	private JButton viewData;
 	private JList<String> parentsList;
 	private JScrollPane parentsSP;
+
+	// ===== Move Statistics ===== \\
+	private JTextArea statsTA;
 
 	public TreeGUI() {
 		roots = new HashMap<String, Node<ChessEvent>>();
@@ -60,13 +64,14 @@ public class TreeGUI {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					updateRootListData();
+					updateStatsData();
 				}
 			}
 		});
 		cp.add(rootsCB);
 
 		boardDisplay = new JTextArea();
-		boardDisplay.setBounds(270, 50, 90, 130);
+		boardDisplay.setBounds(270, 40, 90, 130);
 		boardDisplay.setBackground(new Color(128, 128, 128));
 		boardDisplay.setEditable(false);
 		cp.add(boardDisplay);
@@ -85,8 +90,13 @@ public class TreeGUI {
 
 		parentsList = new JList<String>();
 		parentsSP = new JScrollPane(parentsList);
-		parentsSP.setBounds(370, 50, 200, 130);
+		parentsSP.setBounds(370, 40, 200, 130);
 		cp.add(parentsSP);
+
+		statsTA = new JTextArea();
+		statsTA.setBounds(270, 180, 300, 170);
+		statsTA.setEditable(false);
+		cp.add(statsTA);
 
 		frame.setVisible(true);
 	}
@@ -95,41 +105,6 @@ public class TreeGUI {
 		String key = "Move " + (roots.size() + 1);
 		roots.put(key, root);
 		rootsCB.addItem(key);
-	}
-
-	private void updateRootListData() {
-		String key = (String) rootsCB.getSelectedItem();
-		List<Node<ChessEvent>> listData = getListData(roots.get(key));
-		String[] listDataArray = new String[listData.size()];
-
-		for (int i = 0; i < listDataArray.length; i++)
-			listDataArray[i] = listData.get(i).getString();
-
-		rootsList.setListData(listDataArray);
-	}
-
-	private void updateParentListData() {
-		Node<ChessEvent> selectedNode = getSelectedNode();
-		List<String> listData = new ArrayList<String>();
-		Node<ChessEvent> currentParent = selectedNode;
-		while(currentParent != null) {
-			listData.add(currentParent.getString());
-			currentParent = currentParent.getParent();
-		}
-		String[] listDataArray = new String[listData.size()];
-		for(int i = 0; i < listDataArray.length; i++) {
-			listDataArray[i] = listData.get(listDataArray.length - i - 1);
-		}
-		parentsList.setListData(listDataArray);
-	}
-
-	private Node<ChessEvent> getSelectedNode() {
-		String key = (String) rootsCB.getSelectedItem();
-		if (key != null) {
-			List<Node<ChessEvent>> listData = getListData(roots.get(key));
-			return listData.get(rootsList.getSelectedIndex());
-		}
-		return null;
 	}
 
 	/**
@@ -144,13 +119,73 @@ public class TreeGUI {
 		}
 	}
 
+	private void updateRootListData() {
+		Node<ChessEvent> root = getCurrentRoot();
+		if (root != null) {
+			List<Node<ChessEvent>> listData = getTreeAsList(root);
+			String[] listDataArray = new String[listData.size()];
+
+			for (int i = 0; i < listDataArray.length; i++)
+				listDataArray[i] = listData.get(i).getString();
+
+			rootsList.setListData(listDataArray);
+		}
+	}
+
+	private void updateParentListData() {
+		Node<ChessEvent> selectedNode = getSelectedNode();
+		if (selectedNode != null) {
+			List<String> listData = new ArrayList<String>();
+			Node<ChessEvent> currentParent = selectedNode;
+			while (currentParent != null) {
+				listData.add(currentParent.getString());
+				currentParent = currentParent.getParent();
+			}
+			String[] listDataArray = new String[listData.size()];
+			for (int i = 0; i < listDataArray.length; i++) {
+				listDataArray[i] = listData.get(listDataArray.length - i - 1);
+			}
+			parentsList.setListData(listDataArray);
+		}
+	}
+
+	private void updateStatsData() {
+		String text = "";
+		Node<ChessEvent> root = getCurrentRoot();
+		if (root != null) {
+			List<Node<ChessEvent>> listData = getTreeAsList(root);
+			text += "Executed Move: " + root.toString() + "\n";
+			text += "Evaluated Nodes: " + (listData.size() - 1) + " + Root" + "\n";
+		}
+
+		statsTA.setText(text);
+	}
+
+	private Node<ChessEvent> getSelectedNode() {
+		String key = (String) rootsCB.getSelectedItem();
+		if (key != null) {
+			List<Node<ChessEvent>> listData = getTreeAsList(roots.get(key));
+			int selectedIndex = rootsList.getSelectedIndex();
+			if (Utils.inRange(selectedIndex, 0, listData.size() - 1))
+				return listData.get(rootsList.getSelectedIndex());
+		}
+		return null;
+	}
+
+	private Node<ChessEvent> getCurrentRoot() {
+		String key = (String) rootsCB.getSelectedItem();
+		if (key != null)
+			return roots.get(key);
+		return null;
+	}
+
 	/**
 	 * Converts a tree into a List.
 	 * 
 	 * @param root the root of the tree.
 	 * @return a List of the nodes.
 	 */
-	private List<Node<ChessEvent>> getListData(Node<ChessEvent> root) {
+	private List<Node<ChessEvent>> getTreeAsList(Node<ChessEvent> root) {
 		List<Node<ChessEvent>> data = new ArrayList<Node<ChessEvent>>();
 		addChildrenData(data, root);
 		return data;

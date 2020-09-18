@@ -27,7 +27,7 @@ public class ChessEvent {
 
 	@Override
 	public String toString() {
-		return eval + (move != null ? "|" + move.getData() + "|" + move.getPiece().getTeam() : "");
+		return eval + (move != null ? "|" + move.getData() : "");
 	}
 
 	public ChessBoard getBoard() {

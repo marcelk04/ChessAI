@@ -24,6 +24,7 @@ public class Move {
 		String text = columns[oldX] + (8 - oldY) + "-" + columns[newX] + (8 - newY);
 		if (!piece.getName().equals("Pawn"))
 			text = piece.getName().charAt(0) + text;
+		text += "|" + piece.getTeam();
 		return text;
 	}
 
