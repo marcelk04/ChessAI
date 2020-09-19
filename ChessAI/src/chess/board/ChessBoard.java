@@ -14,9 +14,9 @@ import chess.pieces.King;
 import chess.pieces.Knight;
 import chess.pieces.Pawn;
 import chess.pieces.Piece;
-import chess.pieces.Piece.Team;
 import chess.pieces.Queen;
 import chess.pieces.Rook;
+import chess.pieces.Team;
 import input.MouseManager;
 import tree.TreeGUI;
 
@@ -31,13 +31,15 @@ public class ChessBoard {
 	private MinimaxAlgorithm algorithm;
 	private Color backgroundColor;
 	private TreeGUI gui;
+	private List<Move> executedMoves;
 
 	public ChessBoard(MouseManager mouseManager) {
 		board = new Piece[8][8];
 		this.mouseManager = mouseManager;
 		playingTeam = Team.white;
 		backgroundColor = Color.lightGray;
-		gui = new TreeGUI();
+		gui = new TreeGUI(this);
+		executedMoves = new ArrayList<Move>();
 
 		init();
 	}
@@ -116,6 +118,7 @@ public class ChessBoard {
 	public boolean makeMove(Move move) {
 		boolean moved = movePiece(move.getOldX(), move.getOldY(), move.getNewX(), move.getNewY());
 		move.updatePiecePosition();
+		executedMoves.add(move);
 		return moved;
 	}
 
@@ -150,6 +153,12 @@ public class ChessBoard {
 	 */
 	public int getEvaluation() {
 		return getValue(Team.black) - getValue(Team.white);
+	}
+
+	public void printExecutedMoves() {
+		for (int i = 0; i < executedMoves.size(); i++) {
+			System.out.println("Turn " + ((i + 2) / 2) + ": " + executedMoves.get(i).getData());
+		}
 	}
 
 	/**
@@ -314,7 +323,7 @@ public class ChessBoard {
 	 * @return the king of the specified team.
 	 */
 	public King getKing(Team team) {
-		if (team == Piece.Team.white)
+		if (team == Team.white)
 			return white_king;
 		else
 			return black_king;
@@ -326,28 +335,28 @@ public class ChessBoard {
 	 */
 	private void init() {
 		for (int i = 0; i < 8; i++) {
-			addPiece(new Pawn(i, 1, Piece.Team.black, this));
-			addPiece(new Pawn(i, 6, Piece.Team.white, this));
+			addPiece(new Pawn(i, 1, Team.black, this));
+			addPiece(new Pawn(i, 6, Team.white, this));
 		}
 
 		for (int i = 0; i < 2; i++) {
-			addPiece(new Rook(i * 7, 0, Piece.Team.black, this));
-			addPiece(new Rook(i * 7, 7, Piece.Team.white, this));
+			addPiece(new Rook(i * 7, 0, Team.black, this));
+			addPiece(new Rook(i * 7, 7, Team.white, this));
 
-			addPiece(new Bishop(i * 3 + 2, 0, Piece.Team.black, this));
-			addPiece(new Bishop(i * 3 + 2, 7, Piece.Team.white, this));
+			addPiece(new Bishop(i * 3 + 2, 0, Team.black, this));
+			addPiece(new Bishop(i * 3 + 2, 7, Team.white, this));
 
-			addPiece(new Knight(i * 5 + 1, 0, Piece.Team.black, this));
-			addPiece(new Knight(i * 5 + 1, 7, Piece.Team.white, this));
+			addPiece(new Knight(i * 5 + 1, 0, Team.black, this));
+			addPiece(new Knight(i * 5 + 1, 7, Team.white, this));
 		}
 
-		black_king = new King(4, 0, Piece.Team.black, this);
+		black_king = new King(4, 0, Team.black, this);
 		addPiece(black_king);
-		addPiece(new Queen(3, 0, Piece.Team.black, this));
+		addPiece(new Queen(3, 0, Team.black, this));
 
-		white_king = new King(4, 7, Piece.Team.white, this);
+		white_king = new King(4, 7, Team.white, this);
 		addPiece(white_king);
-		addPiece(new Queen(3, 7, Piece.Team.white, this));
+		addPiece(new Queen(3, 7, Team.white, this));
 	}
 
 	// ===== Getters & Setters ===== \\

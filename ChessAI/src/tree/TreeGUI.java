@@ -23,6 +23,7 @@ import main.Utils;
 
 public class TreeGUI {
 	private JFrame frame;
+	private ChessBoard board;
 
 	// ===== Roots ===== \\
 	private Map<String, Node<ChessEvent>> roots;
@@ -38,8 +39,11 @@ public class TreeGUI {
 
 	// ===== Move Statistics ===== \\
 	private JTextArea statsTA;
+	private JButton movesButton;
 
-	public TreeGUI() {
+	public TreeGUI(ChessBoard board) {
+		this.board = board;
+
 		roots = new HashMap<String, Node<ChessEvent>>();
 
 		frame = new JFrame("Tree Inspector");
@@ -57,7 +61,7 @@ public class TreeGUI {
 		cp.add(rootsSP);
 
 		rootsCB = new JComboBox<String>();
-		rootsCB.setBounds(270, 10, 180, 20);
+		rootsCB.setBounds(270, 10, 90, 20);
 		rootsCB.addItemListener(new ItemListener() {
 
 			@Override
@@ -76,8 +80,8 @@ public class TreeGUI {
 		boardDisplay.setEditable(false);
 		cp.add(boardDisplay);
 
-		viewData = new JButton("View Data");
-		viewData.setBounds(460, 10, 110, 20);
+		viewData = new JButton("View");
+		viewData.setBounds(370, 10, 90, 20);
 		viewData.addActionListener(new ActionListener() {
 
 			@Override
@@ -97,6 +101,17 @@ public class TreeGUI {
 		statsTA.setBounds(270, 180, 300, 170);
 		statsTA.setEditable(false);
 		cp.add(statsTA);
+
+		movesButton = new JButton("Print");
+		movesButton.setBounds(470, 10, 100, 20);
+		movesButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				board.printExecutedMoves();
+			}
+		});
+		cp.add(movesButton);
 
 		frame.setVisible(true);
 	}

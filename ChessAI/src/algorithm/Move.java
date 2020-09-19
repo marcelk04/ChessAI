@@ -20,7 +20,7 @@ public class Move {
 	}
 
 	public String getData() {
-		String[] columns = { "a", "b", "c", "d", "e", "f", "g", "h"};
+		String[] columns = { "a", "b", "c", "d", "e", "f", "g", "h" };
 		String text = columns[oldX] + (8 - oldY) + "-" + columns[newX] + (8 - newY);
 		if (!piece.getName().equals("Pawn"))
 			text = piece.getName().charAt(0) + text;
@@ -28,9 +28,12 @@ public class Move {
 		return text;
 	}
 
-	public boolean isEqualTo(Move move) {
-		if (move == null || this.oldX != move.getOldX() || this.oldY != move.getOldY() || this.newX != move.getNewX()
-				|| this.newY != move.getNewY())
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof Move))
+			return false;
+		Move move = (Move) o;
+		if (this.oldX != move.getOldX() || this.oldY != move.getOldY() || this.newX != move.getNewX()
+				|| this.newY != move.getNewY() || this.piece != move.getPiece())
 			return false;
 		return true;
 	}

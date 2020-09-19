@@ -2,7 +2,7 @@ package tree;
 
 import algorithm.Move;
 import chess.board.ChessBoard;
-import chess.pieces.Piece.Team;
+import chess.pieces.Team;
 
 public class ChessEvent {
 	private ChessBoard board;
@@ -20,7 +20,7 @@ public class ChessEvent {
 		this.move = move;
 		this.eval = eval;
 	}
-	
+
 	public ChessEvent(int eval) {
 		this.eval = eval;
 	}

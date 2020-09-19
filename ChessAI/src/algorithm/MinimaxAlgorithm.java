@@ -2,7 +2,7 @@ package algorithm;
 
 import chess.board.ChessBoard;
 import chess.pieces.Piece;
-import chess.pieces.Piece.Team;
+import chess.pieces.Team;
 import tree.ChessEvent;
 import tree.Node;
 import tree.TreeGUI;

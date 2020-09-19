@@ -29,33 +29,73 @@ public abstract class Piece {
 		g.drawImage(texture, x * PIECE_WIDTH, y * PIECE_HEIGHT, PIECE_WIDTH, PIECE_HEIGHT, null);
 	}
 
+	/**
+	 * Returns all the moves this piece can possibly do in its position.
+	 * 
+	 * @return all possible moves.
+	 */
 	public abstract Set<Move> getMoves();
 
+	/**
+	 * Creates a piece that has exactly the same attributes while still being a
+	 * different object. This method includes a ChessBoard in the parameters since
+	 * the board used for the constructor also has to be the cloned version,
+	 * otherwise there would be to pieces on the same board.
+	 * 
+	 * @param board the board the piece should be on.
+	 * @return the cloned piece.
+	 */
 	public abstract Piece clone(ChessBoard board);
 
+	/**
+	 * Returns the name of the piece. Used for example for displaying the moves.
+	 * 
+	 * @return the name of the piece.
+	 */
 	public abstract String getName();
 
+	/**
+	 * Moves the piece to a new position.
+	 * 
+	 * @param newX the new x coordinate of the piece.
+	 * @param newY the new y coordinate of the piece.
+	 */
 	public void setPosition(int newX, int newY) {
 		this.x = newX;
 		this.y = newY;
 		movedAtLeastOnce = true;
 	}
 
+	/**
+	 * Checks if the possible moves of this piece contain a move. Also see
+	 * {@link Piece#getMoves}.
+	 * 
+	 * @param move the move to be checked.
+	 * @return {@code true} if the move can be executed by this piece.
+	 */
 	public boolean movesContain(Move move) {
 		Set<Move> moves = this.getMoves();
 
 		for (Move m : moves) {
-			if (move.isEqualTo(m))
+			if (move.equals(m))
 				return true;
 		}
 
 		return false;
 	}
 
+	/**
+	 * See {@link Piece#movesContain(Move)}.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public boolean movesContain(int x, int y) {
 		return movesContain(new Move(this, x, y));
 	}
-
+	
+	// ===== Getters & Setters ===== \\
 	public Team getTeam() {
 		return team;
 	}
@@ -74,9 +114,5 @@ public abstract class Piece {
 
 	public boolean gotMovedAtLeastOnce() {
 		return movedAtLeastOnce;
-	}
-
-	public static enum Team {
-		black, white;
 	}
 }
