@@ -11,6 +11,9 @@ public class Assets {
 	// black pieces
 	public static BufferedImage black_king, black_queen, black_rook, black_bishop, black_knight, black_pawn;
 
+	/**
+	 * Initializes all the images so they can be rendered by the pieces.
+	 */
 	public static void init() {
 		SpriteSheet sheet = new SpriteSheet(ImageLoader.loadImage("/sheet.png"));
 

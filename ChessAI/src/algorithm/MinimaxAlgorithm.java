@@ -31,7 +31,6 @@ public class MinimaxAlgorithm implements Runnable {
 		board.makeMove(bestMove);
 		gui.addTree(root);
 //		root.deleteChildren();
-		System.out.println(root);
 
 		stop();
 	}

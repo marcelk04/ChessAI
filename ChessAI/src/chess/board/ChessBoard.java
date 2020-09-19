@@ -311,7 +311,7 @@ public class ChessBoard {
 	 * Returns the king of a specific team.
 	 * 
 	 * @param team the team of the king.
-	 * @return the king of the specified.
+	 * @return the king of the specified team.
 	 */
 	public King getKing(Team team) {
 		if (team == Piece.Team.white)
