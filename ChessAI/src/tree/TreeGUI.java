@@ -101,6 +101,11 @@ public class TreeGUI {
 		frame.setVisible(true);
 	}
 
+	/**
+	 * Adds a Tree to the map.
+	 * 
+	 * @param root the Tree to be added.
+	 */
 	public void addTree(Node<ChessEvent> root) {
 		String key = "Move " + (roots.size() + 1);
 		roots.put(key, root);
@@ -119,6 +124,9 @@ public class TreeGUI {
 		}
 	}
 
+	/**
+	 * Updates the list on the left with all the nodes in the Tree.
+	 */
 	private void updateRootListData() {
 		Node<ChessEvent> root = getCurrentRoot();
 		if (root != null) {
@@ -132,6 +140,10 @@ public class TreeGUI {
 		}
 	}
 
+	/**
+	 * Updates the list on the right with all the parents of the currently selected
+	 * node.
+	 */
 	private void updateParentListData() {
 		Node<ChessEvent> selectedNode = getSelectedNode();
 		if (selectedNode != null) {
@@ -149,6 +161,9 @@ public class TreeGUI {
 		}
 	}
 
+	/**
+	 * Updates the TextArea with important information about the current Tree.
+	 */
 	private void updateStatsData() {
 		String text = "";
 		Node<ChessEvent> root = getCurrentRoot();
@@ -161,6 +176,11 @@ public class TreeGUI {
 		statsTA.setText(text);
 	}
 
+	/**
+	 * Returns the node that is currently selected in the list on the left.
+	 * 
+	 * @return the selected node.
+	 */
 	private Node<ChessEvent> getSelectedNode() {
 		String key = (String) rootsCB.getSelectedItem();
 		if (key != null) {
@@ -172,6 +192,11 @@ public class TreeGUI {
 		return null;
 	}
 
+	/**
+	 * Returns the current root.
+	 * 
+	 * @return the current root.
+	 */
 	private Node<ChessEvent> getCurrentRoot() {
 		String key = (String) rootsCB.getSelectedItem();
 		if (key != null)

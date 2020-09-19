@@ -107,18 +107,27 @@ public class ChessBoard {
 		}
 	}
 
-	public void makeMove(Move move) {
-		board[move.getOldX()][move.getOldY()] = null;
-		board[move.getNewX()][move.getNewY()] = move.getPiece();
-
+	/**
+	 * Executes a move. Also see {@link ChessBoard#movePiece}.
+	 * 
+	 * @param move the move the be made.
+	 * @return {@code false} if there is no piece to be moved.
+	 */
+	public boolean makeMove(Move move) {
+		boolean moved = movePiece(move.getOldX(), move.getOldY(), move.getNewX(), move.getNewY());
 		move.updatePiecePosition();
-
-		if (playingTeam == Team.white)
-			playingTeam = Team.black;
-		else
-			playingTeam = Team.white;
+		return moved;
 	}
 
+	/**
+	 * Moves a piece from a coordinate to another.
+	 * 
+	 * @param x    the x coordinate of the piece.
+	 * @param y    the y coordinate of the piece.
+	 * @param newX the new x coordinate of the piece.
+	 * @param newY the new y coordinate of the piece.
+	 * @return {@code false} if there is no piece to be moved.
+	 */
 	public boolean movePiece(int x, int y, int newX, int newY) {
 		if (board[x][y] == null)
 			return false;
@@ -126,13 +135,27 @@ public class ChessBoard {
 		board[newX][newY] = board[x][y];
 		board[x][y] = null;
 
+		if (playingTeam == Team.white)
+			playingTeam = Team.black;
+		else
+			playingTeam = Team.white;
+
 		return true;
 	}
 
+	/**
+	 * Returns the current evaluation of the board.
+	 * 
+	 * @return the evaluation of the board.
+	 */
 	public int getEvaluation() {
 		return getValue(Team.black) - getValue(Team.white);
 	}
 
+	/**
+	 * Resets the board to the beginning state. Also executes the
+	 * {@link ChessBoard#init} method.
+	 */
 	public void reset() {
 		algorithm = null;
 		win = false;
@@ -150,22 +173,50 @@ public class ChessBoard {
 		init();
 	}
 
+	/**
+	 * Returns the piece at the specified coordinates. Will return {@code null} if
+	 * there is no piece.
+	 * 
+	 * @param x the x coordinate.
+	 * @param y the y coordinate.
+	 * @return the piece at the coordinates.
+	 */
 	public Piece getPiece(int x, int y) {
 		return board[x][y];
 	}
 
+	/**
+	 * Returns the piece at the destination coordinates of a Move. Returns
+	 * {@code null} if there is no piece at the specified coordinates.
+	 * 
+	 * @param move the move.
+	 * @return the piece at the destination coordinates.
+	 */
 	public Piece getPiece(Move move) {
 		if (move != null)
 			return getPiece(move.getNewX(), move.getNewY());
 		return null;
 	}
 
+	/**
+	 * Adds a piece to the board. The coordinates used are the ones specified by the
+	 * piece.
+	 * 
+	 * @param piece the piece to be added.
+	 */
 	public void addPiece(Piece piece) {
 		int posX = piece.getX();
 		int posY = piece.getY();
 		board[posX][posY] = piece;
 	}
 
+	/**
+	 * Sets a piece on the board. Only used for cloning the board.
+	 * 
+	 * @param x     the x coordinate of the piece.
+	 * @param y     the y coordinate of the piece.
+	 * @param piece the piece to be set.
+	 */
 	private void setPiece(int x, int y, Piece piece) {
 		board[x][y] = piece;
 		if (piece instanceof King) {
@@ -190,10 +241,20 @@ public class ChessBoard {
 		return board;
 	}
 
+	/**
+	 * Returns the winner of the game and {@code null} if neither team has won.
+	 * 
+	 * @return the winner.
+	 */
 	public Team getWinner() {
 		return winner;
 	}
 
+	/**
+	 * Checks if a team has won the game.
+	 * 
+	 * @return {@code true} if a team has won.
+	 */
 	public boolean checkWin() {
 		if (white_king == null) {
 			win = true;
@@ -206,6 +267,15 @@ public class ChessBoard {
 		return win;
 	}
 
+	/**
+	 * Returns the value of a specific team. The value is currently just determined
+	 * by the value of the pieces, not their positions.
+	 * <p>
+	 * TODO Expand evaluation of the value of a team.
+	 * 
+	 * @param team the team of the pieces.
+	 * @return the value of the specific team.
+	 */
 	public int getValue(Team team) {
 		int value = 0;
 
@@ -217,10 +287,12 @@ public class ChessBoard {
 		return value;
 	}
 
-	public void setPlayingTeam(Team team) {
-		this.playingTeam = team;
-	}
-
+	/**
+	 * Returns all pieces of a specific team.
+	 * 
+	 * @param team the team of the pieces.
+	 * @return all pieces of the specified team.
+	 */
 	public List<Piece> getPieces(Team team) {
 		List<Piece> pieces = new ArrayList<Piece>();
 
@@ -235,26 +307,12 @@ public class ChessBoard {
 		return pieces;
 	}
 
-	public MinimaxAlgorithm getAlgorithm() {
-		return algorithm;
-	}
-
-	public void setBackgroundColor(Color c) {
-		this.backgroundColor = c;
-	}
-
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-
-	public boolean isPlayingAgainstAI() {
-		return playingAgainstAI;
-	}
-
-	public void setPlayingAgainstAI(boolean playingAgainstAI) {
-		this.playingAgainstAI = playingAgainstAI;
-	}
-
+	/**
+	 * Returns the king of a specific team.
+	 * 
+	 * @param team the team of the king.
+	 * @return the king of the specified.
+	 */
 	public King getKing(Team team) {
 		if (team == Piece.Team.white)
 			return white_king;
@@ -262,6 +320,10 @@ public class ChessBoard {
 			return black_king;
 	}
 
+	/**
+	 * Initializes the ChessBoard with all pieces in their correct starting
+	 * positions. Also sets both kings.
+	 */
 	private void init() {
 		for (int i = 0; i < 8; i++) {
 			addPiece(new Pawn(i, 1, Piece.Team.black, this));
@@ -286,5 +348,30 @@ public class ChessBoard {
 		white_king = new King(4, 7, Piece.Team.white, this);
 		addPiece(white_king);
 		addPiece(new Queen(3, 7, Piece.Team.white, this));
+	}
+
+	// ===== Getters & Setters ===== \\
+	public void setPlayingTeam(Team team) {
+		this.playingTeam = team;
+	}
+
+	public MinimaxAlgorithm getAlgorithm() {
+		return algorithm;
+	}
+
+	public void setBackgroundColor(Color c) {
+		this.backgroundColor = c;
+	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public boolean isPlayingAgainstAI() {
+		return playingAgainstAI;
+	}
+
+	public void setPlayingAgainstAI(boolean playingAgainstAI) {
+		this.playingAgainstAI = playingAgainstAI;
 	}
 }
