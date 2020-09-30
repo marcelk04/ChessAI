@@ -27,6 +27,7 @@ public class ChessBoard {
 	private Set<Move> selectedPiece_moves;
 	private Team playingTeam, winner;
 	private King white_king, black_king;
+	private List<Piece> whitePieces, blackPieces;
 	private boolean win = false, playingAgainstAI = true;
 	private MinimaxAlgorithm algorithm;
 	private Color backgroundColor;
@@ -37,6 +38,8 @@ public class ChessBoard {
 		board = new Piece[8][8];
 		this.mouseManager = mouseManager;
 		playingTeam = Team.white;
+		whitePieces = new ArrayList<Piece>();
+		blackPieces = new ArrayList<Piece>();
 		backgroundColor = Color.lightGray;
 		gui = new TreeGUI(this);
 		executedMoves = new ArrayList<Move>();
@@ -46,6 +49,8 @@ public class ChessBoard {
 
 	private ChessBoard() {
 		board = new Piece[8][8];
+		whitePieces = new ArrayList<Piece>();
+		blackPieces = new ArrayList<Piece>();
 	}
 
 	public void tick() {
@@ -116,10 +121,9 @@ public class ChessBoard {
 	 * @return {@code false} if there is no piece to be moved.
 	 */
 	public boolean makeMove(Move move) {
-		boolean moved = movePiece(move.getOldX(), move.getOldY(), move.getNewX(), move.getNewY());
 		move.updatePiecePosition();
 		executedMoves.add(move);
-		return moved;
+		return movePiece(move.getOldX(), move.getOldY(), move.getNewX(), move.getNewY());
 	}
 
 	/**
@@ -144,6 +148,31 @@ public class ChessBoard {
 			playingTeam = Team.white;
 
 		return true;
+	}
+
+	/**
+	 * See {@link ChessBoard#removePiece(int, int)}.
+	 * 
+	 * @param piece the piece to be removed.
+	 * @return {@code false} if there is no piece to remove.
+	 */
+	public boolean removePiece(Piece piece) {
+		return removePiece(piece.getX(), piece.getY());
+	}
+
+	/**
+	 * Removes a piece from the board.
+	 * 
+	 * @param x the x coordinate.
+	 * @param y the y coordinate.
+	 * @return {@code false} if there is no piece to remove.
+	 */
+	public boolean removePiece(int x, int y) {
+		if (board[x][y] != null) {
+			board[x][y] = null;
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -217,16 +246,21 @@ public class ChessBoard {
 		int posX = piece.getX();
 		int posY = piece.getY();
 		board[posX][posY] = piece;
+
+		if (piece.getTeam() == Team.white)
+			whitePieces.add(piece);
+		else
+			blackPieces.add(piece);
 	}
 
 	/**
-	 * Sets a piece on the board. Only used for cloning the board.
+	 * Sets a piece on the board.
 	 * 
 	 * @param x     the x coordinate of the piece.
 	 * @param y     the y coordinate of the piece.
 	 * @param piece the piece to be set.
 	 */
-	private void setPiece(int x, int y, Piece piece) {
+	public void setPiece(int x, int y, Piece piece) {
 		board[x][y] = piece;
 		if (piece instanceof King) {
 			if (piece.getTeam() == Team.white)
@@ -234,6 +268,11 @@ public class ChessBoard {
 			else if (piece.getTeam() == Team.black)
 				this.black_king = (King) piece;
 		}
+		
+		if(piece.getTeam() == Team.white)
+			whitePieces.add(piece);
+		else
+			blackPieces.add(piece);
 	}
 
 	@Override

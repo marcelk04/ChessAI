@@ -23,6 +23,7 @@ import main.Utils;
 
 public class TreeGUI {
 	private JFrame frame;
+	@SuppressWarnings("unused")
 	private ChessBoard board;
 
 	// ===== Roots ===== \\
