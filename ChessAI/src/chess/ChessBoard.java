@@ -1,4 +1,4 @@
-package chess.board;
+package chess;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -65,7 +65,7 @@ public class ChessBoard {
 				selectedPiece_moves = null;
 
 				if (!win && playingAgainstAI)
-					algorithm = new MinimaxAlgorithm(this, 2, gui);
+					algorithm = new MinimaxAlgorithm(this, 4, true, gui);
 			} else {
 				selectedPiece = getPiece(clickedX, clickedY);
 				if (selectedPiece != null && (selectedPiece.getTeam() == playingTeam
@@ -115,10 +115,11 @@ public class ChessBoard {
 	}
 
 	/**
-	 * Executes a move. Also see {@link ChessBoard#movePiece}.
+	 * Executes a move and updates the piece position.
 	 * 
 	 * @param move the move the be made.
 	 * @return {@code false} if there is no piece to be moved.
+	 * @see #movePiece(int, int, int, int)
 	 */
 	public boolean makeMove(Move move) {
 		move.updatePiecePosition();
@@ -139,6 +140,12 @@ public class ChessBoard {
 		if (board[x][y] == null)
 			return false;
 
+		if (board[x][y] != null) {
+			if (board[x][y].getTeam() == Team.white)
+				whitePieces.remove(board[x][y]);
+			else
+				blackPieces.remove(board[x][y]);
+		}
 		board[newX][newY] = board[x][y];
 		board[x][y] = null;
 
@@ -151,10 +158,11 @@ public class ChessBoard {
 	}
 
 	/**
-	 * See {@link ChessBoard#removePiece(int, int)}.
+	 * Removes a piece from the board.
 	 * 
 	 * @param piece the piece to be removed.
 	 * @return {@code false} if there is no piece to remove.
+	 * @see #removePiece(int, int)
 	 */
 	public boolean removePiece(Piece piece) {
 		return removePiece(piece.getX(), piece.getY());
@@ -169,6 +177,10 @@ public class ChessBoard {
 	 */
 	public boolean removePiece(int x, int y) {
 		if (board[x][y] != null) {
+			if (board[x][y].getTeam() == Team.white)
+				whitePieces.remove(board[x][y]);
+			else
+				blackPieces.remove(board[x][y]);
 			board[x][y] = null;
 			return true;
 		}
@@ -192,7 +204,7 @@ public class ChessBoard {
 
 	/**
 	 * Resets the board to the beginning state. Also executes the
-	 * {@link ChessBoard#init} method.
+	 * {@link ChessBoard#init()} method.
 	 */
 	public void reset() {
 		algorithm = null;
@@ -268,8 +280,8 @@ public class ChessBoard {
 			else if (piece.getTeam() == Team.black)
 				this.black_king = (King) piece;
 		}
-		
-		if(piece.getTeam() == Team.white)
+
+		if (piece.getTeam() == Team.white)
 			whitePieces.add(piece);
 		else
 			blackPieces.add(piece);
@@ -342,17 +354,21 @@ public class ChessBoard {
 	 * @return all pieces of the specified team.
 	 */
 	public List<Piece> getPieces(Team team) {
-		List<Piece> pieces = new ArrayList<Piece>();
-
-		for (int y = 0; y < this.board.length; y++) {
-			for (int x = 0; x < this.board.length; x++) {
-				if (this.board[x][y] != null && this.board[x][y].getTeam() == team) {
-					pieces.add(this.board[x][y]);
-				}
-			}
-		}
-
-		return pieces;
+//		List<Piece> pieces = new ArrayList<Piece>();
+//
+//		for (int y = 0; y < this.board.length; y++) {
+//			for (int x = 0; x < this.board.length; x++) {
+//				if (this.board[x][y] != null && this.board[x][y].getTeam() == team) {
+//					pieces.add(this.board[x][y]);
+//				}
+//			}
+//		}
+//
+//		return pieces;
+		if (team == Team.white)
+			return whitePieces;
+		else
+			return blackPieces;
 	}
 
 	/**

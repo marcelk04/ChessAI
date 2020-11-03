@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import algorithm.Move;
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 import gfx.Assets;
 
 public class Bishop extends Piece {

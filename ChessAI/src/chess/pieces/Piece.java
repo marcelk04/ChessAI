@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.Set;
 
 import algorithm.Move;
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 
 public abstract class Piece {
 	public static final int PIECE_WIDTH = 80, PIECE_HEIGHT = 80;

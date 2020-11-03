@@ -1,7 +1,7 @@
 package tree;
 
 import algorithm.Move;
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 import chess.pieces.Team;
 
 public class ChessEvent {

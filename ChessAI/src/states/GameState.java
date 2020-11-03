@@ -2,7 +2,7 @@ package states;
 
 import java.awt.Graphics;
 
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 import main.Game;
 
 public class GameState extends State {

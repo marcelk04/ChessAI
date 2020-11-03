@@ -18,13 +18,14 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 import main.Utils;
 
 public class TreeGUI {
 	private JFrame frame;
 	@SuppressWarnings("unused")
 	private ChessBoard board;
+	private String key = "Turn ";
 
 	// ===== Roots ===== \\
 	private Map<String, Node<ChessEvent>> roots;
@@ -123,7 +124,7 @@ public class TreeGUI {
 	 * @param root the Tree to be added.
 	 */
 	public void addTree(Node<ChessEvent> root) {
-		String key = "Move " + (roots.size() + 1);
+		String key = this.key + (roots.size() + 1);
 		roots.put(key, root);
 		rootsCB.addItem(key);
 	}

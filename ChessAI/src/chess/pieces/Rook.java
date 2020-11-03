@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import algorithm.Move;
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 import gfx.Assets;
 
 public class Rook extends Piece {
@@ -78,6 +78,7 @@ public class Rook extends Piece {
 					wDone = true;
 				}
 			}
+			
 			if (!eDone && this.x + i < 8) { // right
 				currentMove = new Move(this, this.x + i, this.y);
 				currentPiece = board.getPiece(currentMove);

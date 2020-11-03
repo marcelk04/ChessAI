@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import algorithm.Move;
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 import gfx.Assets;
 import main.Utils;
 
@@ -20,6 +20,15 @@ public class Pawn extends Piece {
 			this.texture = Assets.black_pawn;
 	}
 
+	/**
+	 * Only used for cloning the piece.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param team
+	 * @param movedAtLeastOnce
+	 * @param board
+	 */
 	private Pawn(int x, int y, Team team, boolean movedAtLeastOnce, ChessBoard board) {
 		super(x, y, 10, team, board);
 		this.movedAtLeastOnce = movedAtLeastOnce;

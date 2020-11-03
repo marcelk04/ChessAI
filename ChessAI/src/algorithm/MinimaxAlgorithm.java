@@ -1,6 +1,6 @@
 package algorithm;
 
-import chess.board.ChessBoard;
+import chess.ChessBoard;
 import chess.pieces.Piece;
 import chess.pieces.Team;
 import tree.ChessEvent;
@@ -13,11 +13,13 @@ public class MinimaxAlgorithm implements Runnable {
 
 	private ChessBoard board;
 	private int depth;
+	private boolean usePruning;
 	private TreeGUI gui;
 
-	public MinimaxAlgorithm(ChessBoard board, int depth, TreeGUI gui) {
+	public MinimaxAlgorithm(ChessBoard board, int depth, boolean usePruning, TreeGUI gui) {
 		this.board = board;
 		this.depth = depth;
+		this.usePruning = usePruning;
 		this.gui = gui;
 
 		start();
@@ -25,8 +27,11 @@ public class MinimaxAlgorithm implements Runnable {
 
 	@Override
 	public void run() {
-//		Node<ChessEvent> root = minimaxABTree(board, depth, -1000000000, 1000000000, true);
-		Node<ChessEvent> root = minimaxTree(board, depth, true);
+		Node<ChessEvent> root;
+		if (usePruning)
+			root = minimaxABTree(board, depth, -1000000000, 1000000000, true);
+		else
+			root = minimaxTree(board, depth, true);
 		Move bestMove = root.getData().getMove();
 		board.makeMove(bestMove);
 		gui.addTree(root);

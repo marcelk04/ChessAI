@@ -7,6 +7,13 @@ public class Move {
 	private int oldX, oldY;
 	private int newX, newY;
 
+	/**
+	 * Creates a new move.
+	 * 
+	 * @param piece the piece that will be moved.
+	 * @param newX  the x coordinate the piece will be moved to.
+	 * @param newY  the y coordinate the piece will be moved to.
+	 */
 	public Move(Piece piece, int newX, int newY) {
 		this.piece = piece;
 		this.oldX = piece.getX();
@@ -15,10 +22,22 @@ public class Move {
 		this.newY = newY;
 	}
 
+	/**
+	 * Moves the piece to its new position.
+	 */
 	public void updatePiecePosition() {
 		piece.setPosition(newX, newY);
 	}
 
+	/**
+	 * Returns what piece is moved and to which tile.
+	 * <p>
+	 * For example the bottom left rook moved to the top left tile would be
+	 * <p>
+	 * Ra1-a8.
+	 * 
+	 * @return the important data about the move.
+	 */
 	public String getData() {
 		String[] columns = { "a", "b", "c", "d", "e", "f", "g", "h" };
 		String text = columns[oldX] + (8 - oldY) + "-" + columns[newX] + (8 - newY);

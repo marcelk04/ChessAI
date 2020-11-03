@@ -21,7 +21,6 @@ public class Game implements Runnable {
 	private BufferStrategy bs;
 	private Graphics g;
 
-	// states
 	private State gameState;
 	private State menuState;
 
