@@ -1,13 +1,7 @@
 package algorithm;
 
-import chess.ChessBoard;
-import chess.pieces.Piece;
-import chess.pieces.Team;
-import tree.ChessEvent;
-import tree.Node;
-import tree.TreeGUI;
-
-public class MinimaxAlgorithm implements Runnable {
+public class MinimaxAlgorithm /*implements Runnable*/ {
+	/*
 	private Thread thread;
 	private boolean running = false;
 
@@ -32,7 +26,7 @@ public class MinimaxAlgorithm implements Runnable {
 			root = minimaxABTree(board, depth, -1000000000, 1000000000, true);
 		else
 			root = minimaxTree(board, depth, true);
-		Move bestMove = root.getData().getMove();
+		MoveOld bestMove = root.getData().getMove();
 		board.makeMove(bestMove);
 		gui.addTree(root);
 //		root.deleteChildren();
@@ -57,7 +51,7 @@ public class MinimaxAlgorithm implements Runnable {
 			Node<ChessEvent> maxEval = new Node<ChessEvent>(new ChessEvent(-1000000000));
 
 			pieces: for (Piece currentPossiblePiece : board.getPieces(Team.black)) {
-				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+				for (MoveOld currentPossibleMove : currentPossiblePiece.getMoves()) {
 					ChessBoard boardCopy = board.clone();
 					boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
 							currentPossibleMove.getNewX(), currentPossibleMove.getNewY());
@@ -81,7 +75,7 @@ public class MinimaxAlgorithm implements Runnable {
 			Node<ChessEvent> minEval = new Node<ChessEvent>(new ChessEvent(1000000000));
 
 			pieces: for (Piece currentPossiblePiece : board.getPieces(Team.white)) {
-				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+				for (MoveOld currentPossibleMove : currentPossiblePiece.getMoves()) {
 					ChessBoard boardCopy = board.clone();
 					boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
 							currentPossibleMove.getNewX(), currentPossibleMove.getNewY());
@@ -123,7 +117,7 @@ public class MinimaxAlgorithm implements Runnable {
 			Node<ChessEvent> maxEval = new Node<ChessEvent>(new ChessEvent(-1000000000));
 
 			for (Piece currentPossiblePiece : board.getPieces(Team.black)) {
-				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+				for (MoveOld currentPossibleMove : currentPossiblePiece.getMoves()) {
 					ChessBoard boardCopy = board.clone();
 					if (!boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
 							currentPossibleMove.getNewX(), currentPossibleMove.getNewY())) {
@@ -145,7 +139,7 @@ public class MinimaxAlgorithm implements Runnable {
 			Node<ChessEvent> minEval = new Node<ChessEvent>(new ChessEvent(1000000000));
 
 			for (Piece currentPossiblePiece : board.getPieces(Team.white)) {
-				for (Move currentPossibleMove : currentPossiblePiece.getMoves()) {
+				for (MoveOld currentPossibleMove : currentPossiblePiece.getMoves()) {
 					ChessBoard boardCopy = board.clone();
 					if (!boardCopy.movePiece(currentPossibleMove.getOldX(), currentPossibleMove.getOldY(),
 							currentPossibleMove.getNewX(), currentPossibleMove.getNewY())) {
@@ -186,4 +180,5 @@ public class MinimaxAlgorithm implements Runnable {
 			e.printStackTrace();
 		}
 	}
+	*/
 }
