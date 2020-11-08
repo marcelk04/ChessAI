@@ -3,13 +3,15 @@ package chess.pieces;
 import java.util.HashSet;
 import java.util.Set;
 
-import algorithm.Move;
-import chess.ChessBoard;
+import chess.Board;
+import chess.move.Move;
+import chess.move.Move.AttackMove;
+import chess.move.Move.NormalMove;
 import gfx.Assets;
 
 public class Bishop extends Piece {
-	public Bishop(int x, int y, Team team, ChessBoard board) {
-		super(x, y, 30, team, board);
+	public Bishop(int x, int y, Team team) {
+		super(x, y, 30, team, PieceType.BISHOP);
 
 		if (team == Team.white)
 			this.texture = Assets.white_bishop;
@@ -17,34 +19,27 @@ public class Bishop extends Piece {
 			this.texture = Assets.black_bishop;
 	}
 
-	private Bishop(int x, int y, Team team, boolean movedAtLeastOnce, ChessBoard board) {
-		super(x, y, 30, team, board);
+	private Bishop(int x, int y, Team team, boolean movedAtLeastOnce) {
+		this(x, y, team);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 	}
 
 	@Override
-	public Piece clone(ChessBoard board) {
-		return new Bishop(x, y, team, movedAtLeastOnce, board);
-	}
+	public Set<Move> getMoves(Board board) {
+		final Set<Move> moves = new HashSet<Move>();
 
-	@Override
-	public Set<Move> getMoves() {
-		Set<Move> moves = new HashSet<Move>();
-
-		Move currentMove;
 		Piece currentPiece;
 
 		boolean nwDone = false, neDone = false, seDone = false, swDone = false;
 
 		for (int i = 1; i < 8; i++) {
 			if (!nwDone && this.x - i >= 0 && this.y - i >= 0) { // northwest / left up
-				currentMove = new Move(this, this.x - i, this.y - i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x - i, this.y - i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x - i, this.y - i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x - i, this.y - i, currentPiece));
 					nwDone = true;
 				} else {
 					nwDone = true;
@@ -52,13 +47,12 @@ public class Bishop extends Piece {
 			}
 
 			if (!seDone && this.x + i < 8 && this.y + i < 8) { // southeast / right down
-				currentMove = new Move(this, this.x + i, this.y + i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + i, this.y + i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x + i, this.y + i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x + i, this.y + i, currentPiece));
 					seDone = true;
 				} else {
 					seDone = true;
@@ -66,13 +60,12 @@ public class Bishop extends Piece {
 			}
 
 			if (!swDone && this.x - i >= 0 && this.y + i < 8) { // southwest / left down
-				currentMove = new Move(this, this.x - i, this.y + i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x - i, this.y + i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x - i, this.y + i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x - i, this.y + i, currentPiece));
 					swDone = true;
 				} else {
 					swDone = true;
@@ -80,13 +73,12 @@ public class Bishop extends Piece {
 			}
 
 			if (!neDone && this.x + i < 8 && this.y - i >= 0) { // northeast / right up
-				currentMove = new Move(this, this.x + i, this.y - i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + i, this.y - i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x + i, this.y - i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x + i, this.y - i, currentPiece));
 					neDone = true;
 				} else {
 					neDone = true;
@@ -100,5 +92,10 @@ public class Bishop extends Piece {
 	@Override
 	public String getName() {
 		return "Bishop";
+	}
+
+	@Override
+	public Piece movePiece(Move move) {
+		return new Bishop(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
 	}
 }

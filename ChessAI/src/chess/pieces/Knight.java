@@ -3,14 +3,16 @@ package chess.pieces;
 import java.util.HashSet;
 import java.util.Set;
 
-import algorithm.Move;
-import chess.ChessBoard;
+import chess.Board;
+import chess.move.Move;
+import chess.move.Move.AttackMove;
+import chess.move.Move.NormalMove;
 import gfx.Assets;
 import main.Utils;
 
 public class Knight extends Piece {
-	public Knight(int x, int y, Team team, ChessBoard board) {
-		super(x, y, 30, team, board);
+	public Knight(int x, int y, Team team) {
+		super(x, y, 30, team, PieceType.KNIGHT);
 
 		if (team == Team.white)
 			this.texture = Assets.white_knight;
@@ -18,21 +20,15 @@ public class Knight extends Piece {
 			this.texture = Assets.black_knight;
 	}
 
-	private Knight(int x, int y, Team team, boolean movedAtLeastOnce, ChessBoard board) {
-		super(x, y, 30, team, board);
+	private Knight(int x, int y, Team team, boolean movedAtLeastOnce) {
+		this(x, y, team);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 	}
 
 	@Override
-	public Piece clone(ChessBoard board) {
-		return new Knight(x, y, team, movedAtLeastOnce, board);
-	}
-
-	@Override
-	public Set<Move> getMoves() {
+	public Set<Move> getMoves(Board board) {
 		Set<Move> moves = new HashSet<Move>();
 
-		Move currentMove;
 		Piece currentPiece;
 
 		for (int y = -1; y <= 1; y += 2) {
@@ -43,11 +39,12 @@ public class Knight extends Piece {
 				if (!Utils.inRange(this.x + x, 0, 7))
 					continue;
 
-				currentMove = new Move(this, this.x + x, this.y + y);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + x, this.y + y);
 
-				if (currentPiece == null || currentPiece.getTeam() != team)
-					moves.add(currentMove);
+				if (currentPiece == null)
+					moves.add(new NormalMove(board, this, this.x + x, this.y + y));
+				else if (currentPiece.getTeam() != team)
+					moves.add(new AttackMove(board, this, this.x + x, this.y + y, currentPiece));
 			}
 		}
 
@@ -59,11 +56,12 @@ public class Knight extends Piece {
 				if (!Utils.inRange(this.x + x, 0, 7))
 					continue;
 
-				currentMove = new Move(this, this.x + x, this.y + y);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + x, this.y + y);
 
 				if (currentPiece == null || currentPiece.getTeam() != team)
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x + x, this.y + y));
+				else if (currentPiece.getTeam() != team)
+					moves.add(new AttackMove(board, this, this.x + x, this.y + y, currentPiece));
 			}
 		}
 
@@ -73,5 +71,10 @@ public class Knight extends Piece {
 	@Override
 	public String getName() {
 		return "Knight";
+	}
+
+	@Override
+	public Piece movePiece(Move move) {
+		return new Knight(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
 	}
 }

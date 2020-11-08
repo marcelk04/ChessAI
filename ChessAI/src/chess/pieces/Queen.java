@@ -3,13 +3,15 @@ package chess.pieces;
 import java.util.HashSet;
 import java.util.Set;
 
-import algorithm.Move;
-import chess.ChessBoard;
+import chess.Board;
+import chess.move.Move;
+import chess.move.Move.AttackMove;
+import chess.move.Move.NormalMove;
 import gfx.Assets;
 
 public class Queen extends Piece {
-	public Queen(int x, int y, Team team, ChessBoard board) {
-		super(x, y, 90, team, board);
+	public Queen(int x, int y, Team team) {
+		super(x, y, 90, team, PieceType.QUEEN);
 
 		if (team == Team.white)
 			this.texture = Assets.white_queen;
@@ -17,21 +19,15 @@ public class Queen extends Piece {
 			this.texture = Assets.black_queen;
 	}
 
-	private Queen(int x, int y, Team team, boolean movedAtLeastOnce, ChessBoard board) {
-		super(x, y, 90, team, board);
+	private Queen(int x, int y, Team team, boolean movedAtLeastOnce) {
+		this(x, y, team);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 	}
 
 	@Override
-	public Piece clone(ChessBoard board) {
-		return new Queen(x, y, team, movedAtLeastOnce, board);
-	}
-
-	@Override
-	public Set<Move> getMoves() {
+	public Set<Move> getMoves(Board board) {
 		Set<Move> moves = new HashSet<Move>();
 
-		Move currentMove;
 		Piece currentPiece;
 
 		boolean nDone = false, sDone = false, wDone = false, eDone = false;
@@ -39,13 +35,12 @@ public class Queen extends Piece {
 
 		for (int i = 1; i < 8; i++) {
 			if (!nDone && this.y - i >= 0) { // up
-				currentMove = new Move(this, this.x, this.y - i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x, this.y - i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x, this.y - i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x, this.y - i, currentPiece));
 					nDone = true;
 				} else {
 					nDone = true;
@@ -53,13 +48,12 @@ public class Queen extends Piece {
 			}
 
 			if (!sDone && this.y + i < 8) { // down
-				currentMove = new Move(this, this.x, this.y + i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x, this.y + i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x, this.y + i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x, this.y + i, currentPiece));
 					sDone = true;
 				} else {
 					sDone = true;
@@ -67,26 +61,25 @@ public class Queen extends Piece {
 			}
 
 			if (!wDone && this.x - i >= 0) { // left
-				currentMove = new Move(this, this.x - i, this.y);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x - i, this.y);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x - i, this.y));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x - i, this.y, currentPiece));
 					wDone = true;
 				} else {
 					wDone = true;
 				}
 			}
+
 			if (!eDone && this.x + i < 8) { // right
-				currentMove = new Move(this, this.x + i, this.y);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + i, this.y);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x + i, this.y));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x + i, this.y, currentPiece));
 					eDone = true;
 				} else {
 					eDone = true;
@@ -94,13 +87,12 @@ public class Queen extends Piece {
 			}
 
 			if (!nwDone && this.x - i >= 0 && this.y - i >= 0) { // northwest / left up
-				currentMove = new Move(this, this.x - i, this.y - i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x - i, this.y - i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x - i, this.y - i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x - i, this.y - i, currentPiece));
 					nwDone = true;
 				} else {
 					nwDone = true;
@@ -108,13 +100,12 @@ public class Queen extends Piece {
 			}
 
 			if (!seDone && this.x + i < 8 && this.y + i < 8) { // southeast / right down
-				currentMove = new Move(this, this.x + i, this.y + i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + i, this.y + i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x + i, this.y + i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x + i, this.y + i, currentPiece));
 					seDone = true;
 				} else {
 					seDone = true;
@@ -122,13 +113,12 @@ public class Queen extends Piece {
 			}
 
 			if (!swDone && this.x - i >= 0 && this.y + i < 8) { // southwest / left down
-				currentMove = new Move(this, this.x - i, this.y + i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x - i, this.y + i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x - i, this.y + i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x - i, this.y + i, currentPiece));
 					swDone = true;
 				} else {
 					swDone = true;
@@ -136,13 +126,12 @@ public class Queen extends Piece {
 			}
 
 			if (!neDone && this.x + i < 8 && this.y - i >= 0) { // northeast / right up
-				currentMove = new Move(this, this.x + i, this.y - i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + i, this.y - i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x + i, this.y - i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x + i, this.y - i, currentPiece));
 					neDone = true;
 				} else {
 					neDone = true;
@@ -156,5 +145,10 @@ public class Queen extends Piece {
 	@Override
 	public String getName() {
 		return "Queen";
+	}
+
+	@Override
+	public Piece movePiece(Move move) {
+		return new Queen(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
 	}
 }

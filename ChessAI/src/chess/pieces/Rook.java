@@ -3,13 +3,15 @@ package chess.pieces;
 import java.util.HashSet;
 import java.util.Set;
 
-import algorithm.Move;
-import chess.ChessBoard;
+import chess.Board;
+import chess.move.Move;
+import chess.move.Move.AttackMove;
+import chess.move.Move.NormalMove;
 import gfx.Assets;
 
 public class Rook extends Piece {
-	public Rook(int x, int y, Team team, ChessBoard board) {
-		super(x, y, 50, team, board);
+	public Rook(int x, int y, Team team) {
+		super(x, y, 50, team, PieceType.ROOK);
 
 		if (team == Team.white)
 			this.texture = Assets.white_rook;
@@ -17,34 +19,27 @@ public class Rook extends Piece {
 			this.texture = Assets.black_rook;
 	}
 
-	private Rook(int x, int y, Team team, boolean movedAtLeastOnce, ChessBoard board) {
-		super(x, y, 50, team, board);
+	private Rook(int x, int y, Team team, boolean movedAtLeastOnce) {
+		this(x, y, team);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 	}
 
 	@Override
-	public Piece clone(ChessBoard board) {
-		return new Rook(x, y, team, board);
-	}
-
-	@Override
-	public Set<Move> getMoves() {
+	public Set<Move> getMoves(Board board) {
 		Set<Move> moves = new HashSet<Move>();
 
-		Move currentMove;
 		Piece currentPiece;
 
 		boolean nDone = false, sDone = false, wDone = false, eDone = false;
 
 		for (int i = 1; i < 8; i++) {
 			if (!nDone && this.y - i >= 0) { // up
-				currentMove = new Move(this, this.x, this.y - i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x, this.y - i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x, this.y - i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x, this.y - i, currentPiece));
 					nDone = true;
 				} else {
 					nDone = true;
@@ -52,13 +47,12 @@ public class Rook extends Piece {
 			}
 
 			if (!sDone && this.y + i < 8) { // down
-				currentMove = new Move(this, this.x, this.y + i);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x, this.y + i);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x, this.y + i));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x, this.y + i, currentPiece));
 					sDone = true;
 				} else {
 					sDone = true;
@@ -66,27 +60,25 @@ public class Rook extends Piece {
 			}
 
 			if (!wDone && this.x - i >= 0) { // left
-				currentMove = new Move(this, this.x - i, this.y);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x - i, this.y);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x - i, this.y));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x - i, this.y, currentPiece));
 					wDone = true;
 				} else {
 					wDone = true;
 				}
 			}
-			
+
 			if (!eDone && this.x + i < 8) { // right
-				currentMove = new Move(this, this.x + i, this.y);
-				currentPiece = board.getPiece(currentMove);
+				currentPiece = board.getPiece(this.x + i, this.y);
 
 				if (currentPiece == null) {
-					moves.add(currentMove);
+					moves.add(new NormalMove(board, this, this.x + i, this.y));
 				} else if (currentPiece.getTeam() != team) {
-					moves.add(currentMove);
+					moves.add(new AttackMove(board, this, this.x + i, this.y, currentPiece));
 					eDone = true;
 				} else {
 					eDone = true;
@@ -100,5 +92,10 @@ public class Rook extends Piece {
 	@Override
 	public String getName() {
 		return "Rook";
+	}
+
+	@Override
+	public Piece movePiece(Move move) {
+		return new Rook(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
 	}
 }
