@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import main.Utils;
 import ui.UIUtils;
 import ui.interfaces.Clickable;
 import ui.interfaces.Typeable;
@@ -37,7 +36,7 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 				g.setColor(border);
 				g.drawRect(x, y, width, height);
 			}
-			Utils.drawString(g, text + end, textX, textY, true, textColor, font);
+			UIUtils.drawString(g, text + end, textX, textY, true, textColor, font);
 		}
 	}
 

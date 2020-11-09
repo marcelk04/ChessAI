@@ -3,7 +3,7 @@ package ui.objects;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
-import main.Utils;
+import ui.UIUtils;
 import ui.interfaces.Clickable;
 
 public class UIButton extends UIObject implements Clickable {
@@ -29,7 +29,7 @@ public class UIButton extends UIObject implements Clickable {
 				g.setColor(border);
 				g.drawRect(x, y, width, height);
 			}
-			Utils.drawString(g, text, x + width / 2, y + height / 2, true, textColor, font);
+			UIUtils.drawString(g, text, x + width / 2, y + height / 2, true, textColor, font);
 		}
 	}
 

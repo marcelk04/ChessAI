@@ -9,7 +9,6 @@ public class MoveTransition {
 
 	public MoveTransition(final Board oldBoard, final Board newBoard, final Move executedMove,
 			final MoveStatus moveStatus) {
-		super();
 		this.oldBoard = oldBoard;
 		this.newBoard = newBoard;
 		this.executedMove = executedMove;

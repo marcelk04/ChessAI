@@ -3,7 +3,6 @@ package ui.objects;
 import java.awt.Font;
 import java.awt.Graphics;
 
-import main.Utils;
 import ui.UIUtils;
 
 public class UILabel extends UIObject {
@@ -30,7 +29,7 @@ public class UILabel extends UIObject {
 				g.setColor(border);
 				g.drawRect(x, y, width, height);
 			}
-			Utils.drawString(g, text, textX, textY, true, textColor, font);
+			UIUtils.drawString(g, text, textX, textY, true, textColor, font);
 		}
 	}
 

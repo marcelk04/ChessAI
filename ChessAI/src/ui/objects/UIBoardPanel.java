@@ -10,7 +10,6 @@ import java.util.Set;
 import chess.Board;
 import chess.Board.Position;
 import chess.move.Move;
-import chess.move.MoveStatus;
 import chess.move.MoveTransition;
 import chess.pieces.Piece;
 import ui.interfaces.Clickable;
@@ -86,18 +85,11 @@ public class UIBoardPanel extends UIObject implements Clickable {
 			for (Move m : selectedPiece_moves) {
 				if (m.getPieceDestinationX() == pieceX && m.getPieceDestinationY() == pieceY) {
 					MoveTransition mt = board.getCurrentPlayer().makeMove(m);
-					
+
 					if (meListener != null)
 						meListener.moveExecuted(mt);
-					
-					if (mt.getMoveStatus() == MoveStatus.DONE) {
-						this.board = mt.getNewBoard();
 
-						selectedPiece = null;
-						selectedPiece_movePositions.clear();
-						selectedPiece_moves.clear();
-						return;
-					}
+					break;
 				}
 			}
 		} else {
@@ -127,6 +119,11 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	public void setBoard(Board board) {
 		this.board = board;
+		
+		selectedPiece = null;
+		selectedPiece_movePositions.clear();
+		if (selectedPiece_moves != null)
+			selectedPiece_moves.clear();
 	}
 
 	public void setMoveExecutionListener(MoveExecutionListener meListener) {

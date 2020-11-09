@@ -43,7 +43,7 @@ public class Board {
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
 				Piece p = builder.boardConfig.get(new Position(x, y));
-				if (p != null) {
+				if (p != null && p.getTeam() == team) {
 					activePieces.add(p);
 				}
 			}

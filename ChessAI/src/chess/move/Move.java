@@ -93,7 +93,7 @@ public abstract class Move {
 		}
 	}
 
-	public static class PawnMove extends Move {
+	public static class PawnMove extends NormalMove {
 		public PawnMove(final Board board, final Pawn movedPiece, final int pieceDestinationX,
 				final int pieceDestinationY) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
