@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import chess.Board;
-import chess.Board.Position;
 import chess.move.Move;
 import chess.move.MoveTransition;
+import chess.move.Position;
 import chess.pieces.Piece;
 import ui.interfaces.Clickable;
 import ui.listeners.MoveExecutionListener;
@@ -119,7 +119,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	public void setBoard(Board board) {
 		this.board = board;
-		
+
 		selectedPiece = null;
 		selectedPiece_movePositions.clear();
 		if (selectedPiece_moves != null)

@@ -83,13 +83,35 @@ public abstract class Move {
 		protected final Piece attackedPiece;
 
 		public AttackMove(final Board board, final Piece movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Piece attackPiece) {
+				final int pieceDestinationY, final Piece attackedPiece) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
-			this.attackedPiece = attackPiece;
+			this.attackedPiece = attackedPiece;
 		}
 
 		public Piece getAttackPiece() {
 			return attackedPiece;
+		}
+
+		@Override
+		public Board execute() {
+			Builder b = new Builder();
+
+			for (Piece p : board.getCurrentPlayer().getActivePieces()) {
+				if (!movedPiece.equals(p)) {
+					b.setPiece(p);
+				}
+			}
+
+			for (Piece p : board.getCurrentPlayer().getOpponent().getActivePieces()) {
+				if (!attackedPiece.equals(p)) {
+					b.setPiece(p);
+				}
+			}
+
+			b.setPiece(movedPiece.movePiece(this));
+			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+
+			return b.build();
 		}
 	}
 
@@ -102,8 +124,8 @@ public abstract class Move {
 
 	public static class PawnAttackMove extends AttackMove {
 		public PawnAttackMove(final Board board, final Pawn movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Piece attackPiece) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY, attackPiece);
+				final int pieceDestinationY, final Piece attackedPiece) {
+			super(board, movedPiece, pieceDestinationX, pieceDestinationY, attackedPiece);
 		}
 	}
 

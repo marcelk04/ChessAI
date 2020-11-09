@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import chess.move.Move;
+import chess.move.Position;
 import chess.pieces.Bishop;
 import chess.pieces.King;
 import chess.pieces.Knight;
@@ -146,33 +147,6 @@ public class Board {
 
 		public Board build() {
 			return new Board(this);
-		}
-	}
-
-	public static class Position {
-		public int x, y;
-
-		public Position(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-
-		@Override
-		public boolean equals(Object other) {
-			if (this == other)
-				return true;
-
-			if (!(other instanceof Position))
-				return false;
-
-			Position otherPosition = (Position) other;
-
-			return this.x == otherPosition.x && this.y == otherPosition.y;
-		}
-
-		@Override
-		public int hashCode() {
-			return x * 10 + y;
 		}
 	}
 }
