@@ -13,4 +13,9 @@ public class Utils {
 		else
 			return var;
 	}
+
+	public static char getColumnLetter(int column) {
+		char[] columns = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+		return columns[column];
+	}
 }

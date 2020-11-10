@@ -7,8 +7,8 @@ import ui.UIUtils;
 import ui.interfaces.Clickable;
 
 public class UIButton extends UIObject implements Clickable {
-	private String text;
-	private boolean hovering = false;
+	protected String text;
+	protected boolean hovering = false;
 
 	public UIButton(String text) {
 		this.text = text;

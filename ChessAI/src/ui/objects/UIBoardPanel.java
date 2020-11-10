@@ -16,6 +16,7 @@ import ui.interfaces.Clickable;
 import ui.listeners.MoveExecutionListener;
 
 public class UIBoardPanel extends UIObject implements Clickable {
+	private boolean hovering = false;
 	private Board board;
 	private int pieceWidth, pieceHeight;
 	private Piece selectedPiece;
@@ -58,12 +59,15 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	@Override
 	public void onMouseMove(MouseEvent e) {
-
+		if (boundsContain(e.getX(), e.getY()))
+			hovering = true;
+		else
+			hovering = false;
 	}
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		if (board == null)
+		if (!hovering || board == null)
 			return;
 
 		int clickedX = e.getX();
