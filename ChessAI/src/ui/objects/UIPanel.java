@@ -11,6 +11,10 @@ import ui.interfaces.Typeable;
 public class UIPanel extends UIObject implements Clickable, Typeable {
 	private UIManager uiManager;
 
+	public UIPanel() {
+		uiManager = new UIManager();
+	}
+
 	@Override
 	public void tick() {
 		uiManager.tick();
@@ -18,34 +22,48 @@ public class UIPanel extends UIObject implements Clickable, Typeable {
 
 	@Override
 	public void render(Graphics g) {
-		uiManager.render(g);
+		if (visible) {
+			if (background != null) {
+				g.setColor(background);
+				g.fillRect(x, y, width, height);
+			}
+			if (border != null) {
+				g.setColor(border);
+				g.drawRect(x, y, width, height);
+			}
+			uiManager.render(g);
+		}
 	}
 
 	@Override
 	public void onKeyPress(KeyEvent e) {
-		uiManager.onKeyPress(e);
+		if (enabled)
+			uiManager.onKeyPress(e);
 	}
 
 	@Override
 	public void onKeyRelease(KeyEvent e) {
-		uiManager.onKeyRelease(e);
+		if (enabled)
+			uiManager.onKeyRelease(e);
 	}
 
 	@Override
 	public void onMouseMove(MouseEvent e) {
-		uiManager.onMouseMove(e);
+		if (enabled)
+			uiManager.onMouseMove(e);
 	}
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		uiManager.onMouseRelease(e);
+		if (enabled)
+			uiManager.onMouseRelease(e);
 	}
 
 	public UIObject add(UIObject o) {
 		uiManager.addObject(o);
 		return o;
 	}
-	
+
 	public UIObject remove(UIObject o) {
 		uiManager.removeObject(o);
 		return o;

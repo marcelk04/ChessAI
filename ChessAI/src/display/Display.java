@@ -1,6 +1,7 @@
 package display;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
@@ -89,7 +90,6 @@ public class Display implements Runnable {
 
 		frame.add(canvas);
 		frame.pack();
-		frame.setVisible(true);
 	}
 
 	private void init() {
@@ -170,5 +170,13 @@ public class Display implements Runnable {
 
 	public Canvas getCanvas() {
 		return canvas;
+	}
+
+	public void setVisible(boolean visible) {
+		frame.setVisible(visible);
+	}
+
+	public void setBackground(Color background) {
+		canvas.setBackground(background);
 	}
 }

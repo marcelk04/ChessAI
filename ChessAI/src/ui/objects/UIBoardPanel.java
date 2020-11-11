@@ -23,23 +23,34 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private List<Position> selectedPiece_movePositions;
 	private Set<Move> selectedPiece_moves;
 	private MoveExecutionListener meListener;
+	private Color lightColor, darkColor;
 
 	public UIBoardPanel() {
 		selectedPiece_movePositions = new ArrayList<Position>();
+		lightColor = Color.white;
+		darkColor = Color.lightGray;
 	}
 
 	@Override
 	public void tick() {
-
 	}
 
 	@Override
 	public void render(Graphics g) {
-		g.setColor(Color.lightGray);
+		g.setColor(darkColor);
 
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
 				if ((x + y + 1) % 2 == 0)
+					g.fillRect(this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
+			}
+		}
+
+		g.setColor(lightColor);
+
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				if ((x + y + 1) % 2 == 1)
 					g.fillRect(this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
 
 				if (board != null) {
@@ -103,7 +114,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		}
 	}
 
-	// ===== Getter ===== \\
+	// ===== Getters ===== \\
 	public Board getBoard() {
 		return board;
 	}
@@ -112,7 +123,15 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		return meListener;
 	}
 
-	// ===== Setter ===== \\
+	public Color getLightColor() {
+		return lightColor;
+	}
+
+	public Color getDarkColor() {
+		return darkColor;
+	}
+
+	// ===== Setters ===== \\
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		pieceWidth = width / 8;
@@ -132,5 +151,13 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	public void setMoveExecutionListener(MoveExecutionListener meListener) {
 		this.meListener = meListener;
+	}
+
+	public void setLightColor(Color lightColor) {
+		this.lightColor = lightColor;
+	}
+
+	public void setDarkColor(Color darkColor) {
+		this.darkColor = darkColor;
 	}
 }
