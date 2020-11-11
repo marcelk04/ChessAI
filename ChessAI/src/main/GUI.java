@@ -28,14 +28,15 @@ public class GUI {
 	public GUI() {
 		Assets.init();
 
-		display = new Display("Chess", 1000, 800);
+		display = new Display("Chess", 1010, 820);
 		display.setBackground(Color.white);
 
 		board = Board.create();
 
 		UIBoardPanel boardPanel = new UIBoardPanel();
-		boardPanel.setBounds(0, 0, 800, 800);
+		boardPanel.setBounds(10, 10, 800, 800);
 		boardPanel.setBoard(board);
+		boardPanel.setBorder(Color.black);
 		boardPanel.setMoveExecutionListener(new MoveExecutionListener() {
 			@Override
 			public void moveExecuted(MoveTransition e) {
@@ -47,34 +48,34 @@ public class GUI {
 		display.add(boardPanel);
 
 		UIPanel panelSettings = new UIPanel();
-		panelSettings.setBounds(810, 10, 180, 230);
+		panelSettings.setBounds(820, 10, 180, 230);
 		panelSettings.setBorder(Color.black);
 		display.add(panelSettings);
 
 		UILabel lblPlayer1 = new UILabel("Player 1");
-		lblPlayer1.setBounds(810, 15, 180, 20);
+		lblPlayer1.setBounds(820, 15, 180, 20);
 		lblPlayer1.setHorizontalAlignment(UIObject.CENTER);
 		lblPlayer1.setFont(bold_font);
 		panelSettings.add(lblPlayer1);
 
 		UISelectionBox<String> boxPlayer1 = new UISelectionBox<String>(new String[] { "Player", "AI" });
-		boxPlayer1.setBounds(825, 55, 150, 25);
+		boxPlayer1.setBounds(835, 55, 150, 25);
 		boxPlayer1.setBorder(Color.black);
 		panelSettings.add(boxPlayer1);
 
 		UILabel lblPlayer2 = new UILabel("Player 2");
-		lblPlayer2.setBounds(810, 105, 180, 20);
+		lblPlayer2.setBounds(820, 105, 180, 20);
 		lblPlayer2.setHorizontalAlignment(UIObject.CENTER);
 		lblPlayer2.setFont(bold_font);
 		panelSettings.add(lblPlayer2);
 
 		UISelectionBox<String> boxPlayer2 = new UISelectionBox<String>(new String[] { "Player", "AI" });
-		boxPlayer2.setBounds(825, 145, 150, 25);
+		boxPlayer2.setBounds(835, 145, 150, 25);
 		boxPlayer2.setBorder(Color.black);
 		panelSettings.add(boxPlayer2);
 
 		UIButton btnSave = new UIButton("Save Settings");
-		btnSave.setBounds(820, 205, 160, 25);
+		btnSave.setBounds(830, 205, 160, 25);
 		btnSave.setTextColor(Color.white);
 		btnSave.setBackground(Color.black);
 		btnSave.setClickListener(new ClickListener() {
@@ -86,12 +87,12 @@ public class GUI {
 		panelSettings.add(btnSave);
 
 		UIPanel panelColor = new UIPanel();
-		panelColor.setBounds(810, 250, 180, 80);
+		panelColor.setBounds(820, 250, 180, 80);
 		panelColor.setBorder(Color.black);
 		display.add(panelColor);
 
 		UIButton btnLightColor = new UIButton("Set Light Color");
-		btnLightColor.setBounds(820, 260, 160, 25);
+		btnLightColor.setBounds(830, 260, 160, 25);
 		btnLightColor.setTextColor(Color.white);
 		btnLightColor.setBackground(Color.black);
 		btnLightColor.setClickListener(new ClickListener() {
@@ -106,7 +107,7 @@ public class GUI {
 		panelColor.add(btnLightColor);
 
 		UIButton btnDarkColor = new UIButton("Set Dark Color");
-		btnDarkColor.setBounds(820, 295, 160, 25);
+		btnDarkColor.setBounds(830, 295, 160, 25);
 		btnDarkColor.setTextColor(Color.white);
 		btnDarkColor.setBackground(Color.black);
 		btnDarkColor.setClickListener(new ClickListener() {
@@ -121,7 +122,7 @@ public class GUI {
 		panelColor.add(btnDarkColor);
 
 		UIButton btnReset = new UIButton("Reset");
-		btnReset.setBounds(820, 760, 160, 25);
+		btnReset.setBounds(830, 760, 160, 25);
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(new ClickListener() {

@@ -66,6 +66,11 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		for (Position p : selectedPiece_movePositions) {
 			g.drawRect(this.x + p.x * pieceWidth, this.y + p.y * pieceHeight, pieceWidth, pieceHeight);
 		}
+
+		if (border != null) {
+			g.setColor(border);
+			g.drawRect(x, y, width, height);
+		}
 	}
 
 	@Override
