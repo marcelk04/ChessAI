@@ -13,7 +13,7 @@ import gfx.Assets;
 import main.Utils;
 
 public class Pawn extends Piece {
-	private boolean movedTwoSpaces = false;
+	private boolean jumped = false;
 
 	public Pawn(int x, int y, Team team) {
 		super(x, y, 10, team, PieceType.PAWN);
@@ -24,9 +24,10 @@ public class Pawn extends Piece {
 			this.texture = Assets.black_pawn;
 	}
 
-	private Pawn(int x, int y, Team team, boolean movedAtLeastOnce) {
+	private Pawn(int x, int y, Team team, boolean movedAtLeastOnce, boolean jumped) {
 		this(x, y, team);
 		this.movedAtLeastOnce = movedAtLeastOnce;
+		this.jumped = jumped;
 	}
 
 	@Override
@@ -78,11 +79,12 @@ public class Pawn extends Piece {
 	}
 
 	public boolean wasMovedTwoSpaces() {
-		return movedTwoSpaces;
+		return jumped;
 	}
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new Pawn(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
+		return new Pawn(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true,
+				move instanceof PawnJump ? true : jumped);
 	}
 }

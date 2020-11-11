@@ -110,7 +110,8 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		} else {
 			selectedPiece = null;
 			selectedPiece_movePositions.clear();
-			selectedPiece_moves.clear();
+			if (selectedPiece_moves != null)
+				selectedPiece_moves.clear();
 		}
 	}
 
