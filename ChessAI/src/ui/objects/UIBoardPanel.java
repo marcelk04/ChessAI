@@ -103,7 +103,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 					MoveTransition mt = board.getCurrentPlayer().makeMove(m);
 
 					if (meListener != null)
-						meListener.moveExecuted(mt);
+						meListener.onMoveExecution(mt);
 
 					break;
 				}

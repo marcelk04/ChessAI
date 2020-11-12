@@ -105,8 +105,21 @@ public abstract class UIObject {
 		setBounds(bounds);
 	}
 
+	/**
+	 * Used for rendering the object; Called every frame.
+	 * 
+	 * @param g the graphics object.
+	 */
 	public abstract void render(Graphics g);
 
+	/**
+	 * A helper method used by the subclasses to check whether a specific point is
+	 * within their bounds or not.
+	 * 
+	 * @param x the x coordinate of the point.
+	 * @param y the y coordinate of the point.
+	 * @return {@code true} if the point is within the bounds.
+	 */
 	protected boolean boundsContain(int x, int y) {
 		return this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height;
 	}

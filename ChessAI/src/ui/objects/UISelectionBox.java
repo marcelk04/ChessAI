@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 
 import main.Utils;
 
-public class UISelectionBox<E> extends UIButton {
+public class UISelectionBox<E> extends UITextButton {
 	private Object[] elements;
 	private int index;
 

@@ -3,6 +3,7 @@ package main;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,11 +18,11 @@ import gfx.Assets;
 import ui.listeners.ClickListener;
 import ui.listeners.MoveExecutionListener;
 import ui.objects.UIBoardPanel;
-import ui.objects.UIButton;
 import ui.objects.UILabel;
 import ui.objects.UIObject;
 import ui.objects.UIPanel;
 import ui.objects.UISelectionBox;
+import ui.objects.UITextButton;
 
 public class GUI {
 	private static Board board;
@@ -43,7 +44,7 @@ public class GUI {
 		boardPanel.setBorder(Color.black);
 		boardPanel.setMoveExecutionListener(new MoveExecutionListener() {
 			@Override
-			public void moveExecuted(MoveTransition e) {
+			public void onMoveExecution(MoveTransition e) {
 				if (e.getMoveStatus() == MoveStatus.DONE) {
 					boardPanel.setBoard(board = e.getNewBoard());
 				}
@@ -80,13 +81,13 @@ public class GUI {
 		boxPlayer2.setBackground(Color.black);
 		panelSettings.add(boxPlayer2);
 
-		UIButton btnSave = new UIButton("Save Settings");
+		UITextButton btnSave = new UITextButton("Save Settings");
 		btnSave.setBounds(830, 205, 160, 25);
 		btnSave.setTextColor(Color.white);
 		btnSave.setBackground(Color.black);
 		btnSave.setClickListener(new ClickListener() {
 			@Override
-			public void onClick() {
+			public void onClick(MouseEvent e) {
 				saveSettings();
 			}
 		});
@@ -97,13 +98,13 @@ public class GUI {
 		panelColor.setBorder(Color.black);
 		display.add(panelColor);
 
-		UIButton btnLightColor = new UIButton("Set Light Color");
+		UITextButton btnLightColor = new UITextButton("Set Light Color");
 		btnLightColor.setBounds(830, 260, 160, 25);
 		btnLightColor.setTextColor(Color.white);
 		btnLightColor.setBackground(Color.black);
 		btnLightColor.setClickListener(new ClickListener() {
 			@Override
-			public void onClick() {
+			public void onClick(MouseEvent e) {
 				Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new light color",
 						boardPanel.getLightColor());
 				if (newColor != null)
@@ -112,13 +113,13 @@ public class GUI {
 		});
 		panelColor.add(btnLightColor);
 
-		UIButton btnDarkColor = new UIButton("Set Dark Color");
+		UITextButton btnDarkColor = new UITextButton("Set Dark Color");
 		btnDarkColor.setBounds(830, 295, 160, 25);
 		btnDarkColor.setTextColor(Color.white);
 		btnDarkColor.setBackground(Color.black);
 		btnDarkColor.setClickListener(new ClickListener() {
 			@Override
-			public void onClick() {
+			public void onClick(MouseEvent e) {
 				Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new dark color",
 						boardPanel.getDarkColor());
 				if (newColor != null)
@@ -127,13 +128,13 @@ public class GUI {
 		});
 		panelColor.add(btnDarkColor);
 
-		UIButton btnReset = new UIButton("Reset");
+		UITextButton btnReset = new UITextButton("Reset");
 		btnReset.setBounds(820, 780, 180, 30);
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(new ClickListener() {
 			@Override
-			public void onClick() {
+			public void onClick(MouseEvent e) {
 				boardPanel.setBoard(board = Board.create());
 			}
 		});
