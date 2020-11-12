@@ -42,10 +42,6 @@ public class Display implements Runnable {
 		start();
 	}
 
-	private void tick() {
-		uiManager.tick();
-	}
-
 	private void render() {
 		bs = canvas.getBufferStrategy();
 
@@ -110,42 +106,9 @@ public class Display implements Runnable {
 
 	@Override
 	public void run() {
-		int tps = 60;
-		double timePerTick = 1000000000 / tps;
-		double delta = 0;
-		long now;
-		long lastTime = System.nanoTime();
-		long timer = 0;
-		int ticks = 0;
-		int frames = 0;
-
 		while (running) {
-			now = System.nanoTime();
-			delta += (now - lastTime) / timePerTick;
-			timer += now - lastTime;
-			lastTime = now;
-
-			// tick
-			if (delta >= 1) {
-				tick();
-				ticks++;
-				delta--;
-			}
-
-			// render
 			render();
-			frames++;
-
-			// show tps & fps
-			if (timer >= 1000000000) {
-				System.out.println(frames + "|" + ticks);
-				frames = 0;
-				ticks = 0;
-				timer -= 1000000000;
-			}
 		}
-
-		stop();
 	}
 
 	public synchronized void start() {

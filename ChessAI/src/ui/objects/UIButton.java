@@ -5,17 +5,15 @@ import java.awt.event.MouseEvent;
 
 import ui.UIUtils;
 import ui.interfaces.Clickable;
+import ui.listeners.ClickListener;
 
 public class UIButton extends UIObject implements Clickable {
 	protected String text;
 	protected boolean hovering = false;
+	protected ClickListener clickListener;
 
 	public UIButton(String text) {
 		this.text = text;
-	}
-
-	@Override
-	public void tick() {
 	}
 
 	@Override
@@ -44,18 +42,26 @@ public class UIButton extends UIObject implements Clickable {
 	@Override
 	public void onMouseRelease(MouseEvent e) {
 		if (hovering && enabled) {
-			if (clicker != null)
-				clicker.onClick();
+			if (clickListener != null)
+				clickListener.onClick();
 		}
 	}
-	
-	// ===== Getter ===== \\
+
+	// ===== Getters ===== \\
 	public String getText() {
 		return text;
 	}
-	
-	// ===== Setter ===== \\
+
+	public ClickListener getClickListener() {
+		return clickListener;
+	}
+
+	// ===== Setters ===== \\
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public void setClickListener(ClickListener clickListener) {
+		this.clickListener = clickListener;
 	}
 }

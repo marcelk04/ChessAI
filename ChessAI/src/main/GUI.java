@@ -1,7 +1,11 @@
 package main;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.swing.JColorChooser;
 
@@ -52,7 +56,7 @@ public class GUI {
 		panelSettings.setBorder(Color.black);
 		display.add(panelSettings);
 
-		UILabel lblPlayer1 = new UILabel("Player 1");
+		UILabel lblPlayer1 = new UILabel("Player 1 (White)");
 		lblPlayer1.setBounds(820, 15, 180, 20);
 		lblPlayer1.setHorizontalAlignment(UIObject.CENTER);
 		lblPlayer1.setFont(bold_font);
@@ -60,10 +64,11 @@ public class GUI {
 
 		UISelectionBox<String> boxPlayer1 = new UISelectionBox<String>(new String[] { "Player", "AI" });
 		boxPlayer1.setBounds(835, 55, 150, 25);
-		boxPlayer1.setBorder(Color.black);
+		boxPlayer1.setTextColor(Color.white);
+		boxPlayer1.setBackground(Color.black);
 		panelSettings.add(boxPlayer1);
 
-		UILabel lblPlayer2 = new UILabel("Player 2");
+		UILabel lblPlayer2 = new UILabel("Player 2 (Black)");
 		lblPlayer2.setBounds(820, 105, 180, 20);
 		lblPlayer2.setHorizontalAlignment(UIObject.CENTER);
 		lblPlayer2.setFont(bold_font);
@@ -71,7 +76,8 @@ public class GUI {
 
 		UISelectionBox<String> boxPlayer2 = new UISelectionBox<String>(new String[] { "Player", "AI" });
 		boxPlayer2.setBounds(835, 145, 150, 25);
-		boxPlayer2.setBorder(Color.black);
+		boxPlayer2.setTextColor(Color.white);
+		boxPlayer2.setBackground(Color.black);
 		panelSettings.add(boxPlayer2);
 
 		UIButton btnSave = new UIButton("Save Settings");
@@ -122,7 +128,7 @@ public class GUI {
 		panelColor.add(btnDarkColor);
 
 		UIButton btnReset = new UIButton("Reset");
-		btnReset.setBounds(830, 760, 160, 25);
+		btnReset.setBounds(820, 780, 180, 30);
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(new ClickListener() {
@@ -135,7 +141,11 @@ public class GUI {
 	}
 
 	private void saveSettings() {
-		System.out.println("saved");
+		try {
+			Desktop.getDesktop().browse(new URL("https://github.com/DefensivLord/ChessAI").toURI());
+		} catch (IOException | URISyntaxException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	public void show() {

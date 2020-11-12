@@ -22,10 +22,6 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 	}
 
 	@Override
-	public void tick() {
-	}
-
-	@Override
 	public void render(Graphics g) {
 		if (visible) {
 			if (background != null) {

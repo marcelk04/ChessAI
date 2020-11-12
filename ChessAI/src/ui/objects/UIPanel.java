@@ -16,11 +16,6 @@ public class UIPanel extends UIObject implements Clickable, Typeable {
 	}
 
 	@Override
-	public void tick() {
-		uiManager.tick();
-	}
-
-	@Override
 	public void render(Graphics g) {
 		if (visible) {
 			if (background != null) {

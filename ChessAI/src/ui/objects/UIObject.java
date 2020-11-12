@@ -5,42 +5,105 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import ui.listeners.ClickListener;
-
+/**
+ * The UIObject class is a template class for all objects that should be added
+ * to the GUI. It provides a basic structure for the subclasses with the
+ * dimension and some attributes for text rendering already in place. Also it
+ * includes getters and setters for all the attributes, so they don't have to be
+ * added in subclasses.
+ * 
+ * @author DefensivLord
+ */
 public abstract class UIObject {
+	/**
+	 * Constants used for the horizontal alignment of text.
+	 */
 	public static final int LEFT = 0, CENTER = 1, RIGHT = 2;
+
+	/**
+	 * The default text color.
+	 */
 	protected static final Color standard_text_color = Color.black;
+
+	/**
+	 * The default font used for text rendering.
+	 */
 	protected static final Font standard_font = new Font("Sans Serif", Font.PLAIN, 13);
 
+	/**
+	 * The position of the object.
+	 */
 	protected int x, y;
+
+	/**
+	 * The dimension of the object.
+	 */
 	protected int width, height;
 
+	/**
+	 * The visibiliy of the object.
+	 */
 	protected boolean visible = true;
+
+	/**
+	 * Whether the object is enabled or not.
+	 */
 	protected boolean enabled = true;
 
+	/**
+	 * The hoerizontal alignment of the text.
+	 */
 	protected int horizontalAlignment = LEFT;
 
+	/**
+	 * The color of the background.
+	 */
 	protected Color background = null;
+
+	/**
+	 * The color of the border.
+	 */
 	protected Color border = null;
+
+	/**
+	 * The color of the text.
+	 */
 	protected Color textColor = standard_text_color;
+
+	/**
+	 * The font used for text rendering.
+	 */
 	protected Font font = standard_font;
 
-	protected ClickListener clicker;
+	/**
+	 * Default constructor for instances of the class UIObject.
+	 */
+	public UIObject() {
+	}
 
+	/**
+	 * Constructor with position and size already as parameters in place.
+	 * 
+	 * @param x      the x coordinate.
+	 * @param y      the y coordinate.
+	 * @param width  the width.
+	 * @param height the height.
+	 */
 	public UIObject(int x, int y, int width, int height) {
 		this();
 		setBounds(x, y, width, height);
 	}
 
+	/**
+	 * Constructor with position and size already as parameters in from of a
+	 * rectangle in place.
+	 * 
+	 * @param bounds the bounds of the object.
+	 */
 	public UIObject(Rectangle bounds) {
 		this();
 		setBounds(bounds);
 	}
-
-	public UIObject() {
-	}
-
-	public abstract void tick();
 
 	public abstract void render(Graphics g);
 
@@ -48,7 +111,7 @@ public abstract class UIObject {
 		return this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height;
 	}
 
-	// ===== Getter ===== \\
+	// ===== Getters ===== \\
 	public int getX() {
 		return x;
 	}
@@ -63,6 +126,10 @@ public abstract class UIObject {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public Rectangle getBounds() {
+		return new Rectangle(x, y, width, height);
 	}
 
 	public boolean isVisible() {
@@ -93,11 +160,7 @@ public abstract class UIObject {
 		return font;
 	}
 
-	public ClickListener getClickListener() {
-		return clicker;
-	}
-
-	// ===== Setter ===== \\
+	// ===== Setters ===== \\
 	public void setBounds(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
@@ -106,7 +169,8 @@ public abstract class UIObject {
 	}
 
 	public void setBounds(Rectangle bounds) {
-		setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+		if (bounds != null)
+			setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
 	public void setVisible(boolean visible) {
@@ -130,14 +194,12 @@ public abstract class UIObject {
 	}
 
 	public void setTextColor(Color textColor) {
-		this.textColor = textColor;
+		if (textColor != null)
+			this.textColor = textColor;
 	}
 
 	public void setFont(Font font) {
-		this.font = font;
-	}
-
-	public void setClickListener(ClickListener clicker) {
-		this.clicker = clicker;
+		if (font != null)
+			this.font = font;
 	}
 }

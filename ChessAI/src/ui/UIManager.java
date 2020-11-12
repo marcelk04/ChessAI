@@ -17,12 +17,6 @@ public class UIManager {
 		objects = new CopyOnWriteArrayList<UIObject>();
 	}
 
-	public void tick() {
-		for (UIObject o : objects) {
-			o.tick();
-		}
-	}
-
 	public void render(Graphics g) {
 		for (UIObject o : objects) {
 			o.render(g);
