@@ -23,31 +23,24 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private List<Position> selectedPiece_movePositions;
 	private Set<Move> selectedPiece_moves;
 	private MoveExecutionListener meListener;
-	private Color lightColor, darkColor;
+	private Color lightColor, darkColor, moveColor;
+	private Color[][] colors;
 
 	public UIBoardPanel() {
 		selectedPiece_movePositions = new ArrayList<Position>();
+		colors = new Color[8][8];
 		lightColor = Color.white;
 		darkColor = Color.lightGray;
+		moveColor = Color.yellow;
+		fillColorArray();
 	}
 
 	@Override
 	public void render(Graphics g) {
-		g.setColor(darkColor);
-
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
-				if ((x + y + 1) % 2 == 0)
-					g.fillRect(this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
-			}
-		}
-
-		g.setColor(lightColor);
-
-		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
-				if ((x + y + 1) % 2 == 1)
-					g.fillRect(this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
+				g.setColor(colors[x][y]);
+				g.fillRect(this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
 
 				if (board != null) {
 					Piece p = board.getPiece(x, y);
@@ -56,11 +49,6 @@ public class UIBoardPanel extends UIObject implements Clickable {
 					}
 				}
 			}
-		}
-
-		g.setColor(Color.black);
-		for (Position p : selectedPiece_movePositions) {
-			g.drawRect(this.x + p.x * pieceWidth, this.y + p.y * pieceHeight, pieceWidth, pieceHeight);
 		}
 
 		if (border != null) {
@@ -91,11 +79,23 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		Piece clickedPiece = board.getPiece(pieceX, pieceY);
 
 		if (clickedPiece != null && clickedPiece.getTeam() == board.getCurrentPlayer().getTeam()) {
+			clearMoves();
+
 			selectedPiece = clickedPiece;
-			selectedPiece_movePositions.clear();
 			selectedPiece_moves = selectedPiece.getMoves(board);
+
 			for (Move m : selectedPiece_moves) {
-				selectedPiece_movePositions.add(new Position(m.getPieceDestinationX(), m.getPieceDestinationY()));
+				int destinationX = m.getPieceDestinationX();
+				int destinationY = m.getPieceDestinationY();
+
+				selectedPiece_movePositions.add(new Position(destinationX, destinationY));
+
+				Color oldColor = colors[destinationX][destinationY];
+				Color newColor = new Color((oldColor.getRed() + moveColor.getRed()) / 2,
+						(oldColor.getGreen() + moveColor.getGreen()) / 2,
+						(oldColor.getBlue() + moveColor.getBlue()) / 2);
+
+				colors[destinationX][destinationY] = newColor;
 			}
 		} else if (selectedPiece_movePositions.contains(new Position(pieceX, pieceY))) {
 			for (Move m : selectedPiece_moves) {
@@ -109,11 +109,29 @@ public class UIBoardPanel extends UIObject implements Clickable {
 				}
 			}
 		} else {
-			selectedPiece = null;
-			selectedPiece_movePositions.clear();
-			if (selectedPiece_moves != null)
-				selectedPiece_moves.clear();
+			clearMoves();
 		}
+	}
+
+	private void fillColorArray() {
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				if ((x + y) % 2 == 0) {
+					colors[x][y] = lightColor;
+				} else {
+					colors[x][y] = darkColor;
+				}
+			}
+		}
+	}
+
+	private void clearMoves() {
+		selectedPiece = null;
+		selectedPiece_movePositions.clear();
+		if (selectedPiece_moves != null)
+			selectedPiece_moves = null;
+
+		fillColorArray();
 	}
 
 	// ===== Getters ===== \\
@@ -132,6 +150,10 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	public Color getDarkColor() {
 		return darkColor;
 	}
+	
+	public Color getMoveColor() {
+		return moveColor;
+	}
 
 	// ===== Setters ===== \\
 	@Override
@@ -145,10 +167,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	public void setBoard(Board board) {
 		this.board = board;
 
-		selectedPiece = null;
-		selectedPiece_movePositions.clear();
-		if (selectedPiece_moves != null)
-			selectedPiece_moves.clear();
+		clearMoves();
 	}
 
 	public void setMoveExecutionListener(MoveExecutionListener meListener) {
@@ -157,9 +176,16 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	public void setLightColor(Color lightColor) {
 		this.lightColor = lightColor;
+		clearMoves();
 	}
 
 	public void setDarkColor(Color darkColor) {
 		this.darkColor = darkColor;
+		clearMoves();
+	}
+	
+	public void setMoveColor(Color moveColor) {
+		this.moveColor = moveColor;
+		clearMoves();
 	}
 }

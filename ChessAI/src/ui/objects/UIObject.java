@@ -209,10 +209,14 @@ public abstract class UIObject {
 	public void setTextColor(Color textColor) {
 		if (textColor != null)
 			this.textColor = textColor;
+		else
+			this.textColor = standard_text_color;
 	}
 
 	public void setFont(Font font) {
 		if (font != null)
 			this.font = font;
+		else
+			this.font = standard_font;
 	}
 }

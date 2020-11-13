@@ -94,7 +94,7 @@ public class GUI {
 		panelSettings.add(btnSave);
 
 		UIPanel panelColor = new UIPanel();
-		panelColor.setBounds(820, 250, 180, 80);
+		panelColor.setBounds(820, 250, 180, 115);
 		panelColor.setBorder(Color.black);
 		display.add(panelColor);
 
@@ -127,6 +127,21 @@ public class GUI {
 			}
 		});
 		panelColor.add(btnDarkColor);
+
+		UITextButton btnMoveColor = new UITextButton("Set Move Color");
+		btnMoveColor.setBounds(830, 330, 160, 25);
+		btnMoveColor.setTextColor(Color.white);
+		btnMoveColor.setBackground(Color.black);
+		btnMoveColor.setClickListener(new ClickListener() {
+			@Override
+			public void onClick(MouseEvent e) {
+				Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new move color",
+						boardPanel.getMoveColor());
+				if (newColor != null)
+					boardPanel.setMoveColor(newColor);
+			}
+		});
+		display.add(btnMoveColor);
 
 		UITextButton btnReset = new UITextButton("Reset");
 		btnReset.setBounds(820, 780, 180, 30);
