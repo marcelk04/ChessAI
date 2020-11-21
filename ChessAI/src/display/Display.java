@@ -4,6 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
@@ -141,5 +143,18 @@ public class Display implements Runnable {
 
 	public void setBackground(Color background) {
 		canvas.setBackground(background);
+	}
+
+	private class WindowHandler extends WindowAdapter {
+		private Display display;
+
+		public WindowHandler(Display display) {
+			this.display = display;
+		}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+			display.stop();
+		}
 	}
 }
