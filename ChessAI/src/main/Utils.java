@@ -1,6 +1,8 @@
 package main;
 
 public class Utils {
+	public static final char[] columns = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+
 	public static boolean inRange(int var, int min, int max) {
 		return var >= min && var <= max;
 	}
@@ -12,10 +14,5 @@ public class Utils {
 			return max;
 		else
 			return var;
-	}
-
-	public static char getColumnLetter(int column) {
-		char[] columns = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
-		return columns[column];
 	}
 }

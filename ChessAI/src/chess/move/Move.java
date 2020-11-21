@@ -6,6 +6,7 @@ import chess.pieces.King;
 import chess.pieces.Pawn;
 import chess.pieces.Piece;
 import chess.pieces.Rook;
+import main.Utils;
 
 public abstract class Move {
 	protected final Board board;
@@ -62,6 +63,14 @@ public abstract class Move {
 		return b.build();
 	}
 
+	public String getNotation() {
+		String notation = "";
+		notation += movedPiece.getType().getLetter();
+		notation += Utils.columns[pieceDestinationX];
+		notation += pieceDestinationY;
+		return notation;
+	}
+
 	public Piece getMovedPiece() {
 		return movedPiece;
 	}
@@ -115,12 +124,29 @@ public abstract class Move {
 
 			return b.build();
 		}
+
+		@Override
+		public String getNotation() {
+			String notation = "";
+			notation += movedPiece.getType().getLetter() + "x";
+			notation += Utils.columns[pieceDestinationX];
+			notation += pieceDestinationY;
+			return notation;
+		}
 	}
 
 	public static class PawnMove extends NormalMove {
 		public PawnMove(final Board board, final Pawn movedPiece, final int pieceDestinationX,
 				final int pieceDestinationY) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
+		}
+
+		@Override
+		public String getNotation() {
+			String notation = "";
+			notation += Utils.columns[pieceDestinationX];
+			notation += pieceDestinationY;
+			return notation;
 		}
 	}
 
@@ -129,12 +155,28 @@ public abstract class Move {
 				final int pieceDestinationY, final Piece attackedPiece) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY, attackedPiece);
 		}
+
+		@Override
+		public String getNotation() {
+			String notation = "";
+			notation += Utils.columns[movedPiece.getX()] + "x";
+			notation += Utils.columns[pieceDestinationX];
+			notation += pieceDestinationY;
+			return notation;
+		}
 	}
 
 	public static class PawnEnPassantAttackMove extends PawnAttackMove {
 		public PawnEnPassantAttackMove(final Board board, final Pawn movedPiece, final int pieceDestinationX,
 				final int pieceDestinationY, final Piece attackedPiece) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY, attackedPiece);
+		}
+
+		@Override
+		public String getNotation() {
+			String notation = super.getNotation();
+			notation += " e.p.";
+			return notation;
 		}
 	}
 
