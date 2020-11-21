@@ -3,14 +3,11 @@ package ui.objects;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import chess.Board;
 import chess.move.Move;
 import chess.move.MoveTransition;
-import chess.move.Position;
 import chess.pieces.Piece;
 import ui.interfaces.Clickable;
 import ui.listeners.MoveExecutionListener;
@@ -20,14 +17,12 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private Board board;
 	private int pieceWidth, pieceHeight;
 	private Piece selectedPiece;
-	private List<Position> selectedPiece_movePositions;
 	private Set<Move> selectedPiece_moves;
 	private MoveExecutionListener meListener;
 	private Color lightColor, darkColor, moveColor;
 	private Color[][] colors;
 
 	public UIBoardPanel() {
-		selectedPiece_movePositions = new ArrayList<Position>();
 		colors = new Color[8][8];
 		lightColor = Color.white;
 		darkColor = Color.lightGray;
@@ -88,8 +83,6 @@ public class UIBoardPanel extends UIObject implements Clickable {
 				int destinationX = m.getPieceDestinationX();
 				int destinationY = m.getPieceDestinationY();
 
-				selectedPiece_movePositions.add(new Position(destinationX, destinationY));
-
 				Color oldColor = colors[destinationX][destinationY];
 				Color newColor = new Color((oldColor.getRed() + moveColor.getRed()) / 2,
 						(oldColor.getGreen() + moveColor.getGreen()) / 2,
@@ -97,20 +90,33 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 				colors[destinationX][destinationY] = newColor;
 			}
-		} else if (selectedPiece_movePositions.contains(new Position(pieceX, pieceY))) {
-			for (Move m : selectedPiece_moves) {
-				if (m.getPieceDestinationX() == pieceX && m.getPieceDestinationY() == pieceY) {
-					MoveTransition mt = board.getCurrentPlayer().makeMove(m);
+		} else {
+			boolean moveFound = false;
 
-					if (meListener != null)
-						meListener.onMoveExecution(mt);
+			if (selectedPiece_moves != null) {
+				for (Move m : selectedPiece_moves) {
+					if (m.getPieceDestinationX() == pieceX && m.getPieceDestinationY() == pieceY) {
+						MoveTransition mt = board.getCurrentPlayer().makeMove(m);
 
-					break;
+						if (meListener != null)
+							meListener.onMoveExecution(mt);
+
+						moveFound = true;
+						break;
+					}
 				}
 			}
-		} else {
-			clearMoves();
+
+			if (!moveFound)
+				clearMoves();
 		}
+	}
+
+	private void clearMoves() {
+		selectedPiece = null;
+		selectedPiece_moves = null;
+	
+		fillColorArray();
 	}
 
 	private void fillColorArray() {
@@ -123,15 +129,6 @@ public class UIBoardPanel extends UIObject implements Clickable {
 				}
 			}
 		}
-	}
-
-	private void clearMoves() {
-		selectedPiece = null;
-		selectedPiece_movePositions.clear();
-		if (selectedPiece_moves != null)
-			selectedPiece_moves = null;
-
-		fillColorArray();
 	}
 
 	// ===== Getters ===== \\
@@ -150,7 +147,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	public Color getDarkColor() {
 		return darkColor;
 	}
-	
+
 	public Color getMoveColor() {
 		return moveColor;
 	}
@@ -183,7 +180,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		this.darkColor = darkColor;
 		clearMoves();
 	}
-	
+
 	public void setMoveColor(Color moveColor) {
 		this.moveColor = moveColor;
 		clearMoves();

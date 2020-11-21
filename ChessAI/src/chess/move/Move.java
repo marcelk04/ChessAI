@@ -57,6 +57,8 @@ public abstract class Move {
 		b.setPiece(movedPiece.movePiece(this));
 		b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 
+		getMovedPiece();
+
 		return b.build();
 	}
 

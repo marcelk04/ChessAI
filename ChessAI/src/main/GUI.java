@@ -25,8 +25,8 @@ import ui.objects.UISelectionBox;
 import ui.objects.UITextButton;
 
 public class GUI {
-	private static Board board;
-	private static Display display;
+	private Board board;
+	private Display display;
 
 	private static final Font bold_font = new Font("Sans Serif", Font.BOLD, 15);
 

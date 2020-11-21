@@ -90,6 +90,7 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 	// ===== Setter ===== \\
 	public void setText(String text) {
 		this.text = text;
+		calculateTextPos();
 	}
 
 	@Override

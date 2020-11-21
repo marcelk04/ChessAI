@@ -50,7 +50,7 @@ public abstract class Player {
 		if (!legalMoves.contains(move)) {
 			return new MoveTransition(board, board, move, MoveStatus.ILLEGAL_MOVE);
 		}
-		
+
 		Board newBoard = move.execute();
 
 		return new MoveTransition(this.board, newBoard, move, MoveStatus.DONE);

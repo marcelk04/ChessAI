@@ -8,6 +8,13 @@ import ui.UIManager;
 import ui.interfaces.Clickable;
 import ui.interfaces.Typeable;
 
+/**
+ * The purpose of the UIPanel class is to hold multiple objects within one, so
+ * you have a way to group various objects and set their visibility or enability
+ * quickly.
+ * 
+ * @author DefensivLord
+ */
 public class UIPanel extends UIObject implements Clickable, Typeable {
 	private UIManager uiManager;
 
@@ -54,11 +61,23 @@ public class UIPanel extends UIObject implements Clickable, Typeable {
 			uiManager.onMouseRelease(e);
 	}
 
+	/**
+	 * Adds a UIObject to the panel.
+	 * 
+	 * @param o the object to be added.
+	 * @return the object.
+	 */
 	public UIObject add(UIObject o) {
 		uiManager.addObject(o);
 		return o;
 	}
 
+	/**
+	 * Removes a UIObject from the panel.
+	 * 
+	 * @param o the object to be removed.
+	 * @return the object.
+	 */
 	public UIObject remove(UIObject o) {
 		uiManager.removeObject(o);
 		return o;
