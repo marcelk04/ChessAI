@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -129,6 +130,7 @@ public class Display implements Runnable {
 		running = false;
 	}
 
+	// ===== Getters ===== \\
 	public JFrame getFrame() {
 		return frame;
 	}
@@ -137,6 +139,7 @@ public class Display implements Runnable {
 		return canvas;
 	}
 
+	// ===== Setters ===== \\
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
 	}
@@ -145,6 +148,11 @@ public class Display implements Runnable {
 		canvas.setBackground(background);
 	}
 
+	public void setIcon(Image icon) {
+		frame.setIconImage(icon);
+	}
+
+	// ===== Inner classes ===== \\
 	private class WindowHandler extends WindowAdapter {
 		private Display display;
 

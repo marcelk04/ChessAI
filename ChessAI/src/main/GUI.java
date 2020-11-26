@@ -144,7 +144,7 @@ public class GUI {
 		display.add(btnMoveColor);
 
 		UITextButton btnReset = new UITextButton("Reset");
-		btnReset.setBounds(820, 780, 180, 30);
+		btnReset.setBounds(820, 740, 180, 30);
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(new ClickListener() {
@@ -154,17 +154,34 @@ public class GUI {
 			}
 		});
 		display.add(btnReset);
+
+		UITextButton btnGitHub = new UITextButton("GitHub repository");
+		btnGitHub.setBounds(820, 780, 180, 30);
+		btnGitHub.setTextColor(Color.white);
+		btnGitHub.setBackground(Color.black);
+		btnGitHub.setClickListener(new ClickListener() {
+			@Override
+			public void onClick(MouseEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URL("https://github.com/DefensivLord/ChessAI").toURI());
+				} catch (IOException | URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		display.add(btnGitHub);
 	}
 
 	private void saveSettings() {
-		try {
-			Desktop.getDesktop().browse(new URL("https://github.com/DefensivLord/ChessAI").toURI());
-		} catch (IOException | URISyntaxException e1) {
-			e1.printStackTrace();
-		}
+		System.out.println("Not yet implemented");
 	}
 
-	public void show() {
-		display.setVisible(true);
+	// ===== Getters ===== \\
+	public Display getDisplay() {
+		return display;
+	}
+
+	public static void main(String[] args) {
+		new GUI().getDisplay().setVisible(true);
 	}
 }

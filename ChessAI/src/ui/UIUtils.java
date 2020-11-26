@@ -41,4 +41,16 @@ public class UIUtils {
 			return true;
 		return false;
 	}
+
+	public static String shortenText(String text, double length, Font font) {
+		double currentTextWidth = getStringWidth(text, font);
+		if (currentTextWidth <= length) {
+			return text;
+		} else {
+			while (getStringWidth(text, font) > length && text != "") {
+				text = text.substring(0, text.length() - 2);
+			}
+			return text;
+		}
+	}
 }
