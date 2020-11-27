@@ -73,11 +73,6 @@ public class Pawn extends Piece {
 		return moves;
 	}
 
-	@Override
-	public String getName() {
-		return "Pawn";
-	}
-
 	public boolean wasMovedTwoSpaces() {
 		return jumped;
 	}

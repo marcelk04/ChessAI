@@ -4,14 +4,15 @@ public enum PieceType {
 	KING('K', "King"), QUEEN('Q', "Queen"), ROOK('R', "Rook"), BISHOP('B', "Bishop"), KNIGHT('N', "Knight"),
 	PAWN('P', "Pawn");
 
-	private char letter;
-	private String name;
+	private final char letter;
+	private final String name;
 
-	private PieceType(char letter, String name) {
+	private PieceType(final char letter, final String name) {
 		this.letter = letter;
 		this.name = name;
 	}
 
+	// ===== Getters ===== \\
 	public char getLetter() {
 		return letter;
 	}

@@ -16,8 +16,14 @@ import ui.interfaces.Typeable;
  * @author DefensivLord
  */
 public class UIPanel extends UIObject implements Clickable, Typeable {
+	/**
+	 * The UIManager that holds all UIObjects added to the panel.
+	 */
 	private UIManager uiManager;
 
+	/**
+	 * The constructor for instances of the class UIPanel.
+	 */
 	public UIPanel() {
 		uiManager = new UIManager();
 	}

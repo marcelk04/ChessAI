@@ -90,11 +90,6 @@ public class Rook extends Piece {
 	}
 
 	@Override
-	public String getName() {
-		return "Rook";
-	}
-
-	@Override
 	public Piece movePiece(Move move) {
 		return new Rook(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
 	}

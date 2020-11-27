@@ -88,7 +88,7 @@ public class GUI {
 		btnSave.setClickListener(new ClickListener() {
 			@Override
 			public void onClick(MouseEvent e) {
-				saveSettings();
+				saveSettings(boxPlayer1, boxPlayer2);
 			}
 		});
 		panelSettings.add(btnSave);
@@ -172,7 +172,7 @@ public class GUI {
 		display.add(btnGitHub);
 	}
 
-	private void saveSettings() {
+	private void saveSettings(UISelectionBox<String> boxPlayer1, UISelectionBox<String> boxPlayer2) {
 		System.out.println("Not yet implemented");
 	}
 

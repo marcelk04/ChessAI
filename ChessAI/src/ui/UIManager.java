@@ -10,9 +10,21 @@ import ui.interfaces.Clickable;
 import ui.interfaces.Typeable;
 import ui.objects.UIObject;
 
-public class UIManager {
+/**
+ * A UIManager is basically a list for UIObjects. It can be added to a Key-
+ * and/or MouseManager to get input.
+ * 
+ * @author DefensivLord
+ */
+public class UIManager implements Clickable, Typeable {
+	/**
+	 * The list that holds the objects.
+	 */
 	private List<UIObject> objects;
 
+	/**
+	 * The constructor for instances of the class UIManager.
+	 */
 	public UIManager() {
 		objects = new CopyOnWriteArrayList<UIObject>();
 	}
@@ -23,6 +35,7 @@ public class UIManager {
 		}
 	}
 
+	@Override
 	public void onMouseMove(MouseEvent e) {
 		for (UIObject o : objects) {
 			if (o instanceof Clickable)
@@ -30,6 +43,7 @@ public class UIManager {
 		}
 	}
 
+	@Override
 	public void onMouseRelease(MouseEvent e) {
 		for (UIObject o : objects) {
 			if (o instanceof Clickable)
@@ -37,6 +51,7 @@ public class UIManager {
 		}
 	}
 
+	@Override
 	public void onKeyPress(KeyEvent e) {
 		for (UIObject o : objects) {
 			if (o instanceof Typeable)
@@ -44,6 +59,7 @@ public class UIManager {
 		}
 	}
 
+	@Override
 	public void onKeyRelease(KeyEvent e) {
 		for (UIObject o : objects) {
 			if (o instanceof Typeable)
@@ -59,6 +75,7 @@ public class UIManager {
 		objects.remove(o);
 	}
 
+	// ===== Getters ===== \\
 	public List<UIObject> getObjects() {
 		return objects;
 	}

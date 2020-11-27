@@ -36,13 +36,6 @@ public abstract class Piece {
 	 */
 	public abstract Set<Move> getMoves(Board board);
 
-	/**
-	 * Returns the name of the piece. Used for example for displaying the moves.
-	 * 
-	 * @return the name of the piece.
-	 */
-	public abstract String getName();
-
 	public abstract Piece movePiece(Move move);
 
 	@Override

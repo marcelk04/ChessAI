@@ -32,7 +32,7 @@ public class Bishop extends Piece {
 
 		boolean nwDone = false, neDone = false, seDone = false, swDone = false;
 
-		for (int i = 1; i < 8; i++) {
+		for (int i = 1; i < 7; i++) {
 			if (!nwDone && this.x - i >= 0 && this.y - i >= 0) { // northwest / left up
 				currentPiece = board.getPiece(this.x - i, this.y - i);
 
@@ -87,11 +87,6 @@ public class Bishop extends Piece {
 		}
 
 		return moves;
-	}
-
-	@Override
-	public String getName() {
-		return "Bishop";
 	}
 
 	@Override

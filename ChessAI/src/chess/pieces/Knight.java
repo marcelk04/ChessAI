@@ -69,11 +69,6 @@ public class Knight extends Piece {
 	}
 
 	@Override
-	public String getName() {
-		return "Knight";
-	}
-
-	@Override
 	public Piece movePiece(Move move) {
 		return new Knight(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
 	}

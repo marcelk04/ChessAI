@@ -55,7 +55,7 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 
 	@Override
 	public void onMouseMove(MouseEvent e) {
-		if (boundsContain(e.getX(), e.getY()))
+		if (visible && boundsContain(e.getX(), e.getY()))
 			hovering = true;
 		else
 			hovering = false;

@@ -143,11 +143,6 @@ public class Queen extends Piece {
 	}
 
 	@Override
-	public String getName() {
-		return "Queen";
-	}
-
-	@Override
 	public Piece movePiece(Move move) {
 		return new Queen(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
 	}

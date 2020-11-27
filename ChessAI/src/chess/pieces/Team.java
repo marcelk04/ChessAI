@@ -14,5 +14,5 @@ public enum Team {
 		}
 	};
 
-	public abstract int moveDirection();
+	abstract int moveDirection();
 }
