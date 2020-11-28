@@ -43,13 +43,10 @@ public class GUI {
 		boardPanel.setBounds(10, 10, 800, 800);
 		boardPanel.setBoard(board);
 		boardPanel.setBorder(Color.black);
-		boardPanel.setMoveExecutionListener(new MoveExecutionListener() {
-			@Override
-			public void onMoveExecution(MoveTransition e) {
-				if (e.getMoveStatus() == MoveStatus.DONE) {
-					boardPanel.setBoard(board = e.getNewBoard());
-					System.out.println(e.getExecutedMove().getNotation());
-				}
+		boardPanel.setMoveExecutionListener(e -> {
+			if (e.getMoveStatus() == MoveStatus.DONE) {
+				boardPanel.setBoard(board = e.getNewBoard());
+				System.out.println(e.getExecutedMove().getNotation());
 			}
 		});
 		display.add(boardPanel);
@@ -87,11 +84,8 @@ public class GUI {
 		btnSave.setBounds(830, 205, 160, 25);
 		btnSave.setTextColor(Color.white);
 		btnSave.setBackground(Color.black);
-		btnSave.setClickListener(new ClickListener() {
-			@Override
-			public void onClick(MouseEvent e) {
-				saveSettings(boxPlayer1, boxPlayer2);
-			}
+		btnSave.setClickListener(e -> {
+			saveSettings(boxPlayer1, boxPlayer2);
 		});
 		panelSettings.add(btnSave);
 
@@ -104,14 +98,11 @@ public class GUI {
 		btnLightColor.setBounds(830, 260, 160, 25);
 		btnLightColor.setTextColor(Color.white);
 		btnLightColor.setBackground(Color.black);
-		btnLightColor.setClickListener(new ClickListener() {
-			@Override
-			public void onClick(MouseEvent e) {
-				Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new light color",
-						boardPanel.getLightColor());
-				if (newColor != null)
-					boardPanel.setLightColor(newColor);
-			}
+		btnLightColor.setClickListener(e -> {
+			Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new light color",
+					boardPanel.getLightColor());
+			if (newColor != null)
+				boardPanel.setLightColor(newColor);
 		});
 		panelColor.add(btnLightColor);
 
@@ -119,14 +110,11 @@ public class GUI {
 		btnDarkColor.setBounds(830, 295, 160, 25);
 		btnDarkColor.setTextColor(Color.white);
 		btnDarkColor.setBackground(Color.black);
-		btnDarkColor.setClickListener(new ClickListener() {
-			@Override
-			public void onClick(MouseEvent e) {
-				Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new dark color",
-						boardPanel.getDarkColor());
-				if (newColor != null)
-					boardPanel.setDarkColor(newColor);
-			}
+		btnDarkColor.setClickListener(e -> {
+			Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new dark color",
+					boardPanel.getDarkColor());
+			if (newColor != null)
+				boardPanel.setDarkColor(newColor);
 		});
 		panelColor.add(btnDarkColor);
 
@@ -134,14 +122,11 @@ public class GUI {
 		btnMoveColor.setBounds(830, 330, 160, 25);
 		btnMoveColor.setTextColor(Color.white);
 		btnMoveColor.setBackground(Color.black);
-		btnMoveColor.setClickListener(new ClickListener() {
-			@Override
-			public void onClick(MouseEvent e) {
-				Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new move color",
-						boardPanel.getMoveColor());
-				if (newColor != null)
-					boardPanel.setMoveColor(newColor);
-			}
+		btnMoveColor.setClickListener(e -> {
+			Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new move color",
+					boardPanel.getMoveColor());
+			if (newColor != null)
+				boardPanel.setMoveColor(newColor);
 		});
 		display.add(btnMoveColor);
 
@@ -149,11 +134,8 @@ public class GUI {
 		btnReset.setBounds(820, 740, 180, 30);
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
-		btnReset.setClickListener(new ClickListener() {
-			@Override
-			public void onClick(MouseEvent e) {
-				boardPanel.setBoard(board = Board.create());
-			}
+		btnReset.setClickListener(e -> {
+			boardPanel.setBoard(board = Board.create());
 		});
 		display.add(btnReset);
 
@@ -161,14 +143,11 @@ public class GUI {
 		btnGitHub.setBounds(820, 780, 180, 30);
 		btnGitHub.setTextColor(Color.white);
 		btnGitHub.setBackground(Color.black);
-		btnGitHub.setClickListener(new ClickListener() {
-			@Override
-			public void onClick(MouseEvent e) {
-				try {
-					Desktop.getDesktop().browse(new URL("https://github.com/DefensivLord/ChessAI").toURI());
-				} catch (IOException | URISyntaxException e1) {
-					e1.printStackTrace();
-				}
+		btnGitHub.setClickListener(e -> {
+			try {
+				Desktop.getDesktop().browse(new URL("https://github.com/DefensivLord/ChessAI").toURI());
+			} catch (IOException | URISyntaxException e1) {
+				e1.printStackTrace();
 			}
 		});
 		display.add(btnGitHub);
