@@ -63,13 +63,7 @@ public abstract class Move {
 		return b.build();
 	}
 
-	public String getNotation() {
-		String notation = "";
-		notation += movedPiece.getType().getLetter();
-		notation += Utils.columns[pieceDestinationX];
-		notation += pieceDestinationY;
-		return notation;
-	}
+	public abstract String getNotation();
 
 	public Piece getMovedPiece() {
 		return movedPiece;
@@ -91,6 +85,15 @@ public abstract class Move {
 		public NormalMove(final Board board, final Piece movedPiece, final int pieceDestinationX,
 				final int pieceDestinationY) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
+		}
+
+		@Override
+		public String getNotation() {
+			String notation = "";
+			notation += movedPiece.getType().getLetter();
+			notation += Utils.columns[pieceDestinationX];
+			notation += 8 - pieceDestinationY;
+			return notation;
 		}
 	}
 
@@ -134,7 +137,7 @@ public abstract class Move {
 			String notation = "";
 			notation += movedPiece.getType().getLetter() + "x";
 			notation += Utils.columns[pieceDestinationX];
-			notation += pieceDestinationY;
+			notation += 8 - pieceDestinationY;
 			return notation;
 		}
 	}
@@ -149,7 +152,7 @@ public abstract class Move {
 		public String getNotation() {
 			String notation = "";
 			notation += Utils.columns[pieceDestinationX];
-			notation += pieceDestinationY;
+			notation += 8 - pieceDestinationY;
 			return notation;
 		}
 	}
@@ -165,7 +168,7 @@ public abstract class Move {
 			String notation = "";
 			notation += Utils.columns[movedPiece.getX()] + "x";
 			notation += Utils.columns[pieceDestinationX];
-			notation += pieceDestinationY;
+			notation += 8 - pieceDestinationY;
 			return notation;
 		}
 	}
@@ -191,7 +194,7 @@ public abstract class Move {
 		}
 	}
 
-	public static class CastleMove extends Move {
+	public static abstract class CastleMove extends Move {
 		protected final Rook castleRook;
 		protected final int castleRookDestinationX, castleRookDestinationY;
 

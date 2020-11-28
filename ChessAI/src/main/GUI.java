@@ -48,6 +48,7 @@ public class GUI {
 			public void onMoveExecution(MoveTransition e) {
 				if (e.getMoveStatus() == MoveStatus.DONE) {
 					boardPanel.setBoard(board = e.getNewBoard());
+					System.out.println(e.getExecutedMove().getNotation());
 				}
 			}
 		});

@@ -29,7 +29,7 @@ public class Rook extends Piece {
 		boolean nDone = false, sDone = false, wDone = false, eDone = false;
 
 		for (int i = 1; i < 8; i++) {
-			if (!nDone && this.y - i >= 0) { // up
+			if (!nDone && this.y - i >= 0) { // north
 				currentPiece = board.getPiece(this.x, this.y - i);
 
 				if (currentPiece == null) {
@@ -42,7 +42,7 @@ public class Rook extends Piece {
 				}
 			}
 
-			if (!sDone && this.y + i < 8) { // down
+			if (!sDone && this.y + i < 8) { // south
 				currentPiece = board.getPiece(this.x, this.y + i);
 
 				if (currentPiece == null) {
@@ -55,7 +55,7 @@ public class Rook extends Piece {
 				}
 			}
 
-			if (!wDone && this.x - i >= 0) { // left
+			if (!wDone && this.x - i >= 0) { // east
 				currentPiece = board.getPiece(this.x - i, this.y);
 
 				if (currentPiece == null) {
@@ -68,7 +68,7 @@ public class Rook extends Piece {
 				}
 			}
 
-			if (!eDone && this.x + i < 8) { // right
+			if (!eDone && this.x + i < 8) { // south
 				currentPiece = board.getPiece(this.x + i, this.y);
 
 				if (currentPiece == null) {
