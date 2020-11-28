@@ -11,17 +11,13 @@ import gfx.Assets;
 
 public class Queen extends Piece {
 	public Queen(int x, int y, Team team) {
-		super(x, y, 90, team, PieceType.QUEEN);
-
-		if (team == Team.white)
-			this.texture = Assets.white_queen;
-		else
-			this.texture = Assets.black_queen;
+		this(x, y, team, false);
 	}
 
 	private Queen(int x, int y, Team team, boolean movedAtLeastOnce) {
-		this(x, y, team);
+		super(x, y, 90, team, PieceType.QUEEN);
 		this.movedAtLeastOnce = movedAtLeastOnce;
+		this.texture = team == Team.white ? Assets.white_queen : Assets.black_queen;
 	}
 
 	@Override

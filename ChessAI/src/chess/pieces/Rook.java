@@ -11,17 +11,13 @@ import gfx.Assets;
 
 public class Rook extends Piece {
 	public Rook(int x, int y, Team team) {
-		super(x, y, 50, team, PieceType.ROOK);
-
-		if (team == Team.white)
-			this.texture = Assets.white_rook;
-		else
-			this.texture = Assets.black_rook;
+		this(x, y, team, false);
 	}
 
 	public Rook(int x, int y, Team team, boolean movedAtLeastOnce) {
-		this(x, y, team);
+		super(x, y, 50, team, PieceType.ROOK);
 		this.movedAtLeastOnce = movedAtLeastOnce;
+		this.texture = team == Team.white ? Assets.white_rook : Assets.black_rook;
 	}
 
 	@Override

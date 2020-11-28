@@ -15,22 +15,17 @@ public class King extends Piece {
 	private final boolean canKingSideCastle, canQueenSideCastle;
 
 	public King(int x, int y, Team team, boolean canKingSideCastle, boolean canQueenSideCastle) {
-		super(x, y, 900, team, PieceType.KING);
-		this.isCastled = false;
-		this.canKingSideCastle = canKingSideCastle;
-		this.canQueenSideCastle = canQueenSideCastle;
-
-		if (team == Team.white)
-			this.texture = Assets.white_king;
-		else
-			this.texture = Assets.black_king;
+		this(x, y, team, false, canKingSideCastle, canQueenSideCastle, false);
 	}
 
 	private King(int x, int y, Team team, boolean movedAtLeastOnce, boolean canKingSideCastle,
 			boolean canQueenSideCastle, boolean isCastled) {
-		this(x, y, team, canKingSideCastle, canQueenSideCastle);
+		super(x, y, 900, team, PieceType.KING);
 		this.isCastled = isCastled;
+		this.canKingSideCastle = canKingSideCastle;
+		this.canQueenSideCastle = canQueenSideCastle;
 		this.movedAtLeastOnce = movedAtLeastOnce;
+		this.texture = team == Team.white ? Assets.white_king : Assets.black_king;
 	}
 
 	@Override

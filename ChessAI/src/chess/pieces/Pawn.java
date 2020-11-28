@@ -16,18 +16,14 @@ public class Pawn extends Piece {
 	private boolean jumped = false;
 
 	public Pawn(int x, int y, Team team) {
-		super(x, y, 10, team, PieceType.PAWN);
-
-		if (team == Team.white)
-			this.texture = Assets.white_pawn;
-		else
-			this.texture = Assets.black_pawn;
+		this(x, y, team, false, false);
 	}
 
 	private Pawn(int x, int y, Team team, boolean movedAtLeastOnce, boolean jumped) {
-		this(x, y, team);
+		super(x, y, 10, team, PieceType.PAWN);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.jumped = jumped;
+		this.texture = team == Team.white ? Assets.white_pawn : Assets.black_pawn;
 	}
 
 	@Override

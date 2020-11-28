@@ -12,17 +12,13 @@ import main.Utils;
 
 public class Knight extends Piece {
 	public Knight(int x, int y, Team team) {
-		super(x, y, 30, team, PieceType.KNIGHT);
-
-		if (team == Team.white)
-			this.texture = Assets.white_knight;
-		else
-			this.texture = Assets.black_knight;
+		this(x, y, team, false);
 	}
 
 	private Knight(int x, int y, Team team, boolean movedAtLeastOnce) {
-		this(x, y, team);
+		super(x, y, 30, team, PieceType.KNIGHT);
 		this.movedAtLeastOnce = movedAtLeastOnce;
+		this.texture = team == Team.white ? Assets.white_knight : Assets.black_knight;
 	}
 
 	@Override

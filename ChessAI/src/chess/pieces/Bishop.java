@@ -11,17 +11,13 @@ import gfx.Assets;
 
 public class Bishop extends Piece {
 	public Bishop(int x, int y, Team team) {
-		super(x, y, 30, team, PieceType.BISHOP);
-
-		if (team == Team.white)
-			this.texture = Assets.white_bishop;
-		else
-			this.texture = Assets.black_bishop;
+		this(x, y, team, false);
 	}
 
 	private Bishop(int x, int y, Team team, boolean movedAtLeastOnce) {
-		this(x, y, team);
+		super(x, y, 30, team, PieceType.BISHOP);
 		this.movedAtLeastOnce = movedAtLeastOnce;
+		this.texture = team == Team.white ? Assets.white_bishop : Assets.black_bishop;
 	}
 
 	@Override

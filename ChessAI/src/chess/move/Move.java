@@ -245,6 +245,11 @@ public abstract class Move {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook, castleRookDestinationX,
 					castleRookDestinationY);
 		}
+
+		@Override
+		public String getNotation() {
+			return "O-O";
+		}
 	}
 
 	public static class QueenSideCastleMove extends CastleMove {
@@ -253,6 +258,11 @@ public abstract class Move {
 				final int castleRookDestinationY) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook, castleRookDestinationX,
 					castleRookDestinationY);
+		}
+
+		@Override
+		public String getNotation() {
+			return "O-O-O";
 		}
 	}
 }
