@@ -19,7 +19,7 @@ public class Rook extends Piece {
 			this.texture = Assets.black_rook;
 	}
 
-	private Rook(int x, int y, Team team, boolean movedAtLeastOnce) {
+	public Rook(int x, int y, Team team, boolean movedAtLeastOnce) {
 		this(x, y, team);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 	}

@@ -27,6 +27,7 @@ import ui.objects.UITextButton;
 public class GUI {
 	private Board board;
 	private Display display;
+	private UIBoardPanel boardPanel;
 
 	private static final Font bold_font = new Font("Sans Serif", Font.BOLD, 15);
 
@@ -38,7 +39,7 @@ public class GUI {
 
 		board = Board.create();
 
-		UIBoardPanel boardPanel = new UIBoardPanel();
+		boardPanel = new UIBoardPanel();
 		boardPanel.setBounds(10, 10, 800, 800);
 		boardPanel.setBoard(board);
 		boardPanel.setBorder(Color.black);
@@ -179,6 +180,12 @@ public class GUI {
 	// ===== Getters ===== \\
 	public Display getDisplay() {
 		return display;
+	}
+
+	// ===== Setters ===== \\
+	public void setBoard(Board board) {
+		this.board = board;
+		this.boardPanel.setBoard(board);
 	}
 
 	public static void main(String[] args) {

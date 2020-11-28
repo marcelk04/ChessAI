@@ -77,7 +77,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 			clearMoves();
 
 			selectedPiece = clickedPiece;
-			selectedPiece_moves = selectedPiece.getMoves(board);
+			selectedPiece_moves = board.getPossibleMoves(selectedPiece);
 
 			for (Move m : selectedPiece_moves) {
 				int destinationX = m.getPieceDestinationX();
@@ -115,7 +115,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private void clearMoves() {
 		selectedPiece = null;
 		selectedPiece_moves = null;
-	
+
 		fillColorArray();
 	}
 

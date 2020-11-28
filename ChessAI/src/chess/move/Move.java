@@ -83,6 +83,10 @@ public abstract class Move {
 		return pieceDestinationY;
 	}
 
+	public boolean isCastlingMove() {
+		return false;
+	}
+
 	public static class NormalMove extends Move {
 		public NormalMove(final Board board, final Piece movedPiece, final int pieceDestinationX,
 				final int pieceDestinationY) {
@@ -189,29 +193,66 @@ public abstract class Move {
 
 	public static class CastleMove extends Move {
 		protected final Rook castleRook;
+		protected final int castleRookDestinationX, castleRookDestinationY;
 
 		public CastleMove(final Board board, final King movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Rook castleRook) {
+				final int pieceDestinationY, final Rook castleRook, final int castleRookDestinationX,
+				final int castleRookDestinationY) {
 			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
 			this.castleRook = castleRook;
+			this.castleRookDestinationX = castleRookDestinationX;
+			this.castleRookDestinationY = castleRookDestinationY;
 		}
 
 		public Rook getCastleRook() {
 			return castleRook;
 		}
+
+		public int getCastleRookDestinationX() {
+			return castleRookDestinationX;
+		}
+
+		public int getCastleRookDestinationY() {
+			return castleRookDestinationY;
+		}
+
+		@Override
+		public Board execute() {
+			Builder b = new Builder();
+
+			for (Piece p : board.getAllPieces()) {
+				if (!p.equals(movedPiece) && !p.equals(castleRook)) {
+					b.setPiece(p);
+				}
+			}
+
+			b.setPiece(movedPiece.movePiece(this));
+			b.setPiece(new Rook(castleRookDestinationX, castleRookDestinationY, castleRook.getTeam(), true));
+			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+			return b.build();
+		}
+
+		@Override
+		public boolean isCastlingMove() {
+			return true;
+		}
 	}
 
 	public static class KingSideCastleMove extends CastleMove {
 		public KingSideCastleMove(final Board board, final King movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Rook castleRook) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook);
+				final int pieceDestinationY, final Rook castleRook, final int castleRookDestinationX,
+				final int castleRookDestinationY) {
+			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook, castleRookDestinationX,
+					castleRookDestinationY);
 		}
 	}
 
 	public static class QueenSideCastleMove extends CastleMove {
 		public QueenSideCastleMove(final Board board, final King movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Rook castleRook) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook);
+				final int pieceDestinationY, final Rook castleRook, final int castleRookDestinationX,
+				final int castleRookDestinationY) {
+			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook, castleRookDestinationX,
+					castleRookDestinationY);
 		}
 	}
 }

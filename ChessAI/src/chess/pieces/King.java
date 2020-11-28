@@ -11,8 +11,14 @@ import gfx.Assets;
 import main.Utils;
 
 public class King extends Piece {
-	public King(int x, int y, Team team) {
+	private boolean isCastled;
+	private final boolean canKingSideCastle, canQueenSideCastle;
+
+	public King(int x, int y, Team team, boolean canKingSideCastle, boolean canQueenSideCastle) {
 		super(x, y, 900, team, PieceType.KING);
+		this.isCastled = false;
+		this.canKingSideCastle = canKingSideCastle;
+		this.canQueenSideCastle = canQueenSideCastle;
 
 		if (team == Team.white)
 			this.texture = Assets.white_king;
@@ -20,8 +26,10 @@ public class King extends Piece {
 			this.texture = Assets.black_king;
 	}
 
-	private King(int x, int y, Team team, boolean movedAtLeastOnce) {
-		this(x, y, team);
+	private King(int x, int y, Team team, boolean movedAtLeastOnce, boolean canKingSideCastle,
+			boolean canQueenSideCastle, boolean isCastled) {
+		this(x, y, team, canKingSideCastle, canQueenSideCastle);
+		this.isCastled = isCastled;
 		this.movedAtLeastOnce = movedAtLeastOnce;
 	}
 
@@ -31,21 +39,24 @@ public class King extends Piece {
 
 		Piece currentPiece;
 
+		int destinationX, destinationY;
+
 		for (int y = -1; y <= 1; y++) {
-			if (!Utils.inRange(this.y + y, 0, 7))
+			destinationY = this.y + y;
+			if (!Utils.inRange(destinationY, 0, 7))
 				continue;
 
 			for (int x = -1; x <= 1; x++) {
-				if (!Utils.inRange(this.x + x, 0, 7))
+				destinationX = this.x + x;
+				if (!Utils.inRange(destinationX, 0, 7))
 					continue;
 
-				currentPiece = board.getPiece(this.x + x, this.y + y);
+				currentPiece = board.getPiece(destinationX, destinationY);
 
 				if (currentPiece == null)
-					moves.add(new NormalMove(board, this, this.x + x, this.y + y));
+					moves.add(new NormalMove(board, this, destinationX, destinationY));
 				else if (currentPiece.getTeam() != team)
-					moves.add(new AttackMove(board, this, this.x + x, this.y + y, currentPiece));
-
+					moves.add(new AttackMove(board, this, destinationX, destinationY, currentPiece));
 			}
 		}
 
@@ -54,6 +65,19 @@ public class King extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new King(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
+		return new King(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true, false, false,
+				move.isCastlingMove());
+	}
+
+	public boolean isCastled() {
+		return isCastled;
+	}
+
+	public boolean canKingSideCastle() {
+		return canKingSideCastle;
+	}
+
+	public boolean canQueenSideCastle() {
+		return canQueenSideCastle;
 	}
 }

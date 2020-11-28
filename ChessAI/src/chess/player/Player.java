@@ -22,6 +22,7 @@ public abstract class Player {
 	Player(final Board board, final Set<Move> playerLegals, final Set<Move> opponentLegals) {
 		this.board = board;
 		this.playerKing = findKing();
+		playerLegals.addAll(calculateKingCastles(opponentLegals));
 		this.legalMoves = playerLegals;
 		this.kingInCheck = !calculateAttacksOnTile(this.playerKing.getX(), this.playerKing.getY(), opponentLegals)
 				.isEmpty();
@@ -62,4 +63,15 @@ public abstract class Player {
 	public abstract Team getTeam();
 
 	public abstract Player getOpponent();
+
+	protected abstract Set<Move> calculateKingCastles(Set<Move> opponentLegals);
+
+	protected boolean canCastle() {
+		return !kingInCheck && !playerKing.isCastled()
+				&& (playerKing.canKingSideCastle() || playerKing.canQueenSideCastle());
+	}
+
+	public Set<Move> getLegalMoves() {
+		return legalMoves;
+	}
 }

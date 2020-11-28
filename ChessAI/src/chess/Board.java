@@ -68,7 +68,7 @@ public class Board {
 		b.setPiece(new Knight(1, 0, Team.black));
 		b.setPiece(new Bishop(2, 0, Team.black));
 		b.setPiece(new Queen(3, 0, Team.black));
-		b.setPiece(new King(4, 0, Team.black));
+		b.setPiece(new King(4, 0, Team.black, true, true));
 		b.setPiece(new Bishop(5, 0, Team.black));
 		b.setPiece(new Knight(6, 0, Team.black));
 		b.setPiece(new Rook(7, 0, Team.black));
@@ -93,7 +93,7 @@ public class Board {
 		b.setPiece(new Knight(1, 7, Team.white));
 		b.setPiece(new Bishop(2, 7, Team.white));
 		b.setPiece(new Queen(3, 7, Team.white));
-		b.setPiece(new King(4, 7, Team.white));
+		b.setPiece(new King(4, 7, Team.white, true, true));
 		b.setPiece(new Bishop(5, 7, Team.white));
 		b.setPiece(new Knight(6, 7, Team.white));
 		b.setPiece(new Rook(7, 7, Team.white));
@@ -125,6 +125,31 @@ public class Board {
 
 	public Player getCurrentPlayer() {
 		return this.currentPlayer;
+	}
+
+	public List<Piece> getAllPieces() {
+		List<Piece> pieces = whitePieces;
+		whitePieces.addAll(blackPieces);
+		return pieces;
+	}
+
+	public Set<Move> getPossibleMoves(Piece piece) {
+		Set<Move> moves = new HashSet<Move>();
+		Set<Move> allTeamMoves;
+
+		if (piece.getTeam() == Team.white) {
+			allTeamMoves = whitePlayer.getLegalMoves();
+		} else {
+			allTeamMoves = blackPlayer.getLegalMoves();
+		}
+
+		for (Move m : allTeamMoves) {
+			if (piece.equals(m.getMovedPiece())) {
+				moves.add(m);
+			}
+		}
+
+		return moves;
 	}
 
 	public static class Builder {
