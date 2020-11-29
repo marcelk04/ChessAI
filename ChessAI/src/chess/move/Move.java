@@ -81,6 +81,10 @@ public abstract class Move {
 		return false;
 	}
 
+	public boolean isAttackMove() {
+		return false;
+	}
+
 	public static class NormalMove extends Move {
 		public NormalMove(final Board board, final Piece movedPiece, final int pieceDestinationX,
 				final int pieceDestinationY) {
@@ -106,7 +110,7 @@ public abstract class Move {
 			this.attackedPiece = attackedPiece;
 		}
 
-		public Piece getAttackPiece() {
+		public Piece getAttackedPiece() {
 			return attackedPiece;
 		}
 
@@ -139,6 +143,11 @@ public abstract class Move {
 			notation += Utils.columns[pieceDestinationX];
 			notation += 8 - pieceDestinationY;
 			return notation;
+		}
+
+		@Override
+		public boolean isAttackMove() {
+			return true;
 		}
 	}
 

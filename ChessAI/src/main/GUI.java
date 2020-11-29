@@ -3,25 +3,24 @@ package main;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.JColorChooser;
 
+import algorithm.PlayerType;
 import chess.Board;
+import chess.move.Move.AttackMove;
 import chess.move.MoveStatus;
-import chess.move.MoveTransition;
 import display.Display;
 import gfx.Assets;
-import ui.listeners.ClickListener;
-import ui.listeners.MoveExecutionListener;
 import ui.objects.UIBoardPanel;
 import ui.objects.UILabel;
 import ui.objects.UIObject;
 import ui.objects.UIPanel;
 import ui.objects.UISelectionBox;
+import ui.objects.UITakenPiecesPanel;
 import ui.objects.UITextButton;
 
 public class GUI {
@@ -34,68 +33,83 @@ public class GUI {
 	public GUI() {
 		Assets.init();
 
-		display = new Display("Chess", 1010, 820);
+		display = new Display("Chess", 1280, 720);
 		display.setBackground(Color.white);
 
 		board = Board.create();
 
+		UITakenPiecesPanel panelTakenPieces = new UITakenPiecesPanel(0, 0);
+		panelTakenPieces.setBounds(10, 10, 200, 600);
+		panelTakenPieces.setBorder(Color.black);
+		display.add(panelTakenPieces);
+
 		boardPanel = new UIBoardPanel();
-		boardPanel.setBounds(10, 10, 800, 800);
+		boardPanel.setBounds(220, 10, 600, 600);
 		boardPanel.setBoard(board);
 		boardPanel.setBorder(Color.black);
 		boardPanel.setMoveExecutionListener(e -> {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
-				System.out.println(e.getExecutedMove().getNotation());
+				if (e.getExecutedMove().isAttackMove()) {
+					AttackMove m = (AttackMove) e.getExecutedMove();
+					panelTakenPieces.addPiece(m.getAttackedPiece());
+				}
 			}
 		});
 		display.add(boardPanel);
 
+		UIPanel panelMoves = new UIPanel();
+		panelMoves.setBounds(830, 10, 250, 600);
+		panelMoves.setBorder(Color.black);
+		display.add(panelMoves);
+
 		UIPanel panelSettings = new UIPanel();
-		panelSettings.setBounds(820, 10, 180, 230);
+		panelSettings.setBounds(1090, 10, 180, 230);
 		panelSettings.setBorder(Color.black);
 		display.add(panelSettings);
 
 		UILabel lblPlayer1 = new UILabel("Player 1 (White)");
-		lblPlayer1.setBounds(820, 15, 180, 20);
+		lblPlayer1.setBounds(1090, 15, 180, 20);
 		lblPlayer1.setHorizontalAlignment(UIObject.CENTER);
 		lblPlayer1.setFont(bold_font);
 		panelSettings.add(lblPlayer1);
 
-		UISelectionBox<String> boxPlayer1 = new UISelectionBox<String>(new String[] { "Player", "AI" });
-		boxPlayer1.setBounds(835, 55, 150, 25);
+		UISelectionBox<PlayerType> boxPlayer1 = new UISelectionBox<PlayerType>(
+				new PlayerType[] { PlayerType.HUMAN, PlayerType.AI });
+		boxPlayer1.setBounds(1105, 55, 150, 25);
 		boxPlayer1.setTextColor(Color.white);
 		boxPlayer1.setBackground(Color.black);
 		panelSettings.add(boxPlayer1);
 
 		UILabel lblPlayer2 = new UILabel("Player 2 (Black)");
-		lblPlayer2.setBounds(820, 105, 180, 20);
+		lblPlayer2.setBounds(1090, 105, 180, 20);
 		lblPlayer2.setHorizontalAlignment(UIObject.CENTER);
 		lblPlayer2.setFont(bold_font);
 		panelSettings.add(lblPlayer2);
 
-		UISelectionBox<String> boxPlayer2 = new UISelectionBox<String>(new String[] { "Player", "AI" });
-		boxPlayer2.setBounds(835, 145, 150, 25);
+		UISelectionBox<PlayerType> boxPlayer2 = new UISelectionBox<PlayerType>(
+				new PlayerType[] { PlayerType.HUMAN, PlayerType.AI });
+		boxPlayer2.setBounds(1105, 145, 150, 25);
 		boxPlayer2.setTextColor(Color.white);
 		boxPlayer2.setBackground(Color.black);
 		panelSettings.add(boxPlayer2);
 
 		UITextButton btnSave = new UITextButton("Save Settings");
-		btnSave.setBounds(830, 205, 160, 25);
+		btnSave.setBounds(1100, 205, 160, 25);
 		btnSave.setTextColor(Color.white);
 		btnSave.setBackground(Color.black);
 		btnSave.setClickListener(e -> {
-			saveSettings(boxPlayer1, boxPlayer2);
+			saveSettings(boxPlayer1.getSelectedElement(), boxPlayer2.getSelectedElement());
 		});
 		panelSettings.add(btnSave);
 
 		UIPanel panelColor = new UIPanel();
-		panelColor.setBounds(820, 250, 180, 115);
+		panelColor.setBounds(1090, 250, 180, 115);
 		panelColor.setBorder(Color.black);
 		display.add(panelColor);
 
 		UITextButton btnLightColor = new UITextButton("Set Light Color");
-		btnLightColor.setBounds(830, 260, 160, 25);
+		btnLightColor.setBounds(1100, 260, 160, 25);
 		btnLightColor.setTextColor(Color.white);
 		btnLightColor.setBackground(Color.black);
 		btnLightColor.setClickListener(e -> {
@@ -107,7 +121,7 @@ public class GUI {
 		panelColor.add(btnLightColor);
 
 		UITextButton btnDarkColor = new UITextButton("Set Dark Color");
-		btnDarkColor.setBounds(830, 295, 160, 25);
+		btnDarkColor.setBounds(1100, 295, 160, 25);
 		btnDarkColor.setTextColor(Color.white);
 		btnDarkColor.setBackground(Color.black);
 		btnDarkColor.setClickListener(e -> {
@@ -119,7 +133,7 @@ public class GUI {
 		panelColor.add(btnDarkColor);
 
 		UITextButton btnMoveColor = new UITextButton("Set Move Color");
-		btnMoveColor.setBounds(830, 330, 160, 25);
+		btnMoveColor.setBounds(1100, 330, 160, 25);
 		btnMoveColor.setTextColor(Color.white);
 		btnMoveColor.setBackground(Color.black);
 		btnMoveColor.setClickListener(e -> {
@@ -131,7 +145,7 @@ public class GUI {
 		display.add(btnMoveColor);
 
 		UITextButton btnReset = new UITextButton("Reset");
-		btnReset.setBounds(820, 740, 180, 30);
+		btnReset.setBounds(1090, 640, 180, 30);
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(e -> {
@@ -140,7 +154,7 @@ public class GUI {
 		display.add(btnReset);
 
 		UITextButton btnGitHub = new UITextButton("GitHub repository");
-		btnGitHub.setBounds(820, 780, 180, 30);
+		btnGitHub.setBounds(1090, 680, 180, 30);
 		btnGitHub.setTextColor(Color.white);
 		btnGitHub.setBackground(Color.black);
 		btnGitHub.setClickListener(e -> {
@@ -151,9 +165,16 @@ public class GUI {
 			}
 		});
 		display.add(btnGitHub);
+
+		UIPanel panelConsole = new UIPanel();
+		panelConsole.setBounds(10, 620, 1070, 90);
+		panelConsole.setBorder(Color.black);
+		display.add(panelConsole);
 	}
 
-	private void saveSettings(UISelectionBox<String> boxPlayer1, UISelectionBox<String> boxPlayer2) {
+	private void saveSettings(PlayerType player1, PlayerType player2) {
+		System.out.println("Player 1: " + player1.toString());
+		System.out.println("Player 2: " + player2.toString());
 		System.out.println("Not yet implemented");
 	}
 

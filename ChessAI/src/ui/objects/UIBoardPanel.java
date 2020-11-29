@@ -26,7 +26,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		colors = new Color[8][8];
 		lightColor = Color.white;
 		darkColor = Color.lightGray;
-		moveColor = Color.yellow;
+		moveColor = Color.orange;
 		fillColorArray();
 	}
 
@@ -64,7 +64,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	public void onMouseRelease(MouseEvent e) {
 		if (!hovering || board == null)
 			return;
-
+		
 		int clickedX = e.getX();
 		int clickedY = e.getY();
 
