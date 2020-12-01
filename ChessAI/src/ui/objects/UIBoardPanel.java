@@ -5,10 +5,12 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.Set;
 
+import algorithm.MoveMaker;
 import chess.Board;
 import chess.move.Move;
 import chess.move.MoveTransition;
 import chess.pieces.Piece;
+import chess.pieces.Team;
 import ui.interfaces.Clickable;
 import ui.listeners.MoveExecutionListener;
 
@@ -21,6 +23,8 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private MoveExecutionListener meListener;
 	private Color lightColor, darkColor, moveColor;
 	private Color[][] colors;
+	private MoveMaker moveMaker;
+	private Team currentTeam;
 
 	public UIBoardPanel() {
 		colors = new Color[8][8];
@@ -62,9 +66,9 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		if (!hovering || board == null)
+		if (!hovering || board == null/* || moveMaker == null || currentTeam == null */)
 			return;
-		
+
 		int clickedX = e.getX();
 		int clickedY = e.getY();
 
@@ -152,6 +156,14 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		return moveColor;
 	}
 
+	public MoveMaker getMoveMaker() {
+		return moveMaker;
+	}
+
+	public Team getCurrentTeam() {
+		return currentTeam;
+	}
+
 	// ===== Setters ===== \\
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
@@ -184,5 +196,13 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	public void setMoveColor(Color moveColor) {
 		this.moveColor = moveColor;
 		clearMoves();
+	}
+
+	public void setMoveMaker(MoveMaker moveMaker) {
+		this.moveMaker = moveMaker;
+	}
+
+	public void setCurrentTeam(Team currentTeam) {
+		this.currentTeam = currentTeam;
 	}
 }

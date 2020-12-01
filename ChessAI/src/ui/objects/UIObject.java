@@ -16,9 +16,9 @@ import java.awt.Rectangle;
  */
 public abstract class UIObject {
 	/**
-	 * Constants used for the horizontal alignment of text.
+	 * Constants used for the alignment of text.
 	 */
-	public static final int LEFT = 0, CENTER = 1, RIGHT = 2;
+	public static final int LEFT = 0, RIGHT = 1, CENTER = 2, TOP = 3, BOTTOM = 4;
 
 	/**
 	 * The default text color.
@@ -51,9 +51,14 @@ public abstract class UIObject {
 	protected boolean enabled = true;
 
 	/**
-	 * The hoerizontal alignment of the text.
+	 * The horizontal alignment of the text.
 	 */
 	protected int horizontalAlignment = LEFT;
+
+	/**
+	 * The vertical alignment of the text.
+	 */
+	protected int verticalAlignment = TOP;
 
 	/**
 	 * The color of the background.
@@ -157,6 +162,10 @@ public abstract class UIObject {
 		return horizontalAlignment;
 	}
 
+	public int getVerticalAlignment() {
+		return verticalAlignment;
+	}
+
 	public Color getBackground() {
 		return background;
 	}
@@ -196,6 +205,10 @@ public abstract class UIObject {
 
 	public void setHorizontalAlignment(int horizontalAlignment) {
 		this.horizontalAlignment = horizontalAlignment;
+	}
+
+	public void setVerticalAlignment(int verticalAlignment) {
+		this.verticalAlignment = verticalAlignment;
 	}
 
 	public void setBackground(Color background) {

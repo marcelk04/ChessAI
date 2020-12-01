@@ -21,6 +21,7 @@ import ui.objects.UIObject;
 import ui.objects.UIPanel;
 import ui.objects.UISelectionBox;
 import ui.objects.UITakenPiecesPanel;
+import ui.objects.UITextArea;
 import ui.objects.UITextButton;
 
 public class GUI {
@@ -43,6 +44,11 @@ public class GUI {
 		panelTakenPieces.setBorder(Color.black);
 		display.add(panelTakenPieces);
 
+		UITextArea panelConsole = new UITextArea("", 5, 5);
+		panelConsole.setBounds(10, 620, 1070, 90);
+		panelConsole.setBorder(Color.black);
+		display.add(panelConsole);
+
 		boardPanel = new UIBoardPanel();
 		boardPanel.setBounds(220, 10, 600, 600);
 		boardPanel.setBoard(board);
@@ -50,6 +56,7 @@ public class GUI {
 		boardPanel.setMoveExecutionListener(e -> {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
+				panelConsole.setText(e.getExecutedMove().getNotation());
 				if (e.getExecutedMove().isAttackMove()) {
 					AttackMove m = (AttackMove) e.getExecutedMove();
 					panelTakenPieces.addPiece(m.getAttackedPiece());
@@ -165,11 +172,6 @@ public class GUI {
 			}
 		});
 		display.add(btnGitHub);
-
-		UIPanel panelConsole = new UIPanel();
-		panelConsole.setBounds(10, 620, 1070, 90);
-		panelConsole.setBorder(Color.black);
-		display.add(panelConsole);
 	}
 
 	private void saveSettings(PlayerType player1, PlayerType player2) {
