@@ -25,7 +25,7 @@ public class King extends Piece {
 		this.canKingSideCastle = canKingSideCastle;
 		this.canQueenSideCastle = canQueenSideCastle;
 		this.movedAtLeastOnce = movedAtLeastOnce;
-		this.texture = team == Team.white ? Assets.white_king : Assets.black_king;
+		this.texture = team == Team.WHITE ? Assets.white_king : Assets.black_king;
 	}
 
 	@Override

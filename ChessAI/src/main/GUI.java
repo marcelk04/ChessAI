@@ -56,7 +56,8 @@ public class GUI {
 		boardPanel.setMoveExecutionListener(e -> {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
-				panelConsole.setText(e.getExecutedMove().getNotation());
+				panelConsole.setText(e.getExecutedMove().getMovedPiece().getTeam() + " executed move "
+						+ e.getExecutedMove().getNotation());
 				if (e.getExecutedMove().isAttackMove()) {
 					AttackMove m = (AttackMove) e.getExecutedMove();
 					panelTakenPieces.addPiece(m.getAttackedPiece());

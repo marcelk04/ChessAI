@@ -23,7 +23,7 @@ public class Pawn extends Piece {
 		super(x, y, 10, team, PieceType.PAWN);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.jumped = jumped;
-		this.texture = team == Team.white ? Assets.white_pawn : Assets.black_pawn;
+		this.texture = team == Team.WHITE ? Assets.white_pawn : Assets.black_pawn;
 	}
 
 	@Override
@@ -33,9 +33,9 @@ public class Pawn extends Piece {
 		Piece currentPiece = null;
 
 		for (int i = -1; i < 2 && Utils.inRange(this.x + i, 0, 7); i += 2) { // check for pieces to hit
-			if (team == Team.white && this.y - 1 >= 0) // white team
+			if (team == Team.WHITE && this.y - 1 >= 0) // white team
 				currentPiece = board.getPiece(this.x + i, this.y - 1);
-			else if (team == Team.black && this.y + 1 < 8) // black team
+			else if (team == Team.BLACK && this.y + 1 < 8) // black team
 				currentPiece = board.getPiece(this.x + i, this.y + 1);
 
 			if (currentPiece != null && currentPiece.getTeam() != team)
@@ -51,7 +51,7 @@ public class Pawn extends Piece {
 			}
 		}
 
-		if (team == Team.white) { // check for moves one field away
+		if (team == Team.WHITE) { // check for moves one field away
 			if (board.getPiece(this.x, this.y - 1) == null)
 				moves.add(new PawnMove(board, this, this.x, this.y - 1));
 		} else { // black team

@@ -17,7 +17,7 @@ public class Queen extends Piece {
 	private Queen(int x, int y, Team team, boolean movedAtLeastOnce) {
 		super(x, y, 90, team, PieceType.QUEEN);
 		this.movedAtLeastOnce = movedAtLeastOnce;
-		this.texture = team == Team.white ? Assets.white_queen : Assets.black_queen;
+		this.texture = team == Team.WHITE ? Assets.white_queen : Assets.black_queen;
 	}
 
 	@Override

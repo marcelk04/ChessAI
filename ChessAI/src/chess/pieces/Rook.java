@@ -17,7 +17,7 @@ public class Rook extends Piece {
 	public Rook(int x, int y, Team team, boolean movedAtLeastOnce) {
 		super(x, y, 50, team, PieceType.ROOK);
 		this.movedAtLeastOnce = movedAtLeastOnce;
-		this.texture = team == Team.white ? Assets.white_rook : Assets.black_rook;
+		this.texture = team == Team.WHITE ? Assets.white_rook : Assets.black_rook;
 	}
 
 	@Override

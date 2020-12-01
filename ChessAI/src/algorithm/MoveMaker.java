@@ -22,7 +22,7 @@ public class MoveMaker {
 	public void moveExecuted(MoveTransition m) {
 		if (m.getMoveStatus() == MoveStatus.DONE) {
 			boardPanel.setBoard(board = m.getNewBoard());
-			currentTeam = currentTeam == Team.white ? Team.black : Team.white;
+			currentTeam = currentTeam == Team.WHITE ? Team.BLACK : Team.WHITE;
 		}
 	}
 

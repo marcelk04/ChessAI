@@ -1,18 +1,31 @@
 package chess.pieces;
 
 public enum Team {
-	white {
+	WHITE {
 		@Override
 		public int moveDirection() {
 			return -1;
 		}
+
+		@Override
+		public String toString() {
+			return "White";
+		}
 	},
-	black {
+	BLACK {
 		@Override
 		public int moveDirection() {
 			return 1;
 		}
+
+		@Override
+		public String toString() {
+			return "Black";
+		}
 	};
 
-	abstract int moveDirection();
+	public abstract int moveDirection();
+
+	@Override
+	public abstract String toString();
 }

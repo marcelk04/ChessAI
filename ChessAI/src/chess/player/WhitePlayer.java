@@ -25,7 +25,7 @@ public class WhitePlayer extends Player {
 
 	@Override
 	public Team getTeam() {
-		return Team.white;
+		return Team.WHITE;
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class BlackPlayer extends Player {
 
 	@Override
 	public Team getTeam() {
-		return Team.black;
+		return Team.BLACK;
 	}
 
 	@Override

@@ -96,7 +96,7 @@ public class UITakenPiecesPanel extends UIObject {
 
 	public void addPiece(Piece p) {
 		if (p != null) {
-			(p.getTeam() == Team.white ? whitePieces : blackPieces).add(p);
+			(p.getTeam() == Team.WHITE ? whitePieces : blackPieces).add(p);
 		}
 	}
 
