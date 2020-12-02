@@ -17,6 +17,7 @@ import display.Display;
 import gfx.Assets;
 import ui.objects.UIBoardPanel;
 import ui.objects.UILabel;
+import ui.objects.UIMovePanel;
 import ui.objects.UIObject;
 import ui.objects.UIPanel;
 import ui.objects.UISelectionBox;
@@ -49,6 +50,11 @@ public class GUI {
 		panelConsole.setBorder(Color.black);
 		display.add(panelConsole);
 
+		UIMovePanel panelMoves = new UIMovePanel(5, 5);
+		panelMoves.setBounds(830, 10, 250, 600);
+		panelMoves.setBorder(Color.black);
+		display.add(panelMoves);
+
 		boardPanel = new UIBoardPanel();
 		boardPanel.setBounds(220, 10, 600, 600);
 		boardPanel.setBoard(board);
@@ -56,8 +62,7 @@ public class GUI {
 		boardPanel.setMoveExecutionListener(e -> {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
-				panelConsole.setText(e.getExecutedMove().getMovedPiece().getTeam() + " executed move "
-						+ e.getExecutedMove().getNotation());
+				panelMoves.addMove(e.getExecutedMove());
 				if (e.getExecutedMove().isAttackMove()) {
 					AttackMove m = (AttackMove) e.getExecutedMove();
 					panelTakenPieces.addPiece(m.getAttackedPiece());
@@ -65,11 +70,6 @@ public class GUI {
 			}
 		});
 		display.add(boardPanel);
-
-		UIPanel panelMoves = new UIPanel();
-		panelMoves.setBounds(830, 10, 250, 600);
-		panelMoves.setBorder(Color.black);
-		display.add(panelMoves);
 
 		UIPanel panelSettings = new UIPanel();
 		panelSettings.setBounds(1090, 10, 180, 230);
@@ -160,6 +160,7 @@ public class GUI {
 			boardPanel.setBoard(board = Board.create());
 			panelTakenPieces.clear();
 			panelConsole.clear();
+			panelMoves.clear();
 		});
 		display.add(btnReset);
 
