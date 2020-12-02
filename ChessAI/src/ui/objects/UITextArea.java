@@ -24,7 +24,7 @@ public class UITextArea extends UIObject {
 		this.hgap = hgap;
 		this.vgap = vgap;
 
-		setup();
+		calculateTextPositions();
 	}
 
 	@Override
@@ -49,9 +49,9 @@ public class UITextArea extends UIObject {
 		}
 	}
 
-	private void setup() {
+	private void calculateTextPositions() {
 		if (text != null && !text.equals("")) {
-			double textHeight = UIUtils.getStringHeight(text, font);
+			float textHeight = (float) UIUtils.getStringHeight(text, font);
 			int maxLines = (int) (height / textHeight);
 			int maxTextWidth = width - hgap * 2;
 
@@ -62,25 +62,28 @@ public class UITextArea extends UIObject {
 				displayText[i] = UIUtils.shortenText(splitText[i], maxTextWidth, font);
 			}
 
-			double totalHeight = (textHeight + vgap) * displayText.length - vgap;
+			float totalHeight = (textHeight + vgap) * displayText.length - vgap;
 
-			int yBegin = 0;
+			int yBegin;
 
 			switch (verticalAlignment) {
 			case TOP:
 				yBegin = y + vgap;
 				break;
 			case CENTER:
-				yBegin = y + (int) Math.round((height - totalHeight) / 2);
+				yBegin = y + Math.round((height - totalHeight) / 2);
 				break;
 			case BOTTOM:
-				yBegin = y + height - (int) Math.round(totalHeight) - vgap;
+				yBegin = y + height - Math.round(totalHeight) - vgap;
 				break;
+			default:
+				yBegin = y + vgap;
 			}
 
 			displayPositions = new Position[displayText.length];
+
 			for (int i = 0; i < displayText.length; i++) {
-				int y = (int) (yBegin + textHeight + (textHeight + vgap) * i);
+				int y = Math.round(yBegin + textHeight + (textHeight + vgap) * i);
 
 				switch (horizontalAlignment) {
 				case LEFT:
@@ -88,11 +91,11 @@ public class UITextArea extends UIObject {
 					break;
 				case CENTER:
 					displayPositions[i] = new Position(
-							(int) (x + (width + UIUtils.getStringWidth(displayText[i], font)) / 2), y);
+							Math.round(x + (width + (float) UIUtils.getStringWidth(displayText[i], font)) / 2), y);
 					break;
 				case RIGHT:
 					displayPositions[i] = new Position(
-							x + width - hgap - (int) UIUtils.getStringWidth(displayText[i], font), y);
+							Math.round(x + width - hgap - (float) UIUtils.getStringWidth(displayText[i], font)), y);
 					break;
 				}
 			}
@@ -104,7 +107,7 @@ public class UITextArea extends UIObject {
 
 	public void clear() {
 		text = "";
-		setup();
+		calculateTextPositions();
 	}
 
 	// ===== Getters ===== \\
@@ -124,7 +127,7 @@ public class UITextArea extends UIObject {
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
-		setup();
+		calculateTextPositions();
 	}
 
 	public void setHgap(int hgap) {
@@ -137,6 +140,6 @@ public class UITextArea extends UIObject {
 
 	public void setText(String text) {
 		this.text = text;
-		setup();
+		calculateTextPositions();
 	}
 }

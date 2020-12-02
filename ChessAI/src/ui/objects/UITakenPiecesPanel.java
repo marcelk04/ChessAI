@@ -2,17 +2,18 @@ package ui.objects;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import chess.move.Position;
 import chess.pieces.Piece;
 import chess.pieces.Team;
 
 public class UITakenPiecesPanel extends UIObject {
 	private List<Piece> whitePieces, blackPieces;
-	private double maxPieceWidth, maxPieceHeight;
-	private double pieceWidth, pieceHeight;
-	private double xOffset, yOffset;
-	private int blackBegin;
+	private Map<Piece, Position> positions;
+	private int pieceWidth, pieceHeight;
 	private int hgap, vgap;
 
 	public UITakenPiecesPanel() {
@@ -22,6 +23,7 @@ public class UITakenPiecesPanel extends UIObject {
 	public UITakenPiecesPanel(int hgap, int vgap) {
 		whitePieces = new ArrayList<Piece>();
 		blackPieces = new ArrayList<Piece>();
+		positions = new HashMap<Piece, Position>();
 		setHgap(hgap);
 		setVgap(vgap);
 	}
@@ -34,30 +36,18 @@ public class UITakenPiecesPanel extends UIObject {
 				g.fillRect(x, y, width, height);
 			}
 
-			int pieceX, pieceY;
+			Position pos;
 
-			for (int x = 0; x < 2; x++) {
-				for (int y = 0; y < 8; y++) {
-					int pieceNumber = x * 8 + y;
+			for (Piece p : whitePieces) {
+				pos = positions.get(p);
 
-					if (pieceNumber < whitePieces.size()) {
-						pieceX = (int) Math.round(this.x + hgap + (hgap + maxPieceWidth) * x + xOffset);
-						pieceY = (int) Math.round(this.y + vgap + (vgap + maxPieceHeight) * y + yOffset);
+				p.render(g, pos.x, pos.y, pieceWidth, pieceHeight);
+			}
 
-						Piece p = whitePieces.get(pieceNumber);
+			for (Piece p : blackPieces) {
+				pos = positions.get(p);
 
-						p.render(g, pieceX, pieceY, (int) Math.round(pieceWidth), (int) Math.round(pieceHeight));
-					}
-
-					if (pieceNumber < blackPieces.size()) {
-						pieceX = (int) Math.round(this.x + hgap + (hgap + maxPieceWidth) * x + xOffset);
-						pieceY = (int) Math.round(this.y + vgap + (vgap + maxPieceHeight) * y + yOffset + blackBegin);
-
-						Piece p = blackPieces.get(pieceNumber);
-
-						p.render(g, pieceX, pieceY, (int) Math.round(pieceWidth), (int) Math.round(pieceHeight));
-					}
-				}
+				p.render(g, pos.x, pos.y, pieceWidth, pieceHeight);
 			}
 
 			if (border != null) {
@@ -68,41 +58,77 @@ public class UITakenPiecesPanel extends UIObject {
 	}
 
 	private void calculatePieceDimensions() {
-		maxPieceWidth = (double) (width - hgap * 3) / 2d;
-		maxPieceHeight = (double) (height - vgap * 19) / 16d;
+		float maxPieceWidth = (float) (width - hgap * 3) / 2f; // 2 pieces per row
+		float maxPieceHeight = (float) (height - vgap * 19) / 16f; // 16 pieces per column
 
-		double originalPieceWidth = Piece.PIECE_WIDTH;
-		double originalPieceHeight = Piece.PIECE_HEIGHT;
+		float originalPieceWidth = Piece.PIECE_WIDTH;
+		float originalPieceHeight = Piece.PIECE_HEIGHT;
 
-		double widthDiff = maxPieceWidth - originalPieceWidth;
-		double heightDiff = maxPieceHeight - originalPieceHeight;
+		float widthDiff = maxPieceWidth - originalPieceWidth;
+		float heightDiff = maxPieceHeight - originalPieceHeight;
 
-		double factor;
+		float factor;
 
 		if (widthDiff < heightDiff) {
-			factor = widthDiff / originalPieceWidth + 1;
+			factor = widthDiff / originalPieceWidth + 1f;
 		} else {
-			factor = heightDiff / originalPieceHeight + 1;
+			factor = heightDiff / originalPieceHeight + 1f;
 		}
 
-		pieceWidth = originalPieceWidth * factor;
-		pieceHeight = originalPieceHeight * factor;
+		float pieceWidth = originalPieceWidth * factor;
+		float pieceHeight = originalPieceHeight * factor;
 
-		xOffset = (maxPieceWidth - pieceWidth) / 2;
-		yOffset = (maxPieceHeight - pieceHeight) / 2;
+		this.pieceWidth = Math.round(pieceWidth);
+		this.pieceHeight = Math.round(pieceHeight);
 
-		blackBegin = (int) Math.round(vgap + (vgap + maxPieceHeight) * 8);
+		float xOffset = (maxPieceWidth - pieceWidth) / 2f;
+		float yOffset = (maxPieceHeight - pieceHeight) / 2f;
+
+		int blackBegin = Math.round(vgap + (vgap + maxPieceHeight) * 8);
+
+		for (int x = 0; x < 2; x++) {
+			for (int y = 0; y < 8; y++) {
+				int pieceNumber = x * 8 + y;
+
+				if (pieceNumber >= Math.max(whitePieces.size(), blackPieces.size()))
+					break;
+
+				if (pieceNumber < whitePieces.size()) {
+					int pieceX = Math.round(this.x + hgap + (hgap + maxPieceWidth) * x + xOffset);
+					int pieceY = Math.round(this.y + vgap + (vgap + maxPieceHeight) * y + yOffset);
+
+					Piece p = whitePieces.get(pieceNumber);
+
+					positions.put(p, new Position(pieceX, pieceY));
+				}
+
+				if (pieceNumber < blackPieces.size()) {
+					int pieceX = Math.round(this.x + hgap + (hgap + maxPieceWidth) * x + xOffset);
+					int pieceY = Math.round(this.y + vgap + (vgap + maxPieceHeight) * y + yOffset + blackBegin);
+
+					Piece p = blackPieces.get(pieceNumber);
+
+					positions.put(p, new Position(pieceX, pieceY));
+				}
+			}
+		}
 	}
 
 	public void addPiece(Piece p) {
 		if (p != null) {
 			(p.getTeam() == Team.WHITE ? whitePieces : blackPieces).add(p);
+			calculatePieceDimensions();
 		}
 	}
 
 	public void removePiece(Piece p) {
 		whitePieces.remove(p);
 		blackPieces.remove(p);
+	}
+
+	public void clear() {
+		whitePieces.clear();
+		blackPieces.clear();
 	}
 
 	// ===== Getters ===== \\

@@ -13,7 +13,7 @@ public abstract class Move {
 	protected final Piece movedPiece;
 	protected final int pieceDestinationX, pieceDestinationY;
 
-	Move(final Board board, final Piece movedPiece, final int pieceDestinationX, final int pieceDestinationY) {
+	public Move(final Board board, final Piece movedPiece, final int pieceDestinationX, final int pieceDestinationY) {
 		this.board = board;
 		this.movedPiece = movedPiece;
 		this.pieceDestinationX = pieceDestinationX;
@@ -83,6 +83,17 @@ public abstract class Move {
 
 	public boolean isAttackMove() {
 		return false;
+	}
+
+	public static class NullMove extends Move {
+		public NullMove() {
+			super(null, null, 0, 0);
+		}
+
+		@Override
+		public String getNotation() {
+			return "NULL_MOVE";
+		}
 	}
 
 	public static class NormalMove extends Move {

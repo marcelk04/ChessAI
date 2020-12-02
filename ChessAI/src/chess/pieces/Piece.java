@@ -56,6 +56,8 @@ public abstract class Piece {
 		int result = team.hashCode();
 		result = 10 * result + x;
 		result = 10 * result + y;
+		result = 10 * result + type.hashCode();
+		result = 10 * result + team.hashCode();
 		return result;
 	}
 

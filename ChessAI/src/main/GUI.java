@@ -158,6 +158,8 @@ public class GUI {
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(e -> {
 			boardPanel.setBoard(board = Board.create());
+			panelTakenPieces.clear();
+			panelConsole.clear();
 		});
 		display.add(btnReset);
 
