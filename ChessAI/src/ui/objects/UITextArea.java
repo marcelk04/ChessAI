@@ -91,11 +91,11 @@ public class UITextArea extends UIObject {
 					break;
 				case CENTER:
 					displayPositions[i] = new Position(
-							Math.round(x + (width + (float) UIUtils.getStringWidth(displayText[i], font)) / 2), y);
+							x + Math.round((width - (float) UIUtils.getStringWidth(displayText[i], font)) / 2f), y);
 					break;
 				case RIGHT:
 					displayPositions[i] = new Position(
-							Math.round(x + width - hgap - (float) UIUtils.getStringWidth(displayText[i], font)), y);
+							x + width - hgap - Math.round((float) UIUtils.getStringWidth(displayText[i], font)), y);
 					break;
 				}
 			}

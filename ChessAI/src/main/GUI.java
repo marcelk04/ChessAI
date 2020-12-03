@@ -53,6 +53,7 @@ public class GUI {
 		UIMovePanel panelMoves = new UIMovePanel(5, 5);
 		panelMoves.setBounds(830, 10, 250, 600);
 		panelMoves.setBorder(Color.black);
+		panelMoves.setHorizontalAlignment(UIObject.CENTER);
 		display.add(panelMoves);
 
 		boardPanel = new UIBoardPanel();
