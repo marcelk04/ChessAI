@@ -4,10 +4,31 @@ import java.awt.event.MouseEvent;
 
 import main.Utils;
 
+/**
+ * The class UISelectionBox is a type of textbutton that changes its text when
+ * it is pressed. Since it is a generic class, it can hold any object, not just
+ * Strings, however the toString() method is used to get the display text.
+ *
+ * @param <E> the type of the box.
+ * 
+ * @author DefensivLord
+ */
 public class UISelectionBox<E> extends UITextButton {
+	/**
+	 * An array of the elements the box is holding.
+	 */
 	private Object[] elements;
+
+	/**
+	 * The index of the object that is currently displayed.
+	 */
 	private int index;
 
+	/**
+	 * The default constructor for instances of the class UISelectionBox.
+	 * 
+	 * @param elements the elements the box should be holding.
+	 */
 	public UISelectionBox(Object[] elements) {
 		super(elements != null && elements.length > 0 ? elements[0].toString() : "");
 
@@ -23,6 +44,9 @@ public class UISelectionBox<E> extends UITextButton {
 		super.onMouseRelease(e);
 	}
 
+	/**
+	 * Sets the text of the button to the next element.
+	 */
 	private void displayNext() {
 		if (elements == null)
 			return;
@@ -32,7 +56,7 @@ public class UISelectionBox<E> extends UITextButton {
 		else
 			index++;
 
-		setText(elements[index].toString());
+		text = elements[index].toString();
 	}
 
 	// ===== Getters ===== \\
@@ -53,17 +77,16 @@ public class UISelectionBox<E> extends UITextButton {
 	public void setElements(Object[] elements) {
 		this.elements = elements;
 		if (elements != null && elements.length > 0)
-			setText(elements[0].toString());
+			text = elements[0].toString();
 		else
-			setText("");
+			text = "";
 
 		index = 0;
 	}
 
 	public void setSelectedIndex(int index) {
 		if (elements != null && Utils.inRange(index, 0, elements.length - 1)) {
-			this.index = index;
-			setText(elements[index].toString());
+			text = elements[this.index = index].toString();
 		}
 	}
 }

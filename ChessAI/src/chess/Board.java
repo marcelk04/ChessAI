@@ -2,10 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import chess.move.Move;
 import chess.move.Position;
@@ -32,8 +30,8 @@ public class Board {
 		this.boardConfig = builder.boardConfig;
 		this.whitePieces = getActivePieces(builder, Team.WHITE);
 		this.blackPieces = getActivePieces(builder, Team.BLACK);
-		final Set<Move> whiteMoves = getLegalMoves(whitePieces);
-		final Set<Move> blackMoves = getLegalMoves(blackPieces);
+		final List<Move> whiteMoves = getLegalMoves(whitePieces);
+		final List<Move> blackMoves = getLegalMoves(blackPieces);
 		this.whitePlayer = new WhitePlayer(this, whiteMoves, blackMoves);
 		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves);
 		this.currentPlayer = builder.nextMoveMaker == Team.WHITE ? whitePlayer : blackPlayer;
@@ -53,8 +51,8 @@ public class Board {
 		return activePieces;
 	}
 
-	private Set<Move> getLegalMoves(List<Piece> pieces) {
-		final Set<Move> legalMoves = new HashSet<Move>();
+	private List<Move> getLegalMoves(List<Piece> pieces) {
+		final List<Move> legalMoves = new ArrayList<Move>();
 		for (Piece p : pieces) {
 			legalMoves.addAll(p.getMoves(this));
 		}
@@ -133,9 +131,9 @@ public class Board {
 		return pieces;
 	}
 
-	public Set<Move> getPossibleMoves(Piece piece) {
-		Set<Move> moves = new HashSet<Move>();
-		Set<Move> allTeamMoves;
+	public List<Move> getPossibleMoves(Piece piece) {
+		List<Move> moves = new ArrayList<Move>();
+		List<Move> allTeamMoves;
 
 		if (piece.getTeam() == Team.WHITE) {
 			allTeamMoves = whitePlayer.getLegalMoves();
@@ -150,6 +148,22 @@ public class Board {
 		}
 
 		return moves;
+	}
+
+	public List<Move> getAllLegalMoves() {
+		List<Move> moves = whitePlayer.getLegalMoves();
+		moves.addAll(blackPlayer.getLegalMoves());
+		return moves;
+	}
+
+	public Move findMove(int currentX, int currentY, int pieceDestinationX, int pieceDestinationY) {
+		for (Move m : getAllLegalMoves()) {
+			if (m.getCurrentX() == currentX && m.getCurrentY() == currentY
+					&& m.getPieceDestinationX() == pieceDestinationX && m.getPieceDestinationY() == pieceDestinationY) {
+				return m;
+			}
+		}
+		return Move.NULL_MOVE;
 	}
 
 	public static class Builder {

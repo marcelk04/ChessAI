@@ -1,8 +1,7 @@
 package chess.player;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import chess.Board;
 import chess.move.Move;
@@ -14,12 +13,12 @@ import chess.pieces.Rook;
 import chess.pieces.Team;
 
 public class WhitePlayer extends Player {
-	public WhitePlayer(Board board, Set<Move> playerLegals, Set<Move> opponentLegals) {
+	public WhitePlayer(Board board, List<Move> playerLegals, List<Move> opponentLegals) {
 		super(board, playerLegals, opponentLegals);
 	}
 
 	@Override
-	public Collection<Piece> getActivePieces() {
+	public List<Piece> getActivePieces() {
 		return board.getWhitePieces();
 	}
 
@@ -34,8 +33,8 @@ public class WhitePlayer extends Player {
 	}
 
 	@Override
-	protected Set<Move> calculateKingCastles(Set<Move> opponentLegals) {
-		final Set<Move> kingCastles = new HashSet<Move>();
+	protected List<Move> calculateKingCastles(List<Move> opponentLegals) {
+		final List<Move> kingCastles = new ArrayList<Move>();
 
 		if (canCastle() && !playerKing.gotMovedAtLeastOnce() && playerKing.getX() == 4 && playerKing.getY() == 7
 				&& !kingInCheck) {

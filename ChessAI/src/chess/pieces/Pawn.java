@@ -1,7 +1,7 @@
 package chess.pieces;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import chess.Board;
 import chess.move.Move;
@@ -27,8 +27,8 @@ public class Pawn extends Piece {
 	}
 
 	@Override
-	public Set<Move> getMoves(Board board) {
-		Set<Move> moves = new HashSet<Move>();
+	public List<Move> getMoves(Board board) {
+		List<Move> moves = new ArrayList<Move>();
 
 		Piece currentPiece = null;
 

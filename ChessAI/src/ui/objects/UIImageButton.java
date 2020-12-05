@@ -3,6 +3,14 @@ package ui.objects;
 import java.awt.Graphics;
 import java.awt.Image;
 
+/**
+ * The UIImageButton is a button, which displays an image instead of text. The
+ * image can either be stretched on the whole size of the button, or its size
+ * can be changed to fit within the bounds of the button without changing scale.
+ * You can also set the bounds of the image yourself.f
+ * 
+ * @author DefensivLord
+ */
 public class UIImageButton extends UIButton {
 	/**
 	 * The image of the button.
@@ -24,6 +32,13 @@ public class UIImageButton extends UIButton {
 	 */
 	private boolean stretchingImage;
 
+	/**
+	 * The constructor for instances of the class UIImageButton.
+	 * 
+	 * @param buttonImage     the image used for the button.
+	 * @param stretchingImage indicates whether the image should be stretched or
+	 *                        not.
+	 */
 	public UIImageButton(Image buttonImage, boolean stretchingImage) {
 		this.buttonImage = buttonImage;
 		this.stretchingImage = stretchingImage;
@@ -44,6 +59,10 @@ public class UIImageButton extends UIButton {
 		}
 	}
 
+	/**
+	 * Calculates the bounds of the images depending whether it should be stretched
+	 * or not.
+	 */
 	private void calculateImageBounds() {
 		if (stretchingImage) {
 			imageX = x;

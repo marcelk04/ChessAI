@@ -4,9 +4,22 @@ import java.awt.Graphics;
 
 import ui.UIUtils;
 
+/**
+ * The class UITextButton is a simple button which displays a String.
+ * 
+ * @author DefensivLord
+ */
 public class UITextButton extends UIButton {
+	/**
+	 * The text to be displayed.
+	 */
 	protected String text;
 
+	/**
+	 * The default constructor for instances of the class UITextButton.
+	 * 
+	 * @param text the text to be displayed.
+	 */
 	public UITextButton(String text) {
 		this.text = text;
 	}

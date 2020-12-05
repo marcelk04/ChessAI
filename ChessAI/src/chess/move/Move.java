@@ -9,6 +9,8 @@ import chess.pieces.Rook;
 import main.Utils;
 
 public abstract class Move {
+	public static final Move NULL_MOVE = new NullMove();
+
 	protected final Board board;
 	protected final Piece movedPiece;
 	protected final int pieceDestinationX, pieceDestinationY;
@@ -58,8 +60,6 @@ public abstract class Move {
 		b.setPiece(movedPiece.movePiece(this));
 		b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 
-		getMovedPiece();
-
 		return b.build();
 	}
 
@@ -67,6 +67,14 @@ public abstract class Move {
 
 	public Piece getMovedPiece() {
 		return movedPiece;
+	}
+
+	public int getCurrentX() {
+		return movedPiece.getX();
+	}
+
+	public int getCurrentY() {
+		return movedPiece.getY();
 	}
 
 	public int getPieceDestinationX() {

@@ -1,8 +1,7 @@
 package chess.player;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import chess.Board;
 import chess.move.Move;
@@ -16,10 +15,10 @@ import chess.pieces.Team;
 public abstract class Player {
 	protected final Board board;
 	protected final King playerKing;
-	protected final Set<Move> legalMoves;
+	protected final List<Move> legalMoves;
 	protected final boolean kingInCheck;
 
-	Player(final Board board, final Set<Move> playerLegals, final Set<Move> opponentLegals) {
+	Player(final Board board, final List<Move> playerLegals, final List<Move> opponentLegals) {
 		this.board = board;
 		this.playerKing = findKing();
 		playerLegals.addAll(calculateKingCastles(opponentLegals));
@@ -37,8 +36,8 @@ public abstract class Player {
 		throw new RuntimeException("Illegal Board");
 	}
 
-	public static Set<Move> calculateAttacksOnTile(final int x, final int y, final Collection<Move> moves) {
-		final Set<Move> attacks = new HashSet<Move>();
+	public static List<Move> calculateAttacksOnTile(final int x, final int y, final List<Move> moves) {
+		final List<Move> attacks = new ArrayList<Move>();
 		for (Move m : moves) {
 			if (m.getPieceDestinationX() == x && m.getPieceDestinationY() == y) {
 				attacks.add(m);
@@ -58,20 +57,20 @@ public abstract class Player {
 
 	}
 
-	public abstract Collection<Piece> getActivePieces();
+	public abstract List<Piece> getActivePieces();
 
 	public abstract Team getTeam();
 
 	public abstract Player getOpponent();
 
-	protected abstract Set<Move> calculateKingCastles(Set<Move> opponentLegals);
+	protected abstract List<Move> calculateKingCastles(List<Move> opponentLegals);
 
 	protected boolean canCastle() {
 		return !kingInCheck && !playerKing.isCastled()
 				&& (playerKing.canKingSideCastle() || playerKing.canQueenSideCastle());
 	}
 
-	public Set<Move> getLegalMoves() {
+	public List<Move> getLegalMoves() {
 		return legalMoves;
 	}
 }

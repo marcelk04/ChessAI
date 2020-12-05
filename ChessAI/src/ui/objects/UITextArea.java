@@ -1,5 +1,6 @@
 package ui.objects;
 
+import java.awt.Font;
 import java.awt.Graphics;
 
 import chess.move.Position;
@@ -127,6 +128,12 @@ public class UITextArea extends UIObject {
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
+		calculateTextPositions();
+	}
+
+	@Override
+	public void setFont(Font font) {
+		super.setFont(font);
 		calculateTextPositions();
 	}
 

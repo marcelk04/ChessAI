@@ -3,7 +3,7 @@ package ui.objects;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.util.Set;
+import java.util.List;
 
 import algorithm.MoveMaker;
 import chess.Board;
@@ -19,7 +19,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private Board board;
 	private int pieceWidth, pieceHeight;
 	private Piece selectedPiece;
-	private Set<Move> selectedPiece_moves;
+	private List<Move> selectedPiece_moves;
 	private MoveExecutionListener meListener;
 	private Color lightColor, darkColor, moveColor;
 	private Color[][] colors;

@@ -2,7 +2,7 @@ package chess.pieces;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.Set;
+import java.util.List;
 
 import chess.Board;
 import chess.move.Move;
@@ -34,7 +34,7 @@ public abstract class Piece {
 	 * 
 	 * @return all possible moves.
 	 */
-	public abstract Set<Move> getMoves(Board board);
+	public abstract List<Move> getMoves(Board board);
 
 	public abstract Piece movePiece(Move move);
 
