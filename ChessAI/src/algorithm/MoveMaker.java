@@ -4,6 +4,7 @@ import chess.Board;
 import chess.move.MoveStatus;
 import chess.move.MoveTransition;
 import chess.pieces.Team;
+import ui.listeners.MoveExecutionListener;
 import ui.objects.UIBoardPanel;
 
 public class MoveMaker {
@@ -11,18 +12,36 @@ public class MoveMaker {
 	private UIBoardPanel boardPanel;
 	private Board board;
 	private Team currentTeam;
+	private MoveExecutionListener moveExecutionListener;;
 
 	public MoveMaker(PlayerType player1, PlayerType player2, UIBoardPanel boardPanel) {
 		this.player1 = player1;
 		this.player2 = player2;
 		this.boardPanel = boardPanel;
 		board = Board.create();
+		currentTeam = board.getCurrentPlayer().getTeam();
+		makeNextMove();
 	}
 
 	public void moveExecuted(MoveTransition m) {
+		if (moveExecutionListener != null) {
+			moveExecutionListener.onMoveExecution(m);
+		}
+
 		if (m.getMoveStatus() == MoveStatus.DONE) {
-			boardPanel.setBoard(board = m.getNewBoard());
-			currentTeam = currentTeam == Team.WHITE ? Team.BLACK : Team.WHITE;
+			board = m.getNewBoard();
+			currentTeam = board.getCurrentPlayer().getTeam();
+		}
+		makeNextMove();
+	}
+
+	public void makeNextMove() {
+		if ((currentTeam == Team.WHITE && player1 == PlayerType.HUMAN)
+				|| (currentTeam == Team.BLACK && player2 == PlayerType.HUMAN)) {
+			boardPanel.setMoveMaker(this);
+		} else {
+			boardPanel.setMoveMaker(null);
+			new Minimax(this, 3, false);
 		}
 	}
 
@@ -47,6 +66,10 @@ public class MoveMaker {
 		return currentTeam;
 	}
 
+	public MoveExecutionListener getMoveExecutionListener() {
+		return moveExecutionListener;
+	}
+
 	// ===== Setters ===== \\
 	public void setPlayer1(PlayerType player1) {
 		this.player1 = player1;
@@ -66,5 +89,9 @@ public class MoveMaker {
 
 	public void setCurrentTeam(Team currentTeam) {
 		this.currentTeam = currentTeam;
+	}
+
+	public void setMoveExecutionListener(MoveExecutionListener moveExecutionListener) {
+		this.moveExecutionListener = moveExecutionListener;
 	}
 }

@@ -27,6 +27,18 @@ public abstract class Player {
 				.isEmpty();
 	}
 
+	public boolean isKingInCheck() {
+		return kingInCheck;
+	}
+
+	public boolean isInCheckMate() {
+		return kingInCheck && !hasExecutableMoves();
+	}
+
+	public boolean isInStaleMate() {
+		return !kingInCheck && !hasExecutableMoves();
+	}
+
 	private King findKing() {
 		for (Piece p : getActivePieces()) {
 			if (p.getType() == PieceType.KING) {
@@ -34,6 +46,15 @@ public abstract class Player {
 			}
 		}
 		throw new RuntimeException("Illegal Board");
+	}
+
+	private boolean hasExecutableMoves() {
+		for (Move m : legalMoves) {
+			if (makeMove(m).getMoveStatus() != MoveStatus.DONE) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static List<Move> calculateAttacksOnTile(final int x, final int y, final List<Move> moves) {
@@ -53,7 +74,11 @@ public abstract class Player {
 
 		Board newBoard = move.execute();
 
-		return new MoveTransition(this.board, newBoard, move, MoveStatus.DONE);
+		if (newBoard.getCurrentPlayer().getOpponent().isKingInCheck()) {
+			return new MoveTransition(board, board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK);
+		}
+
+		return new MoveTransition(board, newBoard, move, MoveStatus.DONE);
 
 	}
 

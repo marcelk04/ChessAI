@@ -9,6 +9,8 @@ import java.net.URL;
 
 import javax.swing.JColorChooser;
 
+import algorithm.Evaluator;
+import algorithm.MoveMaker;
 import algorithm.PlayerType;
 import chess.Board;
 import chess.move.Move.AttackMove;
@@ -28,6 +30,7 @@ import ui.objects.UITextButton;
 public class GUI {
 	private Board board;
 	private Display display;
+	private MoveMaker mm;
 	private UIBoardPanel boardPanel;
 
 	private static final Font bold_font = new Font("Sans Serif", Font.BOLD, 15);
@@ -60,9 +63,14 @@ public class GUI {
 		boardPanel.setBounds(220, 10, 600, 600);
 		boardPanel.setBoard(board);
 		boardPanel.setBorder(Color.black);
-		boardPanel.setMoveExecutionListener(e -> {
+
+		display.add(boardPanel);
+
+		mm = new MoveMaker(PlayerType.HUMAN, PlayerType.HUMAN, boardPanel);
+		mm.setMoveExecutionListener(e -> {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
+				panelConsole.setText("" + Evaluator.evaluateBoard(e.getNewBoard()));
 				panelMoves.addMove(e.getExecutedMove());
 				if (e.getExecutedMove().isAttackMove()) {
 					AttackMove m = (AttackMove) e.getExecutedMove();
@@ -70,7 +78,6 @@ public class GUI {
 				}
 			}
 		});
-		display.add(boardPanel);
 
 		UIPanel panelSettings = new UIPanel();
 		panelSettings.setBounds(1090, 10, 180, 230);
@@ -180,9 +187,8 @@ public class GUI {
 	}
 
 	private void saveSettings(PlayerType player1, PlayerType player2) {
-		System.out.println("Player 1: " + player1.toString());
-		System.out.println("Player 2: " + player2.toString());
-		System.out.println("Not yet implemented");
+		mm.setPlayer1(player1);
+		mm.setPlayer2(player2);
 	}
 
 	// ===== Getters ===== \\

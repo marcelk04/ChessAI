@@ -10,7 +10,6 @@ import chess.Board;
 import chess.move.Move;
 import chess.move.MoveTransition;
 import chess.pieces.Piece;
-import chess.pieces.Team;
 import ui.interfaces.Clickable;
 import ui.listeners.MoveExecutionListener;
 
@@ -24,7 +23,6 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private Color lightColor, darkColor, moveColor;
 	private Color[][] colors;
 	private MoveMaker moveMaker;
-	private Team currentTeam;
 
 	public UIBoardPanel() {
 		colors = new Color[8][8];
@@ -66,7 +64,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		if (!hovering || board == null/* || moveMaker == null || currentTeam == null */)
+		if (!hovering || board == null || moveMaker == null)
 			return;
 
 		int clickedX = e.getX();
@@ -104,6 +102,8 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 						if (meListener != null)
 							meListener.onMoveExecution(mt);
+
+						moveMaker.moveExecuted(mt);
 
 						moveFound = true;
 						break;
@@ -160,10 +160,6 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		return moveMaker;
 	}
 
-	public Team getCurrentTeam() {
-		return currentTeam;
-	}
-
 	// ===== Setters ===== \\
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
@@ -200,9 +196,8 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	public void setMoveMaker(MoveMaker moveMaker) {
 		this.moveMaker = moveMaker;
-	}
 
-	public void setCurrentTeam(Team currentTeam) {
-		this.currentTeam = currentTeam;
+		if (moveMaker != null)
+			setBoard(moveMaker.getBoard());
 	}
 }
