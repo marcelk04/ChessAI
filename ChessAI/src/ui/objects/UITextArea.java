@@ -65,6 +65,8 @@ public class UITextArea extends UIObject {
 
 			float totalHeight = (textHeight + vgap) * displayText.length - vgap;
 
+			displayText = UIUtils.shortenArray(displayText, maxTextWidth, height, vgap, font);
+
 			int yBegin;
 
 			switch (verticalAlignment) {

@@ -5,9 +5,13 @@ import java.util.List;
 
 public class Node<T> {
 	private T data = null;
-	private List<Node<T>> children = new ArrayList<Node<T>>();
+	private final List<Node<T>> children = new ArrayList<Node<T>>();
 	private Node<T> parent = null;
 	private int depth, degree;
+
+	public Node() {
+		this(null);
+	}
 
 	public Node(T data) {
 		this.data = data;
@@ -18,18 +22,18 @@ public class Node<T> {
 		return data.toString() + "|Depth:" + depth + "|Degree:" + degree;
 	}
 
-	public String getString() {
-		String text = "";
-		for (int i = 0; i < depth; i++)
-			text += "   ";
-		if(getRoot() == this)
-			text += "Root";
-		else
-			text += "> " + data;
-		
-		text += "|Degree:" + degree;
+	@Override
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
 
-		return text;
+		if (!(other instanceof Node))
+			return false;
+
+		Node<?> otherNode = (Node<?>) other;
+
+		return otherNode.getData().equals(this.data) && otherNode.getDepth() == this.depth
+				&& otherNode.getDegree() == this.degree && otherNode.getParent().equals(this.parent);
 	}
 
 	public Node<T> addChild(Node<T> child) {
@@ -40,12 +44,33 @@ public class Node<T> {
 	}
 
 	public void addChildren(List<Node<T>> children) {
-		for (Node<T> child : children)
-			child.setParent(this);
-		children.addAll(children);
-		degree = children.size();
+		this.children.addAll(children);
+		this.children.forEach(child -> child.setParent(this));
+		degree = this.children.size();
 	}
 
+	public void deleteChildren() {
+		children.forEach(child -> child.deleteChildren());
+		children.clear();
+	}
+
+	private int calculateDepth() {
+		Node<T> root = getRoot();
+		Node<T> currentParent = this;
+		int d = 0;
+		while (root != currentParent) {
+			d++;
+			currentParent = currentParent.getParent();
+		}
+		return d;
+	}
+
+	public void updateDepth() {
+		children.forEach(child -> child.updateDepth());
+		depth = calculateDepth();
+	}
+
+	// ===== Getters ===== \\
 	public List<Node<T>> getChildren() {
 		return children;
 	}
@@ -54,13 +79,8 @@ public class Node<T> {
 		return data;
 	}
 
-	public void setData(T data) {
-		this.data = data;
-	}
-
-	public void setParent(Node<T> parent) {
-		this.parent = parent;
-		updateDepth();
+	public int getDegree() {
+		return degree;
 	}
 
 	public Node<T> getParent() {
@@ -77,26 +97,13 @@ public class Node<T> {
 		return parent.getRoot();
 	}
 
-	public void deleteChildren() {
-		for (Node<T> child : children)
-			child.deleteChildren();
-		children.clear();
+	// ===== Setters ===== \\
+	public void setData(T data) {
+		this.data = data;
 	}
 
-	private int calculateDepth() {
-		Node<T> root = getRoot();
-		Node<T> currentParent = this;
-		int d = 0;
-		while (root != currentParent) {
-			d++;
-			currentParent = currentParent.getParent();
-		}
-		return d;
-	}
-
-	public void updateDepth() {
-		for (Node<T> child : children)
-			child.updateDepth();
-		this.depth = calculateDepth();
+	public void setParent(Node<T> parent) {
+		this.parent = parent;
+		updateDepth();
 	}
 }

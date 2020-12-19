@@ -53,4 +53,49 @@ public class UIUtils {
 			return text;
 		}
 	}
+
+	public static String[] shortenArray(String[] arr, double length, double height, double vgap, Font font) {
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = shortenText(arr[i], length, font);
+		}
+
+		double currentArrayHeight = calculateArrayHeight(arr, vgap, font);
+
+		if (currentArrayHeight <= height) {
+			return arr;
+		} else {
+			int i;
+			for (i = arr.length - 1; i >= 0 && calculateArrayHeight(arr, vgap, font) > height; i--) {
+				arr[i] = "";
+			}
+
+			if (i > 0) {
+				String[] newArr = new String[i + 1];
+				for (int j = 0; j < newArr.length; j++) {
+					newArr[j] = arr[j];
+				}
+
+				return newArr;
+			} else {
+				return new String[0];
+			}
+		}
+	}
+
+	public static double calculateArrayHeight(String[] arr, double vgap, Font font) {
+		double totalHeight = 0;
+		boolean ranAtLeastOnce = false;
+
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i] != null && !arr[i].equals("")) {
+				totalHeight += getStringHeight(arr[i], font) + vgap;
+				ranAtLeastOnce = true;
+			}
+		}
+
+		if (ranAtLeastOnce)
+			totalHeight -= vgap;
+
+		return totalHeight;
+	}
 }

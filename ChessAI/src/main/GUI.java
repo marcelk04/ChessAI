@@ -9,7 +9,6 @@ import java.net.URL;
 
 import javax.swing.JColorChooser;
 
-import algorithm.Evaluator;
 import algorithm.MoveMaker;
 import algorithm.PlayerType;
 import chess.Board;
@@ -18,6 +17,7 @@ import chess.move.MoveStatus;
 import display.Display;
 import gfx.Assets;
 import ui.objects.UIBoardPanel;
+import ui.objects.UIConsole;
 import ui.objects.UILabel;
 import ui.objects.UIMovePanel;
 import ui.objects.UIObject;
@@ -48,7 +48,7 @@ public class GUI {
 		panelTakenPieces.setBorder(Color.black);
 		display.add(panelTakenPieces);
 
-		UITextArea panelConsole = new UITextArea("", 5, 5);
+		UITextArea panelConsole = new UIConsole();
 		panelConsole.setBounds(10, 620, 1070, 90);
 		panelConsole.setBorder(Color.black);
 		display.add(panelConsole);
@@ -70,8 +70,8 @@ public class GUI {
 		mm.setMoveExecutionListener(e -> {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
-				panelConsole.setText("" + Evaluator.evaluateBoard(e.getNewBoard()));
 				panelMoves.addMove(e.getExecutedMove());
+				UIConsole.log(e.getExecutedMove().getMovedPiece().toString());
 				if (e.getExecutedMove().isAttackMove()) {
 					AttackMove m = (AttackMove) e.getExecutedMove();
 					panelTakenPieces.addPiece(m.getAttackedPiece());

@@ -6,6 +6,7 @@ import chess.move.MoveStatus;
 import chess.move.MoveTransition;
 import chess.pieces.Team;
 import chess.player.Player;
+import ui.objects.UIConsole;
 
 public class Minimax implements Runnable {
 	private Thread thread;
@@ -21,7 +22,7 @@ public class Minimax implements Runnable {
 		this.depth = depth;
 		this.usePruning = usePruning;
 		this.evaluatedBoards = 0;
-
+		
 		start();
 	}
 
@@ -57,7 +58,8 @@ public class Minimax implements Runnable {
 		}
 
 		MoveTransition mt = currentPlayer.makeMove(bestMove);
-		System.out.println(evaluatedBoards);
+		UIConsole.log("Evaluated Boards: " + evaluatedBoards + " with search depth " + depth + " | Best Move: "
+				+ bestMove.getNotation());
 		mm.moveExecuted(mt);
 	}
 

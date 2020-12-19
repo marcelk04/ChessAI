@@ -11,6 +11,11 @@ public enum PieceType {
 		this.letter = letter;
 		this.name = name;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 	// ===== Getters ===== \\
 	public char getLetter() {

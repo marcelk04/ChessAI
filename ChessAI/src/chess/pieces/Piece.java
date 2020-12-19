@@ -25,19 +25,6 @@ public abstract class Piece {
 		this.type = type;
 	}
 
-	public void render(Graphics g, int x, int y, int width, int height) {
-		g.drawImage(texture, x, y, width, height, null);
-	}
-
-	/**
-	 * Returns all the moves this piece can possibly do in its position.
-	 * 
-	 * @return all possible moves.
-	 */
-	public abstract List<Move> getMoves(Board board);
-
-	public abstract Piece movePiece(Move move);
-
 	@Override
 	public boolean equals(Object other) {
 		if (this == other)
@@ -61,7 +48,21 @@ public abstract class Piece {
 		return result;
 	}
 
-	// ===== Getters & Setters ===== \\
+	@Override
+	public String toString() {
+		return type.toString() + ";x=" + x + ";y=" + y + ";" + team.toString() + ";movedAtLeastOnce="
+				+ movedAtLeastOnce;
+	}
+
+	public void render(Graphics g, int x, int y, int width, int height) {
+		g.drawImage(texture, x, y, width, height, null);
+	}
+
+	public abstract List<Move> getMoves(Board board);
+
+	public abstract Piece movePiece(Move move);
+
+	// ===== Getters ===== \\
 	public Team getTeam() {
 		return team;
 	}
