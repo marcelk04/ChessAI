@@ -16,6 +16,8 @@ public class Minimax implements Runnable {
 	private int depth;
 	private boolean usePruning;
 	private long evaluatedBoards;
+	
+	private static Minimax minimax;
 
 	public Minimax(MoveMaker mm, int depth, boolean usePruning) {
 		this.mm = mm;
@@ -23,6 +25,8 @@ public class Minimax implements Runnable {
 		this.usePruning = usePruning;
 		this.evaluatedBoards = 0;
 		
+		minimax = this;
+
 		start();
 	}
 
@@ -37,9 +41,10 @@ public class Minimax implements Runnable {
 			bestEval = Integer.MIN_VALUE;
 
 			for (Move m : currentPlayer.getLegalMoves()) {
-				int currentEval = minimax(currentPlayer.makeMove(m).getNewBoard(), depth, false);
+				MoveTransition moveTransition = currentPlayer.makeMove(m);
+				int currentEval = min(moveTransition.getNewBoard(), depth, bestEval, Integer.MAX_VALUE);
 
-				if (currentEval > bestEval) {
+				if (currentEval > bestEval && moveTransition.getMoveStatus() == MoveStatus.DONE) {
 					bestEval = currentEval;
 					bestMove = m;
 				}
@@ -48,9 +53,10 @@ public class Minimax implements Runnable {
 			bestEval = Integer.MAX_VALUE;
 
 			for (Move m : currentPlayer.getLegalMoves()) {
-				int currentEval = minimax(currentPlayer.makeMove(m).getNewBoard(), depth, true);
+				MoveTransition moveTransition = currentPlayer.makeMove(m);
+				int currentEval = max(moveTransition.getNewBoard(), depth, Integer.MIN_VALUE, bestEval);
 
-				if (currentEval < bestEval) {
+				if (currentEval < bestEval && moveTransition.getMoveStatus() == MoveStatus.DONE) {
 					bestEval = currentEval;
 					bestMove = m;
 				}
@@ -63,45 +69,54 @@ public class Minimax implements Runnable {
 		mm.moveExecuted(mt);
 	}
 
-	private int minimax(Board board, int depth, boolean isMaximizer) {
-		if (depth == 0) {
+	private int min(Board board, int depth, int alpha, int beta) {
+		if (depth == 0 || Evaluator.hasGameEnded(board)) {
 			evaluatedBoards++;
 			return Evaluator.evaluateBoard(board);
 		}
 
-		if (Evaluator.hasGameEnded(board)) {
+		int minEval = beta;
+
+		for (Move m : board.getCurrentPlayer().getLegalMoves()) {
+			MoveTransition mt = board.getCurrentPlayer().makeMove(m);
+
+			if (mt.getMoveStatus() == MoveStatus.DONE) {
+				int currentEval = max(mt.getNewBoard(), depth - 1, alpha, minEval);
+
+				minEval = Math.min(minEval, currentEval);
+
+				if (usePruning && minEval <= alpha) {
+					break;
+				}
+			}
+		}
+
+		return minEval;
+	}
+
+	private int max(Board board, int depth, int alpha, int beta) {
+		if (depth == 0 || Evaluator.hasGameEnded(board)) {
+			evaluatedBoards++;
 			return Evaluator.evaluateBoard(board);
 		}
 
-		if (isMaximizer) {
-			int maxEval = Integer.MIN_VALUE;
+		int maxEval = alpha;
 
-			for (Move m : board.getCurrentPlayer().getLegalMoves()) {
-				MoveTransition mt = board.getCurrentPlayer().makeMove(m);
+		for (Move m : board.getCurrentPlayer().getLegalMoves()) {
+			MoveTransition mt = board.getCurrentPlayer().makeMove(m);
 
-				if (mt.getMoveStatus() == MoveStatus.DONE) {
-					int currentEval = minimax(mt.getNewBoard(), depth - 1, false);
+			if (mt.getMoveStatus() == MoveStatus.DONE) {
+				int currentEval = min(mt.getNewBoard(), depth - 1, maxEval, beta);
 
-					maxEval = Math.max(maxEval, currentEval);
+				maxEval = Math.max(maxEval, currentEval);
+
+				if (usePruning && maxEval >= beta) {
+					break;
 				}
 			}
-
-			return maxEval;
-		} else {
-			int minEval = Integer.MAX_VALUE;
-
-			for (Move m : board.getCurrentPlayer().getLegalMoves()) {
-				MoveTransition mt = board.getCurrentPlayer().makeMove(m);
-
-				if (mt.getMoveStatus() == MoveStatus.DONE) {
-					int currentEval = minimax(mt.getNewBoard(), depth - 1, true);
-
-					minEval = Math.min(minEval, currentEval);
-				}
-			}
-
-			return minEval;
 		}
+
+		return maxEval;
 	}
 
 	public synchronized void start() {
@@ -118,5 +133,9 @@ public class Minimax implements Runnable {
 			return;
 
 		running = false;
+	}
+	
+	public static void terminate() {
+		minimax.stop();
 	}
 }

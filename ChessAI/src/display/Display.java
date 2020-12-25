@@ -56,9 +56,7 @@ public class Display implements Runnable {
 		g = bs.getDrawGraphics();
 		g.clearRect(0, 0, width, height);
 
-		{ // draw here
-			uiManager.render(g);
-		}
+		uiManager.render(g);
 
 		bs.show();
 		g.dispose();

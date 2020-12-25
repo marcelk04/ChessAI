@@ -15,6 +15,12 @@ public class MoveTransition {
 		this.moveStatus = moveStatus;
 	}
 
+	@Override
+	public String toString() {
+		return "Old Board: " + oldBoard + "; New Board: " + newBoard + "; Executed Move: " + executedMove.getNotation()
+				+ "; Move Status: " + moveStatus;
+	}
+
 	public Board getOldBoard() {
 		return oldBoard;
 	}

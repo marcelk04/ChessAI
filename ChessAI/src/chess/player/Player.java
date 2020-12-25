@@ -50,11 +50,11 @@ public abstract class Player {
 
 	private boolean hasExecutableMoves() {
 		for (Move m : legalMoves) {
-			if (makeMove(m).getMoveStatus() != MoveStatus.DONE) {
-				return false;
+			if (makeMove(m).getMoveStatus() == MoveStatus.DONE) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public static List<Move> calculateAttacksOnTile(final int x, final int y, final List<Move> moves) {

@@ -36,6 +36,15 @@ public class Board {
 		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves);
 		this.currentPlayer = builder.nextMoveMaker == Team.WHITE ? whitePlayer : blackPlayer;
 	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		result += "White: " + whitePieces.size();
+		result += "; Black: " + blackPieces.size();
+		result += "; Current Player: " + currentPlayer.getTeam();
+		return result;
+	}
 
 	private static List<Piece> getActivePieces(Builder builder, Team team) {
 		final List<Piece> activePieces = new ArrayList<Piece>();

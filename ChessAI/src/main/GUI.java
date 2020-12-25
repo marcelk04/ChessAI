@@ -24,7 +24,6 @@ import ui.objects.UIObject;
 import ui.objects.UIPanel;
 import ui.objects.UISelectionBox;
 import ui.objects.UITakenPiecesPanel;
-import ui.objects.UITextArea;
 import ui.objects.UITextButton;
 
 public class GUI {
@@ -48,9 +47,10 @@ public class GUI {
 		panelTakenPieces.setBorder(Color.black);
 		display.add(panelTakenPieces);
 
-		UITextArea panelConsole = new UIConsole();
+		UIConsole panelConsole = new UIConsole();
 		panelConsole.setBounds(10, 620, 1070, 90);
 		panelConsole.setBorder(Color.black);
+		panelConsole.setFont(new Font("Sans Serif", Font.PLAIN, 10));
 		display.add(panelConsole);
 
 		UIMovePanel panelMoves = new UIMovePanel(5, 5);
@@ -71,7 +71,6 @@ public class GUI {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
 				panelMoves.addMove(e.getExecutedMove());
-				UIConsole.log(e.getExecutedMove().getMovedPiece().toString());
 				if (e.getExecutedMove().isAttackMove()) {
 					AttackMove m = (AttackMove) e.getExecutedMove();
 					panelTakenPieces.addPiece(m.getAttackedPiece());
@@ -165,10 +164,22 @@ public class GUI {
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(e -> {
+			mm.stop();
 			boardPanel.setBoard(board = Board.create());
 			panelTakenPieces.clear();
 			panelConsole.clear();
 			panelMoves.clear();
+			mm = new MoveMaker(boxPlayer1.getSelectedElement(), boxPlayer2.getSelectedElement(), boardPanel);
+			mm.setMoveExecutionListener(m -> {
+				if (m.getMoveStatus() == MoveStatus.DONE) {
+					boardPanel.setBoard(board = m.getNewBoard());
+					panelMoves.addMove(m.getExecutedMove());
+					if (m.getExecutedMove().isAttackMove()) {
+						AttackMove a = (AttackMove) m.getExecutedMove();
+						panelTakenPieces.addPiece(a.getAttackedPiece());
+					}
+				}
+			});
 		});
 		display.add(btnReset);
 
@@ -187,8 +198,8 @@ public class GUI {
 	}
 
 	private void saveSettings(PlayerType player1, PlayerType player2) {
-		mm.setPlayer1(player1);
-		mm.setPlayer2(player2);
+		mm.setPlayers(player1, player2);
+		UIConsole.log("Set Player 1 to " + player1.toString() + "; Set Player 2 to " + player2.toString());
 	}
 
 	// ===== Getters ===== \\
