@@ -14,14 +14,14 @@ public class MoveMaker {
 	private Board board;
 	private Team currentTeam;
 	private MoveExecutionListener moveExecutionListener;
-	private boolean stopped = false;
+	private static boolean stopped = false;
 
 	public MoveMaker(PlayerType player1, PlayerType player2, UIBoardPanel boardPanel) {
 		this.player1 = player1;
 		this.player2 = player2;
 		this.boardPanel = boardPanel;
-		board = Board.create();
-		currentTeam = board.getCurrentPlayer().getTeam();
+		this.board = Board.create();
+		this.currentTeam = board.getCurrentPlayer().getTeam();
 		makeNextMove();
 	}
 
@@ -58,8 +58,8 @@ public class MoveMaker {
 	}
 
 	public void stop() {
+		Minimax.stopAll();
 		stopped = true;
-		Minimax.terminate();
 	}
 
 	// ===== Getters ===== \\
@@ -91,6 +91,7 @@ public class MoveMaker {
 	public void setPlayers(PlayerType player1, PlayerType player2) {
 		this.player1 = player1;
 		this.player2 = player2;
+		stopped = false;
 		makeNextMove();
 	}
 

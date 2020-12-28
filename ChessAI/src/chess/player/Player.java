@@ -18,47 +18,16 @@ public abstract class Player {
 	protected final List<Move> legalMoves;
 	protected final boolean kingInCheck;
 
-	Player(final Board board, final List<Move> playerLegals, final List<Move> opponentLegals) {
+	public Player(final Board board, final List<Move> playerLegals, final List<Move> opponentLegals) {
 		this.board = board;
 		this.playerKing = findKing();
-		playerLegals.addAll(calculateKingCastles(opponentLegals));
+		playerLegals.addAll(calculateCastleMoves(opponentLegals));
 		this.legalMoves = playerLegals;
-		this.kingInCheck = !calculateAttacksOnTile(this.playerKing.getX(), this.playerKing.getY(), opponentLegals)
-				.isEmpty();
+		this.kingInCheck = !calculateAttacksOnTile(playerKing.getX(), playerKing.getY(), opponentLegals).isEmpty();
 	}
 
-	public boolean isKingInCheck() {
-		return kingInCheck;
-	}
-
-	public boolean isInCheckMate() {
-		return kingInCheck && !hasExecutableMoves();
-	}
-
-	public boolean isInStaleMate() {
-		return !kingInCheck && !hasExecutableMoves();
-	}
-
-	private King findKing() {
-		for (Piece p : getActivePieces()) {
-			if (p.getType() == PieceType.KING) {
-				return (King) p;
-			}
-		}
-		throw new RuntimeException("Illegal Board");
-	}
-
-	private boolean hasExecutableMoves() {
-		for (Move m : legalMoves) {
-			if (makeMove(m).getMoveStatus() == MoveStatus.DONE) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static List<Move> calculateAttacksOnTile(final int x, final int y, final List<Move> moves) {
-		final List<Move> attacks = new ArrayList<Move>();
+	public static List<Move> calculateAttacksOnTile(int x, int y, List<Move> moves) {
+		List<Move> attacks = new ArrayList<Move>();
 		for (Move m : moves) {
 			if (m.getPieceDestinationX() == x && m.getPieceDestinationY() == y) {
 				attacks.add(m);
@@ -82,20 +51,51 @@ public abstract class Player {
 
 	}
 
+	private King findKing() {
+		for (Piece p : getActivePieces()) {
+			if (p.getType() == PieceType.KING) {
+				return (King) p;
+			}
+		}
+		throw new RuntimeException("Board must contain a King!");
+	}
+
+	private boolean hasExecutableMoves() {
+		for (Move m : legalMoves) {
+			if (makeMove(m).getMoveStatus() == MoveStatus.DONE) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public abstract List<Piece> getActivePieces();
 
 	public abstract Team getTeam();
 
 	public abstract Player getOpponent();
 
-	protected abstract List<Move> calculateKingCastles(List<Move> opponentLegals);
+	protected abstract List<Move> calculateCastleMoves(List<Move> opponentLegals);
 
-	protected boolean canCastle() {
-		return !kingInCheck && !playerKing.isCastled()
-				&& (playerKing.canKingSideCastle() || playerKing.canQueenSideCastle());
+	// ===== Getters ===== \\
+	public boolean isKingInCheck() {
+		return kingInCheck;
+	}
+
+	public boolean isInCheckMate() {
+		return kingInCheck && !hasExecutableMoves();
+	}
+
+	public boolean isInStaleMate() {
+		return !kingInCheck && !hasExecutableMoves();
 	}
 
 	public List<Move> getLegalMoves() {
 		return legalMoves;
+	}
+
+	public boolean canCastle() {
+		return !kingInCheck && !playerKing.isCastled()
+				&& (playerKing.canKingSideCastle() || playerKing.canQueenSideCastle());
 	}
 }

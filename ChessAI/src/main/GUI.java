@@ -70,6 +70,7 @@ public class GUI {
 		mm.setMoveExecutionListener(e -> {
 			if (e.getMoveStatus() == MoveStatus.DONE) {
 				boardPanel.setBoard(board = e.getNewBoard());
+				boardPanel.setLastMove(e.getExecutedMove());
 				panelMoves.addMove(e.getExecutedMove());
 				if (e.getExecutedMove().isAttackMove()) {
 					AttackMove m = (AttackMove) e.getExecutedMove();
@@ -166,8 +167,8 @@ public class GUI {
 		btnReset.setClickListener(e -> {
 			mm.stop();
 			boardPanel.setBoard(board = Board.create());
+			boardPanel.setLastMove(null);
 			panelTakenPieces.clear();
-			panelConsole.clear();
 			panelMoves.clear();
 			mm = new MoveMaker(boxPlayer1.getSelectedElement(), boxPlayer2.getSelectedElement(), boardPanel);
 			mm.setMoveExecutionListener(m -> {

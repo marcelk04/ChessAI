@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import chess.move.Move;
 import chess.move.Position;
@@ -36,36 +38,14 @@ public class Board {
 		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves);
 		this.currentPlayer = builder.nextMoveMaker == Team.WHITE ? whitePlayer : blackPlayer;
 	}
-	
+
 	@Override
 	public String toString() {
 		String result = "";
-		result += "White: " + whitePieces.size();
-		result += "; Black: " + blackPieces.size();
-		result += "; Current Player: " + currentPlayer.getTeam();
+		result += "White:" + whitePieces.size();
+		result += ";Black:" + blackPieces.size();
+		result += "; Current Player:" + currentPlayer.getTeam();
 		return result;
-	}
-
-	private static List<Piece> getActivePieces(Builder builder, Team team) {
-		final List<Piece> activePieces = new ArrayList<Piece>();
-		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
-				Piece p = builder.boardConfig.get(new Position(x, y));
-				if (p != null && p.getTeam() == team) {
-					activePieces.add(p);
-				}
-			}
-		}
-
-		return activePieces;
-	}
-
-	private List<Move> getLegalMoves(List<Piece> pieces) {
-		final List<Move> legalMoves = new ArrayList<Move>();
-		for (Piece p : pieces) {
-			legalMoves.addAll(p.getMoves(this));
-		}
-		return legalMoves;
 	}
 
 	public static Board create() {
@@ -110,8 +90,37 @@ public class Board {
 		return b.build();
 	}
 
+	public Move findMove(int currentX, int currentY, int pieceDestinationX, int pieceDestinationY) {
+		for (Move m : getAllLegalMoves()) {
+			if (m.getCurrentX() == currentX && m.getCurrentY() == currentY
+					&& m.getPieceDestinationX() == pieceDestinationX && m.getPieceDestinationY() == pieceDestinationY) {
+				return m;
+			}
+		}
+		return Move.NULL_MOVE;
+	}
+
+	// ===== Getters ===== \\
+	private static List<Piece> getActivePieces(Builder builder, Team team) {
+		final List<Piece> activePieces = new ArrayList<Piece>();
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				Piece p = builder.boardConfig.get(new Position(x, y));
+				if (p != null && p.getTeam() == team) {
+					activePieces.add(p);
+				}
+			}
+		}
+
+		return activePieces;
+	}
+
+	private List<Move> getLegalMoves(List<Piece> pieces) {
+		return pieces.stream().flatMap(p -> p.getMoves(this).stream()).collect(Collectors.toList());
+	}
+
 	public Piece getPiece(int x, int y) {
-		return this.boardConfig.get(new Position(x, y));
+		return boardConfig.get(new Position(x, y));
 	}
 
 	public List<Piece> getWhitePieces() {
@@ -135,46 +144,20 @@ public class Board {
 	}
 
 	public List<Piece> getAllPieces() {
-		List<Piece> pieces = whitePieces;
-		whitePieces.addAll(blackPieces);
-		return pieces;
+		return Stream.concat(whitePieces.stream(), blackPieces.stream()).collect(Collectors.toList());
 	}
 
 	public List<Move> getPossibleMoves(Piece piece) {
-		List<Move> moves = new ArrayList<Move>();
-		List<Move> allTeamMoves;
-
-		if (piece.getTeam() == Team.WHITE) {
-			allTeamMoves = whitePlayer.getLegalMoves();
-		} else {
-			allTeamMoves = blackPlayer.getLegalMoves();
-		}
-
-		for (Move m : allTeamMoves) {
-			if (piece.equals(m.getMovedPiece())) {
-				moves.add(m);
-			}
-		}
-
-		return moves;
+		return (piece.getTeam() == Team.WHITE ? whitePlayer.getLegalMoves() : blackPlayer.getLegalMoves()).stream()
+				.filter(m -> piece.equals(m.getMovedPiece())).collect(Collectors.toList());
 	}
 
 	public List<Move> getAllLegalMoves() {
-		List<Move> moves = whitePlayer.getLegalMoves();
-		moves.addAll(blackPlayer.getLegalMoves());
-		return moves;
+		return Stream.concat(whitePlayer.getLegalMoves().stream(), blackPlayer.getLegalMoves().stream())
+				.collect(Collectors.toList());
 	}
 
-	public Move findMove(int currentX, int currentY, int pieceDestinationX, int pieceDestinationY) {
-		for (Move m : getAllLegalMoves()) {
-			if (m.getCurrentX() == currentX && m.getCurrentY() == currentY
-					&& m.getPieceDestinationX() == pieceDestinationX && m.getPieceDestinationY() == pieceDestinationY) {
-				return m;
-			}
-		}
-		return Move.NULL_MOVE;
-	}
-
+	// ===== Inner classes ===== \\
 	public static class Builder {
 		Map<Position, Piece> boardConfig;
 		Team nextMoveMaker;
@@ -184,7 +167,7 @@ public class Board {
 		}
 
 		public Builder setPiece(Piece piece) {
-			this.boardConfig.put(new Position(piece.getX(), piece.getY()), piece);
+			boardConfig.put(new Position(piece.getX(), piece.getY()), piece);
 			return this;
 		}
 

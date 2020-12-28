@@ -33,8 +33,8 @@ public class BlackPlayer extends Player {
 	}
 
 	@Override
-	protected List<Move> calculateKingCastles(List<Move> opponentLegals) {
-		final List<Move> kingCastles = new ArrayList<Move>();
+	protected List<Move> calculateCastleMoves(List<Move> opponentLegals) {
+		List<Move> kingCastles = new ArrayList<Move>();
 
 		if (canCastle() && !playerKing.gotMovedAtLeastOnce() && playerKing.getX() == 4 && playerKing.getY() == 0
 				&& !kingInCheck) {

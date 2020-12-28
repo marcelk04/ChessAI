@@ -1,5 +1,8 @@
 package algorithm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import chess.Board;
 import chess.move.Move;
 import chess.move.MoveStatus;
@@ -16,17 +19,14 @@ public class Minimax implements Runnable {
 	private int depth;
 	private boolean usePruning;
 	private long evaluatedBoards;
-	
-	private static Minimax minimax;
+
+	private static List<Minimax> list = new ArrayList<Minimax>();
 
 	public Minimax(MoveMaker mm, int depth, boolean usePruning) {
 		this.mm = mm;
 		this.depth = depth;
 		this.usePruning = usePruning;
 		this.evaluatedBoards = 0;
-		
-		minimax = this;
-
 		start();
 	}
 
@@ -65,8 +65,11 @@ public class Minimax implements Runnable {
 
 		MoveTransition mt = currentPlayer.makeMove(bestMove);
 		UIConsole.log("Evaluated Boards: " + evaluatedBoards + " with search depth " + depth + " | Best Move: "
-				+ bestMove.getNotation());
-		mm.moveExecuted(mt);
+				+ bestMove.getNotation() + " with evaluation of " + bestEval);
+
+		if (running)
+			mm.moveExecuted(mt);
+		stop();
 	}
 
 	private int min(Board board, int depth, int alpha, int beta) {
@@ -126,6 +129,7 @@ public class Minimax implements Runnable {
 		thread = new Thread(this);
 		thread.start();
 		running = true;
+		list.add(this);
 	}
 
 	public synchronized void stop() {
@@ -133,9 +137,13 @@ public class Minimax implements Runnable {
 			return;
 
 		running = false;
+		list.remove(this);
 	}
-	
-	public static void terminate() {
-		minimax.stop();
+
+	public static void stopAll() {
+		UIConsole.log("Stopping " + list.size() + " thread(s)!");
+		for (int i = list.size() - 1; i >= 0; i--) {
+			list.get(i).stop();
+		}
 	}
 }
