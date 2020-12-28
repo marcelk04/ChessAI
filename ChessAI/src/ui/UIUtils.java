@@ -98,4 +98,12 @@ public class UIUtils {
 
 		return totalHeight;
 	}
+
+	public static Color mixColors(Color a, Color b) {
+		int red = (a.getRed() + b.getRed()) / 2;
+		int green = (a.getGreen() + b.getGreen()) / 2;
+		int blue = (a.getBlue() + b.getBlue()) / 2;
+		int alpha = (a.getAlpha() + b.getAlpha()) / 2;
+		return new Color(red, green, blue, alpha);
+	}
 }

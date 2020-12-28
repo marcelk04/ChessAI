@@ -10,6 +10,7 @@ import chess.Board;
 import chess.move.Move;
 import chess.move.MoveTransition;
 import chess.pieces.Piece;
+import ui.UIUtils;
 import ui.interfaces.Clickable;
 import ui.listeners.MoveExecutionListener;
 
@@ -20,15 +21,17 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private Piece selectedPiece;
 	private List<Move> selectedPiece_moves;
 	private MoveExecutionListener meListener;
-	private Color lightColor, darkColor, moveColor;
+	private Color lightColor, darkColor, moveColor, lastMoveColor;
 	private Color[][] colors;
 	private MoveMaker moveMaker;
+	private Move lastMove;
 
 	public UIBoardPanel() {
 		colors = new Color[8][8];
 		lightColor = Color.white;
 		darkColor = Color.lightGray;
 		moveColor = Color.orange;
+		lastMoveColor = Color.green;
 		fillColorArray();
 	}
 
@@ -85,12 +88,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 				int destinationX = m.getPieceDestinationX();
 				int destinationY = m.getPieceDestinationY();
 
-				Color oldColor = colors[destinationX][destinationY];
-				Color newColor = new Color((oldColor.getRed() + moveColor.getRed()) / 2,
-						(oldColor.getGreen() + moveColor.getGreen()) / 2,
-						(oldColor.getBlue() + moveColor.getBlue()) / 2);
-
-				colors[destinationX][destinationY] = newColor;
+				colors[destinationX][destinationY] = UIUtils.mixColors(colors[destinationX][destinationY], moveColor);
 			}
 		} else {
 			boolean moveFound = false;
@@ -104,8 +102,11 @@ public class UIBoardPanel extends UIObject implements Clickable {
 							meListener.onMoveExecution(mt);
 
 						moveMaker.moveExecuted(mt);
+						lastMove = m;
 
 						moveFound = true;
+
+						fillColorArray();
 						break;
 					}
 				}
@@ -133,6 +134,13 @@ public class UIBoardPanel extends UIObject implements Clickable {
 				}
 			}
 		}
+
+		if (lastMove != null) {
+			colors[lastMove.getCurrentX()][lastMove.getCurrentY()] = UIUtils
+					.mixColors(colors[lastMove.getCurrentX()][lastMove.getCurrentY()], lastMoveColor);
+			colors[lastMove.getPieceDestinationX()][lastMove.getPieceDestinationY()] = UIUtils
+					.mixColors(colors[lastMove.getPieceDestinationX()][lastMove.getPieceDestinationY()], lastMoveColor);
+		}
 	}
 
 	// ===== Getters ===== \\
@@ -156,8 +164,16 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		return moveColor;
 	}
 
+	public Color getLastMoveColor() {
+		return lastMoveColor;
+	}
+
 	public MoveMaker getMoveMaker() {
 		return moveMaker;
+	}
+
+	public Move getLastMove() {
+		return lastMove;
 	}
 
 	// ===== Setters ===== \\
@@ -194,10 +210,19 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		clearMoves();
 	}
 
+	public void setLastMoveColor(Color lastMoveColor) {
+		this.lastMoveColor = lastMoveColor;
+	}
+
 	public void setMoveMaker(MoveMaker moveMaker) {
 		this.moveMaker = moveMaker;
 
 		if (moveMaker != null)
 			setBoard(moveMaker.getBoard());
+	}
+
+	public void setLastMove(Move lastMove) {
+		this.lastMove = lastMove;
+		fillColorArray();
 	}
 }
