@@ -1,5 +1,7 @@
 package algorithm;
 
+import static algorithm.Evaluator.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,9 @@ public class Minimax implements Runnable {
 	private MoveMaker mm;
 	private int depth;
 	private boolean usePruning;
-	private long evaluatedBoards;
+	private long evaluatedBoards, timesPruned;
+	private double movesPerBoard, prunedBoards;
+	private int count;
 
 	private static List<Minimax> list = new ArrayList<Minimax>();
 
@@ -27,6 +31,10 @@ public class Minimax implements Runnable {
 		this.depth = depth;
 		this.usePruning = usePruning;
 		this.evaluatedBoards = 0;
+		this.timesPruned = 0;
+		this.movesPerBoard = mm.getBoard().getCurrentPlayer().getLegalMoves().size();
+		this.prunedBoards = 0;
+		this.count = 1;
 		start();
 	}
 
@@ -36,6 +44,7 @@ public class Minimax implements Runnable {
 		final Player currentPlayer = board.getCurrentPlayer();
 		Move bestMove = null;
 		int bestEval;
+		double time = System.currentTimeMillis();
 
 		if (currentPlayer.getTeam() == Team.WHITE) {
 			bestEval = Integer.MIN_VALUE;
@@ -64,8 +73,12 @@ public class Minimax implements Runnable {
 		}
 
 		MoveTransition mt = currentPlayer.makeMove(bestMove);
-		UIConsole.log("Evaluated Boards: " + evaluatedBoards + " with search depth " + depth + " | Best Move: "
-				+ bestMove.getNotation() + " with evaluation of " + bestEval);
+
+		time = (System.currentTimeMillis() - time) / 1000d;
+		UIConsole.log("Evaluated Boards:" + evaluatedBoards + "|Depth:" + depth + "|Best Move:" + bestMove.getNotation()
+				+ "|Best Eval:" + bestEval + "|Time: " + time + "s|Times pruned:" + timesPruned
+				+ "|Approx pruned boards:" + Math.round(prunedBoards) + "|in %:"
+				+ Math.round(prunedBoards / (evaluatedBoards + prunedBoards) * 10000) / 100d);
 
 		if (running)
 			mm.moveExecuted(mt);
@@ -73,15 +86,17 @@ public class Minimax implements Runnable {
 	}
 
 	private int min(Board board, int depth, int alpha, int beta) {
-		if (depth == 0 || Evaluator.hasGameEnded(board)) {
+		if (depth == 0 || hasGameEnded(board)) {
 			evaluatedBoards++;
-			return Evaluator.evaluateBoard(board);
+			return evaluateBoard(board);
 		}
 
+		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
+		movesPerBoard = (movesPerBoard * count + moves.size()) / ++count;
 		int minEval = beta;
 
-		for (Move m : board.getCurrentPlayer().getLegalMoves()) {
-			MoveTransition mt = board.getCurrentPlayer().makeMove(m);
+		for (int i = 0; i < moves.size(); i++) {
+			MoveTransition mt = board.getCurrentPlayer().makeMove(moves.get(i));
 
 			if (mt.getMoveStatus() == MoveStatus.DONE) {
 				int currentEval = max(mt.getNewBoard(), depth - 1, alpha, minEval);
@@ -89,6 +104,8 @@ public class Minimax implements Runnable {
 				minEval = Math.min(minEval, currentEval);
 
 				if (usePruning && minEval <= alpha) {
+					timesPruned++;
+					prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}
 			}
@@ -98,15 +115,17 @@ public class Minimax implements Runnable {
 	}
 
 	private int max(Board board, int depth, int alpha, int beta) {
-		if (depth == 0 || Evaluator.hasGameEnded(board)) {
+		if (depth == 0 || hasGameEnded(board)) {
 			evaluatedBoards++;
-			return Evaluator.evaluateBoard(board);
+			return evaluateBoard(board);
 		}
 
+		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
+		movesPerBoard = (movesPerBoard * count + moves.size()) / ++count;
 		int maxEval = alpha;
 
-		for (Move m : board.getCurrentPlayer().getLegalMoves()) {
-			MoveTransition mt = board.getCurrentPlayer().makeMove(m);
+		for (int i = 0; i < moves.size(); i++) {
+			MoveTransition mt = board.getCurrentPlayer().makeMove(moves.get(i));
 
 			if (mt.getMoveStatus() == MoveStatus.DONE) {
 				int currentEval = min(mt.getNewBoard(), depth - 1, maxEval, beta);
@@ -114,6 +133,8 @@ public class Minimax implements Runnable {
 				maxEval = Math.max(maxEval, currentEval);
 
 				if (usePruning && maxEval >= beta) {
+					timesPruned++;
+					prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}
 			}

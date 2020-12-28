@@ -3,6 +3,8 @@ package main;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -39,6 +41,12 @@ public class GUI {
 
 		display = new Display("Chess", 1280, 720);
 		display.setBackground(Color.white);
+		display.getFrame().addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				mm.reset();
+			}
+		});
 
 		board = Board.create();
 
@@ -177,8 +185,7 @@ public class GUI {
 		btnReset.setTextColor(Color.white);
 		btnReset.setBackground(Color.black);
 		btnReset.setClickListener(e -> {
-			mm.stop();
-			boardPanel.setBoard(board = Board.create());
+			mm.reset();
 			boardPanel.setLastMove(null);
 			panelTakenPieces.clear();
 			panelMoves.clear();

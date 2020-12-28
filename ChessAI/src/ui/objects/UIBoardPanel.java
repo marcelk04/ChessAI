@@ -8,6 +8,7 @@ import java.util.List;
 import algorithm.MoveMaker;
 import chess.Board;
 import chess.move.Move;
+import chess.move.MoveStatus;
 import chess.move.MoveTransition;
 import chess.pieces.Piece;
 import ui.UIUtils;
@@ -98,16 +99,18 @@ public class UIBoardPanel extends UIObject implements Clickable {
 					if (m.getPieceDestinationX() == pieceX && m.getPieceDestinationY() == pieceY) {
 						MoveTransition mt = board.getCurrentPlayer().makeMove(m);
 
-						if (meListener != null)
-							meListener.onMoveExecution(mt);
+						if (mt.getMoveStatus() == MoveStatus.DONE) {
+							if (meListener != null)
+								meListener.onMoveExecution(mt);
 
-						moveMaker.moveExecuted(mt);
-						lastMove = m;
+							moveMaker.moveExecuted(mt);
+							lastMove = m;
 
-						moveFound = true;
+							moveFound = true;
 
-						fillColorArray();
-						break;
+							fillColorArray();
+							break;
+						}
 					}
 				}
 			}

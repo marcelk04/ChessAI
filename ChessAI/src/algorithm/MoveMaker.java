@@ -14,7 +14,7 @@ public class MoveMaker {
 	private Board board;
 	private Team currentTeam;
 	private MoveExecutionListener moveExecutionListener;
-	private static boolean stopped = false;
+	private boolean stopped = false;
 
 	public MoveMaker(PlayerType player1, PlayerType player2, UIBoardPanel boardPanel) {
 		this.player1 = player1;
@@ -26,13 +26,13 @@ public class MoveMaker {
 	}
 
 	public void moveExecuted(MoveTransition m) {
-		if (moveExecutionListener != null) {
+		if (moveExecutionListener != null)
 			moveExecutionListener.onMoveExecution(m);
-		}
 
 		if (m.getMoveStatus() == MoveStatus.DONE) {
 			board = m.getNewBoard();
 			currentTeam = board.getCurrentPlayer().getTeam();
+			boardPanel.setLastMove(m.getExecutedMove());
 		} else {
 			UIConsole.log("Couldn't execute move|" + m);
 			throw new RuntimeException();
@@ -57,7 +57,7 @@ public class MoveMaker {
 		}
 	}
 
-	public void stop() {
+	public void reset() {
 		Minimax.stopAll();
 		stopped = true;
 	}
