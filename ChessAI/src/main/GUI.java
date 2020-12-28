@@ -119,10 +119,10 @@ public class GUI {
 		});
 		panelSettings.add(btnSave);
 
-		UIPanel panelColor = new UIPanel();
-		panelColor.setBounds(1090, 250, 180, 115);
-		panelColor.setBorder(Color.black);
-		display.add(panelColor);
+		UIPanel panelColors = new UIPanel();
+		panelColors.setBounds(1090, 250, 180, 150);
+		panelColors.setBorder(Color.black);
+		display.add(panelColors);
 
 		UITextButton btnLightColor = new UITextButton("Set Light Color");
 		btnLightColor.setBounds(1100, 260, 160, 25);
@@ -134,7 +134,7 @@ public class GUI {
 			if (newColor != null)
 				boardPanel.setLightColor(newColor);
 		});
-		panelColor.add(btnLightColor);
+		panelColors.add(btnLightColor);
 
 		UITextButton btnDarkColor = new UITextButton("Set Dark Color");
 		btnDarkColor.setBounds(1100, 295, 160, 25);
@@ -146,7 +146,7 @@ public class GUI {
 			if (newColor != null)
 				boardPanel.setDarkColor(newColor);
 		});
-		panelColor.add(btnDarkColor);
+		panelColors.add(btnDarkColor);
 
 		UITextButton btnMoveColor = new UITextButton("Set Move Color");
 		btnMoveColor.setBounds(1100, 330, 160, 25);
@@ -158,7 +158,19 @@ public class GUI {
 			if (newColor != null)
 				boardPanel.setMoveColor(newColor);
 		});
-		display.add(btnMoveColor);
+		panelColors.add(btnMoveColor);
+
+		UITextButton btnLastMoveColor = new UITextButton("Set last Move Color");
+		btnLastMoveColor.setBounds(1100, 365, 160, 25);
+		btnLastMoveColor.setTextColor(Color.white);
+		btnLastMoveColor.setBackground(Color.black);
+		btnLastMoveColor.setClickListener(e -> {
+			Color newColor = JColorChooser.showDialog(display.getFrame(), "Choose new last move color",
+					boardPanel.getLastMoveColor());
+			if (newColor != null)
+				boardPanel.setLastMoveColor(newColor);
+		});
+		panelColors.add(btnLastMoveColor);
 
 		UITextButton btnReset = new UITextButton("Reset");
 		btnReset.setBounds(1090, 640, 180, 30);
