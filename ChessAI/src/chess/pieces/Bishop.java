@@ -15,7 +15,7 @@ public class Bishop extends Piece {
 	}
 
 	private Bishop(int x, int y, Team team, boolean movedAtLeastOnce) {
-		super(x, y, 30, team, PieceType.BISHOP);
+		super(x, y, 32, team, PieceType.BISHOP);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_bishop : Assets.black_bishop;
 	}

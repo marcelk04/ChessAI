@@ -1,7 +1,5 @@
 package algorithm;
 
-import static algorithm.Evaluator.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +21,7 @@ public class Minimax implements Runnable {
 	private long evaluatedBoards, timesPruned;
 	private double movesPerBoard, prunedBoards;
 	private int count;
+	private BoardEvaluator evaluator;
 
 	private static List<Minimax> list = new ArrayList<Minimax>();
 
@@ -35,6 +34,7 @@ public class Minimax implements Runnable {
 		this.movesPerBoard = mm.getBoard().getCurrentPlayer().getLegalMoves().size();
 		this.prunedBoards = 0;
 		this.count = 1;
+		evaluator = new SimpleBoardEvaluator();
 		start();
 	}
 
@@ -86,9 +86,9 @@ public class Minimax implements Runnable {
 	}
 
 	private int min(Board board, int depth, int alpha, int beta) {
-		if (depth == 0 || hasGameEnded(board)) {
+		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-			return evaluateBoard(board);
+			return evaluator.evaluate(board, depth);
 		}
 
 		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
@@ -105,7 +105,8 @@ public class Minimax implements Runnable {
 
 				if (usePruning && minEval <= alpha) {
 					timesPruned++;
-					prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
+					if (depth > 1)
+						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}
 			}
@@ -115,9 +116,9 @@ public class Minimax implements Runnable {
 	}
 
 	private int max(Board board, int depth, int alpha, int beta) {
-		if (depth == 0 || hasGameEnded(board)) {
+		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-			return evaluateBoard(board);
+			return evaluator.evaluate(board, depth);
 		}
 
 		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
@@ -134,7 +135,8 @@ public class Minimax implements Runnable {
 
 				if (usePruning && maxEval >= beta) {
 					timesPruned++;
-					prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
+					if (depth > 1)
+						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}
 			}
@@ -162,9 +164,11 @@ public class Minimax implements Runnable {
 	}
 
 	public static void stopAll() {
-		UIConsole.log("Stopping " + list.size() + " thread(s)!");
-		for (int i = list.size() - 1; i >= 0; i--) {
-			list.get(i).stop();
+		if (list.size() > 0) {
+			UIConsole.log("Stopping " + list.size() + " thread(s)!");
+			for (int i = list.size() - 1; i >= 0; i--) {
+				list.get(i).stop();
+			}
 		}
 	}
 }

@@ -16,7 +16,7 @@ public class Knight extends Piece {
 	}
 
 	private Knight(int x, int y, Team team, boolean movedAtLeastOnce) {
-		super(x, y, 30, team, PieceType.KNIGHT);
+		super(x, y, 31, team, PieceType.KNIGHT);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_knight : Assets.black_knight;
 	}

@@ -42,7 +42,7 @@ public class MoveMaker {
 
 	public void makeNextMove() {
 		if (!stopped) {
-			if (Evaluator.hasGameEnded(board)) {
+			if (board.hasGameEnded()) {
 				UIConsole.log(board.getCurrentPlayer().getOpponent().getTeam() + " has won!");
 				boardPanel.setMoveMaker(null);
 			} else {

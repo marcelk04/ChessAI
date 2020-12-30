@@ -100,6 +100,14 @@ public class Board {
 		return Move.NULL_MOVE;
 	}
 
+	public static boolean hasGameEnded(Board board) {
+		return board.getCurrentPlayer().isInCheckMate() || board.getCurrentPlayer().isInStaleMate();
+	}
+
+	public boolean hasGameEnded() {
+		return hasGameEnded(this);
+	}
+
 	// ===== Getters ===== \\
 	private static List<Piece> getActivePieces(Builder builder, Team team) {
 		final List<Piece> activePieces = new ArrayList<Piece>();
