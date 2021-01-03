@@ -11,12 +11,14 @@ import gfx.Assets;
 import main.Utils;
 
 public class Knight extends Piece {
-	public Knight(int x, int y, Team team) {
-		this(x, y, team, false);
+	private static final int[] CANDIDATE_MOVE_COORDINATES = { -17, -15, -10, -6, 6, 10, 15, 17 };
+
+	public Knight(int position, Team team) {
+		this(position, team, false);
 	}
 
-	private Knight(int x, int y, Team team, boolean movedAtLeastOnce) {
-		super(x, y, 31, team, PieceType.KNIGHT);
+	private Knight(int position, Team team, boolean movedAtLeastOnce) {
+		super(position, team, PieceType.KNIGHT);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_knight : Assets.black_knight;
 	}
@@ -25,39 +27,27 @@ public class Knight extends Piece {
 	public List<Move> getMoves(Board board) {
 		List<Move> moves = new ArrayList<Move>();
 
-		Piece currentPiece;
-
-		for (int y = -1; y <= 1; y += 2) {
-			if (!Utils.inRange(this.y + y, 0, 7))
+		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
+			int x = Utils.getX(position);
+			if ((x == 0 && (currentOffset == -17 || currentOffset == -10 || currentOffset == 6 || currentOffset == 15))
+					|| (x == 1 && (currentOffset == -10 || currentOffset == 6))
+					|| (x == 6 && (currentOffset == -6 || currentOffset == 10)) || (x == 7 && (currentOffset == -15
+							|| currentOffset == -6 || currentOffset == 10 || currentOffset == 17))) {
+				// if knight is in 1st, 2nd, 7th or 8th column & would move further out
 				continue;
-
-			for (int x = -2; x <= 2; x += 4) {
-				if (!Utils.inRange(this.x + x, 0, 7))
-					continue;
-
-				currentPiece = board.getPiece(this.x + x, this.y + y);
-
-				if (currentPiece == null)
-					moves.add(new NormalMove(board, this, this.x + x, this.y + y));
-				else if (currentPiece.getTeam() != team)
-					moves.add(new AttackMove(board, this, this.x + x, this.y + y, currentPiece));
 			}
-		}
 
-		for (int y = -2; y <= 2; y += 4) {
-			if (!Utils.inRange(this.y + y, 0, 7))
-				continue;
+			int currentDestination = position + currentOffset;
 
-			for (int x = -1; x <= 1; x += 2) {
-				if (!Utils.inRange(this.x + x, 0, 7))
-					continue;
+			if (Utils.inRange(currentDestination, 0, 63)) {
+				Piece pieceAtDestination = board.getPiece(currentDestination);
 
-				currentPiece = board.getPiece(this.x + x, this.y + y);
-
-				if (currentPiece == null || currentPiece.getTeam() != team)
-					moves.add(new NormalMove(board, this, this.x + x, this.y + y));
-				else if (currentPiece.getTeam() != team)
-					moves.add(new AttackMove(board, this, this.x + x, this.y + y, currentPiece));
+				if (pieceAtDestination == null) {
+					moves.add(new NormalMove(board, this, currentDestination));
+				} else {
+					if (team != pieceAtDestination.getTeam())
+						moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
+				}
 			}
 		}
 
@@ -66,6 +56,6 @@ public class Knight extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new Knight(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
+		return new Knight(move.getPieceDestination(), team, true);
 	}
 }

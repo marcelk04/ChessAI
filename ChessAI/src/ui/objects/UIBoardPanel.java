@@ -11,6 +11,7 @@ import chess.move.Move;
 import chess.move.MoveStatus;
 import chess.move.MoveTransition;
 import chess.pieces.Piece;
+import main.Utils;
 import ui.UIUtils;
 import ui.interfaces.Clickable;
 import ui.listeners.MoveExecutionListener;
@@ -23,12 +24,12 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private List<Move> selectedPiece_moves;
 	private MoveExecutionListener meListener;
 	private Color lightColor, darkColor, moveColor, lastMoveColor;
-	private Color[][] colors;
+	private Color[] colors;
 	private MoveMaker moveMaker;
 	private Move lastMove;
 
 	public UIBoardPanel() {
-		colors = new Color[8][8];
+		colors = new Color[64];
 		lightColor = Color.white;
 		darkColor = Color.lightGray;
 		moveColor = Color.orange;
@@ -38,16 +39,17 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	@Override
 	public void render(Graphics g) {
-		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
-				g.setColor(colors[x][y]);
-				g.fillRect(this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
+		for (int i = 0; i < 64; i++) {
+			int x = Utils.getX(i);
+			int y = Utils.getY(i);
 
-				if (board != null) {
-					Piece p = board.getPiece(x, y);
-					if (p != null) {
-						p.render(g, this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
-					}
+			g.setColor(colors[i]);
+			g.fillRect(this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
+
+			if (board != null) {
+				Piece p = board.getPiece(i);
+				if (p != null) {
+					p.render(g, this.x + x * pieceWidth, this.y + y * pieceHeight, pieceWidth, pieceHeight);
 				}
 			}
 		}
@@ -71,13 +73,9 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		if (!hovering || board == null || moveMaker == null)
 			return;
 
-		int clickedX = e.getX();
-		int clickedY = e.getY();
+		int piecePosition = Utils.getIndex((e.getX() - this.x) / pieceWidth, (e.getY() - this.y) / pieceHeight);
 
-		int pieceX = (clickedX - this.x) / pieceWidth;
-		int pieceY = (clickedY - this.y) / pieceHeight;
-
-		Piece clickedPiece = board.getPiece(pieceX, pieceY);
+		Piece clickedPiece = board.getPiece(piecePosition);
 
 		if (clickedPiece != null && clickedPiece.getTeam() == board.getCurrentPlayer().getTeam()) {
 			clearMoves();
@@ -86,17 +84,16 @@ public class UIBoardPanel extends UIObject implements Clickable {
 			selectedPiece_moves = board.getPossibleMoves(selectedPiece);
 
 			for (Move m : selectedPiece_moves) {
-				int destinationX = m.getPieceDestinationX();
-				int destinationY = m.getPieceDestinationY();
+				int pieceDestination = m.getPieceDestination();
 
-				colors[destinationX][destinationY] = UIUtils.mixColors(colors[destinationX][destinationY], moveColor);
+				colors[pieceDestination] = UIUtils.mixColors(colors[pieceDestination], moveColor);
 			}
 		} else {
 			boolean moveFound = false;
 
 			if (selectedPiece_moves != null) {
 				for (Move m : selectedPiece_moves) {
-					if (m.getPieceDestinationX() == pieceX && m.getPieceDestinationY() == pieceY) {
+					if (m.getPieceDestination() == piecePosition) {
 						MoveTransition mt = board.getCurrentPlayer().makeMove(m);
 
 						if (mt.getMoveStatus() == MoveStatus.DONE) {
@@ -128,21 +125,18 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	}
 
 	private void fillColorArray() {
-		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
-				if ((x + y) % 2 == 0) {
-					colors[x][y] = lightColor;
-				} else {
-					colors[x][y] = darkColor;
-				}
-			}
+		for (int i = 0; i < 64; i++) {
+			if ((Utils.getX(i) + Utils.getY(i)) % 2 == 0)
+				colors[i] = lightColor;
+			else
+				colors[i] = darkColor;
 		}
 
 		if (lastMove != null) {
-			colors[lastMove.getCurrentX()][lastMove.getCurrentY()] = UIUtils
-					.mixColors(colors[lastMove.getCurrentX()][lastMove.getCurrentY()], lastMoveColor);
-			colors[lastMove.getPieceDestinationX()][lastMove.getPieceDestinationY()] = UIUtils
-					.mixColors(colors[lastMove.getPieceDestinationX()][lastMove.getPieceDestinationY()], lastMoveColor);
+			colors[lastMove.getCurrentPiecePosition()] = UIUtils.mixColors(colors[lastMove.getCurrentPiecePosition()],
+					lastMoveColor);
+			colors[lastMove.getPieceDestination()] = UIUtils.mixColors(colors[lastMove.getPieceDestination()],
+					lastMoveColor);
 		}
 	}
 

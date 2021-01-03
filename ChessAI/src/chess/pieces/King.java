@@ -11,19 +11,19 @@ import gfx.Assets;
 import main.Utils;
 
 public class King extends Piece {
-	private boolean isCastled;
-	private final boolean canKingSideCastle, canQueenSideCastle;
+	private static final int[] CANDIDATE_MOVE_COORDINATES = { -9, -8, -7, -1, 1, 7, 8, 9 };
 
-	public King(int x, int y, Team team, boolean canKingSideCastle, boolean canQueenSideCastle) {
-		this(x, y, team, false, canKingSideCastle, canQueenSideCastle, false);
+	private final boolean isCastled;
+	private final boolean canCastle;
+
+	public King(int position, Team team, boolean canCastle) {
+		this(position, team, false, canCastle, false);
 	}
 
-	private King(int x, int y, Team team, boolean movedAtLeastOnce, boolean canKingSideCastle,
-			boolean canQueenSideCastle, boolean isCastled) {
-		super(x, y, 900, team, PieceType.KING);
+	private King(int position, Team team, boolean movedAtLeastOnce, boolean canCastle, boolean isCastled) {
+		super(position, team, PieceType.KING);
 		this.isCastled = isCastled;
-		this.canKingSideCastle = canKingSideCastle;
-		this.canQueenSideCastle = canQueenSideCastle;
+		this.canCastle = canCastle;
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_king : Assets.black_king;
 	}
@@ -32,26 +32,25 @@ public class King extends Piece {
 	public List<Move> getMoves(Board board) {
 		List<Move> moves = new ArrayList<Move>();
 
-		Piece currentPiece;
-
-		int destinationX, destinationY;
-
-		for (int y = -1; y <= 1; y++) {
-			destinationY = this.y + y;
-			if (!Utils.inRange(destinationY, 0, 7))
+		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
+			if ((Utils.getX(position) == 0 && (currentOffset == -9 || currentOffset == -1 || currentOffset == 7))
+					|| (Utils.getX(position) == 7
+							&& (currentOffset == 9 || currentOffset == 1 || currentOffset == -7))) {
+				// if king is in left- or rightmost column; can't move any further
 				continue;
+			}
 
-			for (int x = -1; x <= 1; x++) {
-				destinationX = this.x + x;
-				if (!Utils.inRange(destinationX, 0, 7))
-					continue;
+			int currentDestination = position + currentOffset;
 
-				currentPiece = board.getPiece(destinationX, destinationY);
+			if (Utils.inRange(currentDestination, 0, 63)) {
+				Piece pieceAtDestination = board.getPiece(currentDestination);
 
-				if (currentPiece == null)
-					moves.add(new NormalMove(board, this, destinationX, destinationY));
-				else if (currentPiece.getTeam() != team)
-					moves.add(new AttackMove(board, this, destinationX, destinationY, currentPiece));
+				if (pieceAtDestination == null) {
+					moves.add(new NormalMove(board, this, currentDestination));
+				} else {
+					if (team != pieceAtDestination.getTeam())
+						moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
+				}
 			}
 		}
 
@@ -60,19 +59,14 @@ public class King extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new King(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true, false, false,
-				move.isCastlingMove());
+		return new King(move.getPieceDestination(), team, true, false, move.isCastlingMove());
 	}
 
 	public boolean isCastled() {
 		return isCastled;
 	}
 
-	public boolean canKingSideCastle() {
-		return canKingSideCastle;
-	}
-
-	public boolean canQueenSideCastle() {
-		return canQueenSideCastle;
+	public boolean canCastle() {
+		return canCastle;
 	}
 }

@@ -8,14 +8,17 @@ import chess.move.Move;
 import chess.move.Move.AttackMove;
 import chess.move.Move.NormalMove;
 import gfx.Assets;
+import main.Utils;
 
 public class Bishop extends Piece {
-	public Bishop(int x, int y, Team team) {
-		this(x, y, team, false);
+	private static final int[] CANDIDATE_MOVE_COORDINATES = { -9, -7, 7, 9 };
+
+	public Bishop(int position, Team team) {
+		this(position, team, false);
 	}
 
-	private Bishop(int x, int y, Team team, boolean movedAtLeastOnce) {
-		super(x, y, 32, team, PieceType.BISHOP);
+	private Bishop(int position, Team team, boolean movedAtLeastOnce) {
+		super(position, team, PieceType.BISHOP);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_bishop : Assets.black_bishop;
 	}
@@ -24,60 +27,27 @@ public class Bishop extends Piece {
 	public List<Move> getMoves(Board board) {
 		final List<Move> moves = new ArrayList<Move>();
 
-		Piece currentPiece;
+		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
+			int currentDestination = position;
 
-		boolean nwDone = false, neDone = false, seDone = false, swDone = false;
-
-		for (int i = 1; i < 7; i++) {
-			if (!nwDone && this.x - i >= 0 && this.y - i >= 0) { // northwest / left up
-				currentPiece = board.getPiece(this.x - i, this.y - i);
-
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x - i, this.y - i));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x - i, this.y - i, currentPiece));
-					nwDone = true;
-				} else {
-					nwDone = true;
+			while (Utils.inRange(currentDestination, 0, 63)) {
+				if ((Utils.getX(currentDestination) == 0 && (currentOffset == -9 || currentOffset == 7))
+						|| (Utils.getX(currentDestination) == 7 && (currentOffset == 9 || currentOffset == -7))) {
+					// if bishop is in left- or rightmost column; can't move any further
+					break;
 				}
-			}
+				currentDestination += currentOffset;
 
-			if (!seDone && this.x + i < 8 && this.y + i < 8) { // southeast / right down
-				currentPiece = board.getPiece(this.x + i, this.y + i);
+				if (Utils.inRange(currentDestination, 0, 63)) {
+					Piece pieceAtDestination = board.getPiece(currentDestination);
 
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x + i, this.y + i));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x + i, this.y + i, currentPiece));
-					seDone = true;
-				} else {
-					seDone = true;
-				}
-			}
-
-			if (!swDone && this.x - i >= 0 && this.y + i < 8) { // southwest / left down
-				currentPiece = board.getPiece(this.x - i, this.y + i);
-
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x - i, this.y + i));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x - i, this.y + i, currentPiece));
-					swDone = true;
-				} else {
-					swDone = true;
-				}
-			}
-
-			if (!neDone && this.x + i < 8 && this.y - i >= 0) { // northeast / right up
-				currentPiece = board.getPiece(this.x + i, this.y - i);
-
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x + i, this.y - i));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x + i, this.y - i, currentPiece));
-					neDone = true;
-				} else {
-					neDone = true;
+					if (pieceAtDestination == null) {
+						moves.add(new NormalMove(board, this, currentDestination));
+					} else {
+						if (team != pieceAtDestination.getTeam())
+							moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
+						break;
+					}
 				}
 			}
 		}
@@ -87,6 +57,6 @@ public class Bishop extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new Bishop(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
+		return new Bishop(move.getPieceDestination(), team, true);
 	}
 }

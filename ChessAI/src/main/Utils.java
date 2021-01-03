@@ -15,4 +15,16 @@ public class Utils {
 		else
 			return var;
 	}
+
+	public static int getX(int index) {
+		return index % 8;
+	}
+
+	public static int getY(int index) {
+		return (index - getX(index)) / 8;
+	}
+
+	public static int getIndex(int x, int y) {
+		return x + y * 8;
+	}
 }

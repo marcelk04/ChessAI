@@ -21,23 +21,23 @@ class EnPassantTest {
 
 		Pawn p;
 
-		b.setPiece(new Pawn(3, 3, Team.WHITE));
-		b.setPiece(new King(4, 7, Team.WHITE, true, true));
+		b.setPiece(new Pawn(27, Team.WHITE));
+		b.setPiece(new King(60, Team.WHITE, true));
 
-		b.setPiece(p = new Pawn(4, 1, Team.BLACK));
-		b.setPiece(new King(4, 0, Team.BLACK, true, true));
+		b.setPiece(p = new Pawn(12, Team.BLACK));
+		b.setPiece(new King(4, Team.BLACK, true));
 
 		b.setMoveMaker(Team.BLACK);
 
 		Board board = b.build();
 
-		MoveTransition mt = board.getCurrentPlayer().makeMove(new PawnJump(board, p, 4, 3));
+		MoveTransition mt = board.getCurrentPlayer().makeMove(new PawnJump(board, p, 28));
 
 		assertEquals(MoveStatus.DONE, mt.getMoveStatus());
 
 		board = mt.getNewBoard();
 
-		assertTrue(board.getWhitePlayer().getLegalMoves().contains(board.findMove(3, 3, 4, 2)));
+		assertTrue(board.getWhitePlayer().getLegalMoves().contains(board.findMove(27, 20)));
 	}
 
 	@Test
@@ -46,22 +46,22 @@ class EnPassantTest {
 
 		Pawn p;
 
-		b.setPiece(p = new Pawn(3, 6, Team.WHITE));
-		b.setPiece(new King(4, 7, Team.WHITE, true, true));
+		b.setPiece(p = new Pawn(51, Team.WHITE));
+		b.setPiece(new King(60, Team.WHITE, true));
 
-		b.setPiece(new Pawn(4, 4, Team.BLACK));
-		b.setPiece(new King(4, 0, Team.BLACK, true, true));
+		b.setPiece(new Pawn(36, Team.BLACK));
+		b.setPiece(new King(4, Team.BLACK, true));
 
 		b.setMoveMaker(Team.WHITE);
 
 		Board board = b.build();
 
-		MoveTransition mt = board.getCurrentPlayer().makeMove(new PawnJump(board, p, 3, 4));
+		MoveTransition mt = board.getCurrentPlayer().makeMove(new PawnJump(board, p, 35));
 
 		assertEquals(MoveStatus.DONE, mt.getMoveStatus());
 
 		board = mt.getNewBoard();
 
-		assertTrue(board.getBlackPlayer().getLegalMoves().contains(board.findMove(4, 4, 3, 5)));
+		assertTrue(board.getBlackPlayer().getLegalMoves().contains(board.findMove(36, 43)));
 	}
 }

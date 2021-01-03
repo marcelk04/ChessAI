@@ -10,17 +10,14 @@ import chess.move.Move;
 public abstract class Piece {
 	public static final int PIECE_WIDTH = 80, PIECE_HEIGHT = 80;
 
-	protected int x, y;
-	protected final int value;
+	protected int position;
 	protected Team team;
 	protected BufferedImage texture;
 	protected boolean movedAtLeastOnce = false;
 	protected PieceType type;
 
-	public Piece(int x, int y, int value, Team team, PieceType type) {
-		this.x = x;
-		this.y = y;
-		this.value = value;
+	public Piece(int position, Team team, PieceType type) {
+		this.position = position;
 		this.team = team;
 		this.type = type;
 	}
@@ -35,14 +32,13 @@ public abstract class Piece {
 
 		Piece otherPiece = (Piece) other;
 
-		return this.x == otherPiece.getX() && this.y == otherPiece.getY() && this.team == otherPiece.getTeam();
+		return this.position == otherPiece.getPosition() && this.team == otherPiece.getTeam();
 	}
 
 	@Override
 	public int hashCode() {
 		int result = team.hashCode();
-		result = 10 * result + x;
-		result = 10 * result + y;
+		result = 10 * result + position;
 		result = 10 * result + type.hashCode();
 		result = 10 * result + team.hashCode();
 		return result;
@@ -50,8 +46,7 @@ public abstract class Piece {
 
 	@Override
 	public String toString() {
-		return type.toString() + ";x=" + x + ";y=" + y + ";" + team.toString() + ";movedAtLeastOnce="
-				+ movedAtLeastOnce;
+		return type.toString() + ";pos=" + position + ";" + team.toString() + ";movedAtLeastOnce=" + movedAtLeastOnce;
 	}
 
 	public void render(Graphics g, int x, int y, int width, int height) {
@@ -67,16 +62,12 @@ public abstract class Piece {
 		return team;
 	}
 
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
+	public int getPosition() {
+		return position;
 	}
 
 	public int getValue() {
-		return value;
+		return type.getValue();
 	}
 
 	public boolean gotMovedAtLeastOnce() {

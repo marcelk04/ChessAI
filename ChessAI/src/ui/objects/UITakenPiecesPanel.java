@@ -38,16 +38,16 @@ public class UITakenPiecesPanel extends UIObject {
 
 			Position pos;
 
-			for (Piece p : whitePieces) {
-				pos = positions.get(p);
+			for (int i = 0; i < whitePieces.size(); i++) {
+				pos = positions.get(whitePieces.get(i));
 
-				p.render(g, pos.x, pos.y, pieceWidth, pieceHeight);
+				whitePieces.get(i).render(g, pos.x, pos.y, pieceWidth, pieceHeight);
 			}
 
-			for (Piece p : blackPieces) {
-				pos = positions.get(p);
+			for (int i = 0; i < blackPieces.size(); i++) {
+				pos = positions.get(blackPieces.get(i));
 
-				p.render(g, pos.x, pos.y, pieceWidth, pieceHeight);
+				blackPieces.get(i).render(g, pos.x, pos.y, pieceWidth, pieceHeight);
 			}
 
 			if (border != null) {

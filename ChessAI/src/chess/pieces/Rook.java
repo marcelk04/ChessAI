@@ -8,14 +8,17 @@ import chess.move.Move;
 import chess.move.Move.AttackMove;
 import chess.move.Move.NormalMove;
 import gfx.Assets;
+import main.Utils;
 
 public class Rook extends Piece {
-	public Rook(int x, int y, Team team) {
-		this(x, y, team, false);
+	private static final int[] CANDIDATE_MOVE_COORDINATES = { -8, -1, 8, 1 };
+
+	public Rook(int position, Team team) {
+		this(position, team, false);
 	}
 
-	public Rook(int x, int y, Team team, boolean movedAtLeastOnce) {
-		super(x, y, 46, team, PieceType.ROOK);
+	public Rook(int position, Team team, boolean movedAtLeastOnce) {
+		super(position, team, PieceType.ROOK);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_rook : Assets.black_rook;
 	}
@@ -24,60 +27,27 @@ public class Rook extends Piece {
 	public List<Move> getMoves(Board board) {
 		List<Move> moves = new ArrayList<Move>();
 
-		Piece currentPiece;
+		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
+			int currentDestination = position;
 
-		boolean nDone = false, sDone = false, wDone = false, eDone = false;
-
-		for (int i = 1; i < 8; i++) {
-			if (!nDone && this.y - i >= 0) { // north
-				currentPiece = board.getPiece(this.x, this.y - i);
-
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x, this.y - i));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x, this.y - i, currentPiece));
-					nDone = true;
-				} else {
-					nDone = true;
+			while (Utils.inRange(currentDestination, 0, 63)) {
+				if ((Utils.getX(currentDestination) == 0 && currentOffset == -1)
+						|| (Utils.getX(currentDestination) == 7 && currentOffset == 1)) {
+					break;
 				}
-			}
 
-			if (!sDone && this.y + i < 8) { // south
-				currentPiece = board.getPiece(this.x, this.y + i);
+				currentDestination += currentOffset;
 
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x, this.y + i));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x, this.y + i, currentPiece));
-					sDone = true;
-				} else {
-					sDone = true;
-				}
-			}
+				if (Utils.inRange(currentDestination, 0, 63)) {
+					Piece pieceAtDestination = board.getPiece(currentDestination);
 
-			if (!wDone && this.x - i >= 0) { // east
-				currentPiece = board.getPiece(this.x - i, this.y);
-
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x - i, this.y));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x - i, this.y, currentPiece));
-					wDone = true;
-				} else {
-					wDone = true;
-				}
-			}
-
-			if (!eDone && this.x + i < 8) { // south
-				currentPiece = board.getPiece(this.x + i, this.y);
-
-				if (currentPiece == null) {
-					moves.add(new NormalMove(board, this, this.x + i, this.y));
-				} else if (currentPiece.getTeam() != team) {
-					moves.add(new AttackMove(board, this, this.x + i, this.y, currentPiece));
-					eDone = true;
-				} else {
-					eDone = true;
+					if (pieceAtDestination == null) {
+						moves.add(new NormalMove(board, this, currentDestination));
+					} else {
+						if (team != pieceAtDestination.getTeam())
+							moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
+						break;
+					}
 				}
 			}
 		}
@@ -87,6 +57,6 @@ public class Rook extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new Rook(move.getPieceDestinationX(), move.getPieceDestinationY(), team, true);
+		return new Rook(move.getPieceDestination(), team, true);
 	}
 }

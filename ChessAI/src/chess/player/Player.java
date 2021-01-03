@@ -23,13 +23,13 @@ public abstract class Player {
 		this.playerKing = findKing();
 		playerLegals.addAll(calculateCastleMoves(opponentLegals));
 		this.legalMoves = playerLegals;
-		this.kingInCheck = !calculateAttacksOnTile(playerKing.getX(), playerKing.getY(), opponentLegals).isEmpty();
+		this.kingInCheck = !calculateAttacksOnTile(playerKing.getPosition(), opponentLegals).isEmpty();
 	}
 
-	public static List<Move> calculateAttacksOnTile(int x, int y, List<Move> moves) {
+	public static List<Move> calculateAttacksOnTile(int position, List<Move> moves) {
 		List<Move> attacks = new ArrayList<Move>();
 		for (Move m : moves) {
-			if (m.getPieceDestinationX() == x && m.getPieceDestinationY() == y) {
+			if (m.getPieceDestination() == position) {
 				attacks.add(m);
 			}
 		}
@@ -95,7 +95,6 @@ public abstract class Player {
 	}
 
 	public boolean canCastle() {
-		return !kingInCheck && !playerKing.isCastled()
-				&& (playerKing.canKingSideCastle() || playerKing.canQueenSideCastle());
+		return !kingInCheck && !playerKing.isCastled() && playerKing.canCastle();
 	}
 }

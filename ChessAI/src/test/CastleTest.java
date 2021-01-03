@@ -18,13 +18,13 @@ class CastleTest {
 	void test() {
 		Builder b = new Builder();
 
-		b.setPiece(new Rook(0, 0, Team.BLACK));
-		b.setPiece(new King(4, 0, Team.BLACK, true, true));
-		b.setPiece(new Rook(7, 0, Team.BLACK));
+		b.setPiece(new Rook(0, Team.BLACK));
+		b.setPiece(new King(4, Team.BLACK, true));
+		b.setPiece(new Rook(7, Team.BLACK));
 
-		b.setPiece(new Rook(0, 7, Team.WHITE));
-		b.setPiece(new King(4, 7, Team.WHITE, true, true));
-		b.setPiece(new Rook(7, 7, Team.WHITE));
+		b.setPiece(new Rook(56, Team.WHITE));
+		b.setPiece(new King(60, Team.WHITE, true));
+		b.setPiece(new Rook(63, Team.WHITE));
 
 		b.setMoveMaker(Team.WHITE);
 
@@ -33,10 +33,10 @@ class CastleTest {
 		List<Move> whiteLegals = board.getWhitePlayer().getLegalMoves();
 		List<Move> blackLegals = board.getBlackPlayer().getLegalMoves();
 
-		assertTrue(whiteLegals.contains(board.findMove(4, 7, 6, 7)));
-		assertTrue(whiteLegals.contains(board.findMove(4, 7, 2, 7)));
+		assertTrue(whiteLegals.contains(board.findMove(60, 62)));
+		assertTrue(whiteLegals.contains(board.findMove(60, 58)));
 
-		assertTrue(blackLegals.contains(board.findMove(4, 0, 6, 0)));
-		assertTrue(blackLegals.contains(board.findMove(4, 0, 2, 0)));
+		assertTrue(blackLegals.contains(board.findMove(4, 6)));
+		assertTrue(blackLegals.contains(board.findMove(4, 2)));
 	}
 }

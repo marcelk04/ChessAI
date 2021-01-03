@@ -13,13 +13,12 @@ public abstract class Move {
 
 	protected final Board board;
 	protected final Piece movedPiece;
-	protected final int pieceDestinationX, pieceDestinationY;
+	protected final int pieceDestination;
 
-	public Move(final Board board, final Piece movedPiece, final int pieceDestinationX, final int pieceDestinationY) {
+	public Move(final Board board, final Piece movedPiece, final int pieceDestination) {
 		this.board = board;
 		this.movedPiece = movedPiece;
-		this.pieceDestinationX = pieceDestinationX;
-		this.pieceDestinationY = pieceDestinationY;
+		this.pieceDestination = pieceDestination;
 	}
 
 	@Override
@@ -32,15 +31,13 @@ public abstract class Move {
 
 		Move otherMove = (Move) other;
 		return this.movedPiece.equals(otherMove.getMovedPiece())
-				&& this.pieceDestinationX == otherMove.getPieceDestinationX()
-				&& this.pieceDestinationY == otherMove.getPieceDestinationY();
+				&& this.pieceDestination == otherMove.getPieceDestination();
 	}
 
 	@Override
 	public int hashCode() {
 		int result = movedPiece.hashCode();
-		result = 10 * result + pieceDestinationX;
-		result = 10 * result + pieceDestinationY;
+		result = 10 * result + pieceDestination;
 		return result;
 	}
 
@@ -69,20 +66,12 @@ public abstract class Move {
 		return movedPiece;
 	}
 
-	public int getCurrentX() {
-		return movedPiece.getX();
+	public int getCurrentPiecePosition() {
+		return movedPiece.getPosition();
 	}
 
-	public int getCurrentY() {
-		return movedPiece.getY();
-	}
-
-	public int getPieceDestinationX() {
-		return pieceDestinationX;
-	}
-
-	public int getPieceDestinationY() {
-		return pieceDestinationY;
+	public int getPieceDestination() {
+		return pieceDestination;
 	}
 
 	public boolean isCastlingMove() {
@@ -95,7 +84,7 @@ public abstract class Move {
 
 	public static class NullMove extends Move {
 		public NullMove() {
-			super(null, null, 0, 0);
+			super(null, null, 0);
 		}
 
 		@Override
@@ -105,17 +94,16 @@ public abstract class Move {
 	}
 
 	public static class NormalMove extends Move {
-		public NormalMove(final Board board, final Piece movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
+		public NormalMove(final Board board, final Piece movedPiece, final int pieceDestination) {
+			super(board, movedPiece, pieceDestination);
 		}
 
 		@Override
 		public String getNotation() {
 			String notation = "";
 			notation += movedPiece.getType().getLetter();
-			notation += Utils.columns[pieceDestinationX];
-			notation += 8 - pieceDestinationY;
+			notation += Utils.columns[Utils.getX(pieceDestination)];
+			notation += 8 - Utils.getY(pieceDestination);
 			return notation;
 		}
 	}
@@ -123,9 +111,9 @@ public abstract class Move {
 	public static class AttackMove extends Move {
 		protected final Piece attackedPiece;
 
-		public AttackMove(final Board board, final Piece movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Piece attackedPiece) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
+		public AttackMove(final Board board, final Piece movedPiece, final int pieceDestination,
+				final Piece attackedPiece) {
+			super(board, movedPiece, pieceDestination);
 			this.attackedPiece = attackedPiece;
 		}
 
@@ -159,8 +147,8 @@ public abstract class Move {
 		public String getNotation() {
 			String notation = "";
 			notation += movedPiece.getType().getLetter() + "x";
-			notation += Utils.columns[pieceDestinationX];
-			notation += 8 - pieceDestinationY;
+			notation += Utils.columns[Utils.getX(pieceDestination)];
+			notation += 8 - Utils.getY(pieceDestination);
 			return notation;
 		}
 
@@ -171,40 +159,39 @@ public abstract class Move {
 	}
 
 	public static class PawnMove extends NormalMove {
-		public PawnMove(final Board board, final Pawn movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
+		public PawnMove(final Board board, final Pawn movedPiece, final int pieceDestination) {
+			super(board, movedPiece, pieceDestination);
 		}
 
 		@Override
 		public String getNotation() {
 			String notation = "";
-			notation += Utils.columns[pieceDestinationX];
-			notation += 8 - pieceDestinationY;
+			notation += Utils.columns[Utils.getX(pieceDestination)];
+			notation += 8 - Utils.getY(pieceDestination);
 			return notation;
 		}
 	}
 
 	public static class PawnAttackMove extends AttackMove {
-		public PawnAttackMove(final Board board, final Pawn movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Piece attackedPiece) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY, attackedPiece);
+		public PawnAttackMove(final Board board, final Pawn movedPiece, final int pieceDestination,
+				final Piece attackedPiece) {
+			super(board, movedPiece, pieceDestination, attackedPiece);
 		}
 
 		@Override
 		public String getNotation() {
 			String notation = "";
-			notation += Utils.columns[movedPiece.getX()] + "x";
-			notation += Utils.columns[pieceDestinationX];
-			notation += 8 - pieceDestinationY;
+			notation += Utils.columns[Utils.getX(movedPiece.getPosition())] + "x";
+			notation += Utils.columns[Utils.getX(pieceDestination)];
+			notation += 8 - Utils.getY(pieceDestination);
 			return notation;
 		}
 	}
 
 	public static class PawnEnPassantAttackMove extends PawnAttackMove {
-		public PawnEnPassantAttackMove(final Board board, final Pawn movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Piece attackedPiece) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY, attackedPiece);
+		public PawnEnPassantAttackMove(final Board board, final Pawn movedPiece, final int pieceDestination,
+				final Piece attackedPiece) {
+			super(board, movedPiece, pieceDestination, attackedPiece);
 		}
 
 		@Override
@@ -216,23 +203,20 @@ public abstract class Move {
 	}
 
 	public static class PawnJump extends PawnMove {
-		public PawnJump(final Board board, final Pawn movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
+		public PawnJump(final Board board, final Pawn movedPiece, final int pieceDestination) {
+			super(board, movedPiece, pieceDestination);
 		}
 	}
 
 	public static abstract class CastleMove extends Move {
 		protected final Rook castleRook;
-		protected final int castleRookDestinationX, castleRookDestinationY;
+		protected final int castleRookDestination;
 
-		public CastleMove(final Board board, final King movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Rook castleRook, final int castleRookDestinationX,
-				final int castleRookDestinationY) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY);
+		public CastleMove(final Board board, final King movedPiece, final int pieceDestination, final Rook castleRook,
+				final int castleRookDestination) {
+			super(board, movedPiece, pieceDestination);
 			this.castleRook = castleRook;
-			this.castleRookDestinationX = castleRookDestinationX;
-			this.castleRookDestinationY = castleRookDestinationY;
+			this.castleRookDestination = castleRookDestination;
 		}
 
 		public Rook getCastleRook() {
@@ -240,11 +224,7 @@ public abstract class Move {
 		}
 
 		public int getCastleRookDestinationX() {
-			return castleRookDestinationX;
-		}
-
-		public int getCastleRookDestinationY() {
-			return castleRookDestinationY;
+			return castleRookDestination;
 		}
 
 		@Override
@@ -258,7 +238,7 @@ public abstract class Move {
 			}
 
 			b.setPiece(movedPiece.movePiece(this));
-			b.setPiece(new Rook(castleRookDestinationX, castleRookDestinationY, castleRook.getTeam(), true));
+			b.setPiece(new Rook(castleRookDestination, castleRook.getTeam(), true));
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			return b.build();
 		}
@@ -270,11 +250,9 @@ public abstract class Move {
 	}
 
 	public static class KingSideCastleMove extends CastleMove {
-		public KingSideCastleMove(final Board board, final King movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Rook castleRook, final int castleRookDestinationX,
-				final int castleRookDestinationY) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook, castleRookDestinationX,
-					castleRookDestinationY);
+		public KingSideCastleMove(final Board board, final King movedPiece, final int pieceDestination,
+				final Rook castleRook, final int castleRookDestination) {
+			super(board, movedPiece, pieceDestination, castleRook, castleRookDestination);
 		}
 
 		@Override
@@ -284,11 +262,9 @@ public abstract class Move {
 	}
 
 	public static class QueenSideCastleMove extends CastleMove {
-		public QueenSideCastleMove(final Board board, final King movedPiece, final int pieceDestinationX,
-				final int pieceDestinationY, final Rook castleRook, final int castleRookDestinationX,
-				final int castleRookDestinationY) {
-			super(board, movedPiece, pieceDestinationX, pieceDestinationY, castleRook, castleRookDestinationX,
-					castleRookDestinationY);
+		public QueenSideCastleMove(final Board board, final King movedPiece, final int pieceDestination,
+				final Rook castleRook, final int castleRookDestination) {
+			super(board, movedPiece, pieceDestination, castleRook, castleRookDestination);
 		}
 
 		@Override
