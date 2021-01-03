@@ -38,10 +38,8 @@ public class UITextArea extends UIObject {
 
 			try {
 				for (int i = 0; i < displayText.length; i++) {
-					if (i < displayText.length && displayText[i] != null) {
-						UIUtils.drawString(g, displayText[i], displayPositions[i].x, displayPositions[i].y, false,
-								textColor, font);
-					}
+					UIUtils.drawString(g, displayText[i], displayPositions[i].x, displayPositions[i].y, false,
+							textColor, font);
 				}
 			} catch (Exception e) {
 			}
@@ -51,6 +49,7 @@ public class UITextArea extends UIObject {
 				g.drawRect(x, y, width, height);
 			}
 		}
+
 	}
 
 	private void calculateTextPositions() {

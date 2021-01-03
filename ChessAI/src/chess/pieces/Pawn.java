@@ -21,7 +21,7 @@ public class Pawn extends Piece {
 		this(position, team, false, false);
 	}
 
-	private Pawn(int position, Team team, boolean movedAtLeastOnce, boolean jumped) {
+	public Pawn(int position, Team team, boolean movedAtLeastOnce, boolean jumped) {
 		super(position, team, PieceType.PAWN);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.jumped = jumped;

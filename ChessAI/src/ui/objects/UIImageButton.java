@@ -87,8 +87,8 @@ public class UIImageButton extends UIButton {
 			imageWidth = (int) (originalImageWidth * factor);
 			imageHeight = (int) (originalImageHeight * factor);
 
-			imageX = x + (width - imageWidth) / 2;
-			imageY = y + (height - imageHeight) / 2;
+			imageX = x + (width - imageWidth) >> 1;
+			imageY = y + (height - imageHeight) >> 1;
 		}
 	}
 

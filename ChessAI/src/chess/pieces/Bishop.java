@@ -17,7 +17,7 @@ public class Bishop extends Piece {
 		this(position, team, false);
 	}
 
-	private Bishop(int position, Team team, boolean movedAtLeastOnce) {
+	public Bishop(int position, Team team, boolean movedAtLeastOnce) {
 		super(position, team, PieceType.BISHOP);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_bishop : Assets.black_bishop;
@@ -57,6 +57,6 @@ public class Bishop extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new Bishop(move.getPieceDestination(), team, true);
+		return Utils.getMovedBishop(team, move.getPieceDestination());
 	}
 }

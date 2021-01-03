@@ -17,7 +17,7 @@ public class Knight extends Piece {
 		this(position, team, false);
 	}
 
-	private Knight(int position, Team team, boolean movedAtLeastOnce) {
+	public Knight(int position, Team team, boolean movedAtLeastOnce) {
 		super(position, team, PieceType.KNIGHT);
 		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_knight : Assets.black_knight;
@@ -56,6 +56,6 @@ public class Knight extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new Knight(move.getPieceDestination(), team, true);
+		return Utils.getMovedKnight(team, move.getPieceDestination());
 	}
 }
