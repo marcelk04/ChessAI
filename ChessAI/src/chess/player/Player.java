@@ -97,4 +97,8 @@ public abstract class Player {
 	public boolean canCastle() {
 		return !kingInCheck && !playerKing.isCastled() && playerKing.canCastle();
 	}
+
+	public King getKing() {
+		return playerKing;
+	}
 }

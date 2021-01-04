@@ -11,7 +11,7 @@ public abstract class BoardEvaluator {
 
 	protected static int pieceScore(Player player) {
 		int score = 0;
-		
+
 		for (Piece p : player.getActivePieces()) {
 			score += p.getValue();
 		}
@@ -22,17 +22,17 @@ public abstract class BoardEvaluator {
 		return score;
 	}
 
-	protected static int mobilityScore(Player player, int mobilityBonus) {
-		int score = player.getLegalMoves().size() * mobilityBonus;
+	protected static int mobilityScore(Player player, float mobilityBonus) {
+		float score = player.getLegalMoves().size() * mobilityBonus;
 
 		if (player.getTeam() == Team.BLACK)
 			score *= -1;
 
-		return score;
+		return Math.round(score);
 	}
 
-	protected static int attackScore(Player player, int attackBonus) {
-		int score = 0;
+	protected static int attackScore(Player player, float attackBonus) {
+		float score = 0;
 
 		for (Move m : player.getLegalMoves()) {
 			if (m.isAttackMove())
@@ -42,6 +42,15 @@ public abstract class BoardEvaluator {
 		if (player.getTeam() == Team.BLACK)
 			score *= -1;
 
-		return score;
+		return Math.round(score);
+	}
+
+	protected static int kingEscapeScore(Player player, Board board, float kingEscapeBonus) {
+		float score = player.getKing().getMoves(board).size() * kingEscapeBonus;
+
+		if (player.getTeam() == Team.BLACK)
+			score *= -1;
+
+		return Math.round(score);
 	}
 }
