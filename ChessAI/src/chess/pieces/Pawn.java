@@ -45,24 +45,31 @@ public class Pawn extends Piece {
 						&& board.getPiece(position + 8 * team.moveDirection()) == null) {
 					moves.add(new PawnJump(board, this, currentDestination));
 				}
-			} else if ((currentOffset == 7 || currentOffset == 9) && !((Utils.getY(position) == 0 && team == Team.BLACK)
-					|| (Utils.getY(position) == 7 && team == Team.WHITE))) {
-				Piece pieceAtDestination = board.getPiece(currentDestination);
-				if (pieceAtDestination != null && team != pieceAtDestination.getTeam()) {
-					moves.add(new PawnAttackMove(board, this, currentDestination, pieceAtDestination));
-				}
+			} else if (currentOffset == 7 || currentOffset == 9) {
+				if (!((currentOffset == 9 && Utils.getX(position) == 0
+						|| currentOffset == 7 && Utils.getX(position) == 7) && team == Team.WHITE
+						|| (currentOffset == 7 && Utils.getX(position) == 0
+								|| currentOffset == 9 && Utils.getX(position) == 7) && team == Team.BLACK)
+						&& !(Utils.getY(position) == 0 && team == Team.WHITE
+								|| Utils.getY(position) == 7 && team == Team.BLACK)) {
+					Piece pieceAtDestination = board.getPiece(currentDestination);
+					if (pieceAtDestination != null && team != pieceAtDestination.getTeam()) {
+						moves.add(new PawnAttackMove(board, this, currentDestination, pieceAtDestination));
+					}
 
-				int sidePiecePosition = Utils.getIndex(Utils.getX(currentDestination),
-						Utils.getY(currentDestination) - team.moveDirection());
-				Piece sidePiece = board.getPiece(sidePiecePosition);
+					int sidePiecePosition = Utils.getIndex(Utils.getX(currentDestination),
+							Utils.getY(currentDestination) - team.moveDirection());
 
-				if (pieceAtDestination == null && sidePiece != null && sidePiece.getType() == PieceType.PAWN
-						&& ((Utils.getY(position) == 3 && team == Team.WHITE)
-								|| (Utils.getY(position) == 4 && team == Team.BLACK))) {
-					Pawn sidePawn = (Pawn) sidePiece;
+					Piece sidePiece = board.getPiece(sidePiecePosition);
 
-					if (team != sidePiece.getTeam() && sidePawn.wasMovedTwoSpaces()) {
-						moves.add(new PawnEnPassantAttackMove(board, this, currentDestination, sidePawn));
+					if (pieceAtDestination == null && sidePiece != null && sidePiece.getType() == PieceType.PAWN
+							&& ((Utils.getY(position) == 3 && team == Team.WHITE)
+									|| (Utils.getY(position) == 4 && team == Team.BLACK))) {
+						Pawn sidePawn = (Pawn) sidePiece;
+
+						if (team != sidePiece.getTeam() && sidePawn.wasMovedTwoSpaces()) {
+							moves.add(new PawnEnPassantAttackMove(board, this, currentDestination, sidePawn));
+						}
 					}
 				}
 			}

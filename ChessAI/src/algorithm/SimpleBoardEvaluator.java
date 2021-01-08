@@ -4,9 +4,9 @@ import chess.Board;
 import chess.player.Player;
 
 public class SimpleBoardEvaluator extends BoardEvaluator {
-	protected static final float MOBILITY_BONUS = 1f;
-	protected static final float ATTACK_BONUS = 0.5f;
-	protected static final float KING_ESCAPE_BONUS = 0.1f;
+	protected static final int MOBILITY_BONUS = 10;
+	protected static final int ATTACK_BONUS = 5;
+	protected static final int KING_ESCAPE_BONUS = 1;
 
 	@Override
 	public int evaluate(Board board, int depth) {

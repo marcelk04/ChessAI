@@ -1,8 +1,8 @@
 package chess.pieces;
 
 public enum PieceType {
-	KING('K', "King", 900), QUEEN('Q', "Queen", 90), ROOK('R', "Rook", 46), BISHOP('B', "Bishop", 32),
-	KNIGHT('N', "Knight", 31), PAWN('P', "Pawn", 10);
+	KING('K', "King", 9000), QUEEN('Q', "Queen", 900), ROOK('R', "Rook", 460), BISHOP('B', "Bishop", 320),
+	KNIGHT('N', "Knight", 310), PAWN('P', "Pawn", 100);
 
 	private final char letter;
 	private final String name;
