@@ -1,6 +1,7 @@
 package chess.pieces;
 
 import chess.Board;
+import chess.player.Player;
 
 public enum Team {
 	WHITE {
@@ -15,12 +16,8 @@ public enum Team {
 		}
 
 		@Override
-		public int getEval(Board board) {
-			int eval = 0;
-			for (Piece p : board.getWhitePieces()) {
-				eval += p.getValue();
-			}
-			return eval;
+		public Player getPlayer(Board board) {
+			return board.getWhitePlayer();
 		}
 	},
 	BLACK {
@@ -35,12 +32,8 @@ public enum Team {
 		}
 
 		@Override
-		public int getEval(Board board) {
-			int eval = 0;
-			for (Piece p : board.getBlackPieces()) {
-				eval -= p.getValue();
-			}
-			return eval;
+		public Player getPlayer(Board board) {
+			return board.getBlackPlayer();
 		}
 	};
 
@@ -49,5 +42,5 @@ public enum Team {
 	@Override
 	public abstract String toString();
 
-	public abstract int getEval(Board board);
+	public abstract Player getPlayer(Board board);
 }

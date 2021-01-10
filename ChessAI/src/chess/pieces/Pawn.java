@@ -15,16 +15,13 @@ import main.Utils;
 public class Pawn extends Piece {
 	private static final int[] CANDIDATE_MOVE_COORDINATES = { 8, 16, 7, 9 };
 
-	private boolean jumped = false;
-
 	public Pawn(int position, Team team) {
-		this(position, team, false, false);
+		this(position, team, false);
 	}
 
-	public Pawn(int position, Team team, boolean movedAtLeastOnce, boolean jumped) {
+	public Pawn(int position, Team team, boolean movedAtLeastOnce) {
 		super(position, team, PieceType.PAWN);
 		this.movedAtLeastOnce = movedAtLeastOnce;
-		this.jumped = jumped;
 		this.texture = team == Team.WHITE ? Assets.white_pawn : Assets.black_pawn;
 	}
 
@@ -61,15 +58,12 @@ public class Pawn extends Piece {
 							Utils.getY(currentDestination) - team.moveDirection());
 
 					Piece sidePiece = board.getPiece(sidePiecePosition);
+					Pawn enPassantPawn = board.getEnPassantPawn();
 
-					if (pieceAtDestination == null && sidePiece != null && sidePiece.getType() == PieceType.PAWN
-							&& ((Utils.getY(position) == 3 && team == Team.WHITE)
-									|| (Utils.getY(position) == 4 && team == Team.BLACK))) {
-						Pawn sidePawn = (Pawn) sidePiece;
+					if (pieceAtDestination == null && sidePiece != null && enPassantPawn != null
+							&& sidePiece.equals(enPassantPawn)) {
+						moves.add(new PawnEnPassantAttackMove(board, this, currentDestination, enPassantPawn));
 
-						if (team != sidePiece.getTeam() && sidePawn.wasMovedTwoSpaces()) {
-							moves.add(new PawnEnPassantAttackMove(board, this, currentDestination, sidePawn));
-						}
 					}
 				}
 			}
@@ -78,12 +72,8 @@ public class Pawn extends Piece {
 		return moves;
 	}
 
-	public boolean wasMovedTwoSpaces() {
-		return jumped;
-	}
-
 	@Override
 	public Piece movePiece(Move move) {
-		return new Pawn(move.getPieceDestination(), team, true, move instanceof PawnJump ? true : jumped);
+		return new Pawn(move.getPieceDestination(), team, true);
 	}
 }

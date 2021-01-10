@@ -1,7 +1,7 @@
 package chess.player;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import chess.Board;
 import chess.move.Move;
@@ -27,13 +27,7 @@ public abstract class Player {
 	}
 
 	public static List<Move> calculateAttacksOnTile(int position, List<Move> moves) {
-		List<Move> attacks = new ArrayList<Move>();
-		for (Move m : moves) {
-			if (m.getPieceDestination() == position) {
-				attacks.add(m);
-			}
-		}
-		return attacks;
+		return moves.stream().filter(m -> m.getPieceDestination() == position).collect(Collectors.toList());
 	}
 
 	public MoveTransition makeMove(Move move) {

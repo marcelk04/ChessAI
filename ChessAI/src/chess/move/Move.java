@@ -1,11 +1,15 @@
 package chess.move;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import chess.Board;
 import chess.Board.Builder;
 import chess.pieces.King;
 import chess.pieces.Pawn;
 import chess.pieces.Piece;
 import chess.pieces.Rook;
+import chess.player.Player;
 import main.Utils;
 
 public abstract class Move {
@@ -56,11 +60,17 @@ public abstract class Move {
 
 		b.setPiece(movedPiece.movePiece(this));
 		b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+		b.setEnPassantPawn(null);
 
 		return b.build();
 	}
 
-	public abstract String getNotation();
+	public String getNotation() {
+		String notation = "";
+		notation += Utils.columns[Utils.getX(pieceDestination)];
+		notation += 8 - Utils.getY(pieceDestination);
+		return notation;
+	}
 
 	public Piece getMovedPiece() {
 		return movedPiece;
@@ -91,6 +101,11 @@ public abstract class Move {
 		public String getNotation() {
 			return "NULL_MOVE";
 		}
+
+		@Override
+		public Board execute() {
+			return null;
+		}
 	}
 
 	public static class NormalMove extends Move {
@@ -102,9 +117,28 @@ public abstract class Move {
 		public String getNotation() {
 			String notation = "";
 			notation += movedPiece.getType().getLetter();
-			notation += Utils.columns[Utils.getX(pieceDestination)];
-			notation += 8 - Utils.getY(pieceDestination);
-			return notation;
+
+			List<Move> samePieceAttacks = Player
+					.calculateAttacksOnTile(pieceDestination, board.getCurrentPlayer().getLegalMoves()).stream()
+					.filter(e -> e.getMovedPiece().getType() == movedPiece.getType() && !e.equals(this))
+					.collect(Collectors.toList());
+			if (samePieceAttacks.size() > 0) {
+				int sameXAttacks = (int) samePieceAttacks.stream()
+						.filter(e -> Utils.getX(e.getCurrentPiecePosition()) == Utils.getX(getCurrentPiecePosition()))
+						.count();
+				int sameYAttacks = (int) samePieceAttacks.stream()
+						.filter(e -> Utils.getY(e.getCurrentPiecePosition()) == Utils.getY(getCurrentPiecePosition()))
+						.count();
+
+				if (sameXAttacks == 0) {
+					notation += Utils.columns[Utils.getX(getCurrentPiecePosition())];
+				}
+				if (sameYAttacks == 0) {
+					notation += Utils.getY(getCurrentPiecePosition());
+				}
+			}
+
+			return notation + super.getNotation();
 		}
 	}
 
@@ -139,6 +173,7 @@ public abstract class Move {
 
 			b.setPiece(movedPiece.movePiece(this));
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+			b.setEnPassantPawn(null);
 
 			return b.build();
 		}
@@ -146,10 +181,30 @@ public abstract class Move {
 		@Override
 		public String getNotation() {
 			String notation = "";
-			notation += movedPiece.getType().getLetter() + "x";
-			notation += Utils.columns[Utils.getX(pieceDestination)];
-			notation += 8 - Utils.getY(pieceDestination);
-			return notation;
+			notation += movedPiece.getType().getLetter();
+
+			List<Move> samePieceAttacks = Player
+					.calculateAttacksOnTile(pieceDestination, board.getCurrentPlayer().getLegalMoves()).stream()
+					.filter(e -> e.getMovedPiece().getType() == movedPiece.getType() && !e.equals(this))
+					.collect(Collectors.toList());
+			if (samePieceAttacks.size() > 0) {
+				int sameXAttacks = (int) samePieceAttacks.stream()
+						.filter(e -> Utils.getX(e.getCurrentPiecePosition()) == Utils.getX(getCurrentPiecePosition()))
+						.count();
+				int sameYAttacks = (int) samePieceAttacks.stream()
+						.filter(e -> Utils.getY(e.getCurrentPiecePosition()) == Utils.getY(getCurrentPiecePosition()))
+						.count();
+
+				if (sameXAttacks == 0) {
+					notation += Utils.columns[Utils.getX(getCurrentPiecePosition())];
+				}
+				if (sameYAttacks == 0) {
+					notation += Utils.getY(getCurrentPiecePosition());
+				}
+			}
+
+			notation += "x";
+			return notation + super.getNotation();
 		}
 
 		@Override
@@ -206,6 +261,24 @@ public abstract class Move {
 		public PawnJump(final Board board, final Pawn movedPiece, final int pieceDestination) {
 			super(board, movedPiece, pieceDestination);
 		}
+
+		@Override
+		public Board execute() {
+			Builder b = new Builder();
+
+			for (Piece p : board.getAllPieces()) {
+				if (!p.equals(movedPiece))
+					b.setPiece(p);
+			}
+
+			Pawn movedPawn = (Pawn) movedPiece.movePiece(this);
+
+			b.setPiece(movedPawn);
+			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+			b.setEnPassantPawn(movedPawn);
+
+			return b.build();
+		}
 	}
 
 	public static abstract class CastleMove extends Move {
@@ -240,6 +313,8 @@ public abstract class Move {
 			b.setPiece(movedPiece.movePiece(this));
 			b.setPiece(new Rook(castleRookDestination, castleRook.getTeam(), true));
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+			b.setEnPassantPawn(null);
+
 			return b.build();
 		}
 

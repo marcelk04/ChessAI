@@ -22,6 +22,7 @@ import chess.player.WhitePlayer;
 
 public class Board {
 	private final Map<Integer, Piece> boardConfig;
+	private final Pawn enPassantPawn;
 	private final List<Piece> whitePieces, blackPieces;
 	private final WhitePlayer whitePlayer;
 	private final BlackPlayer blackPlayer;
@@ -29,10 +30,11 @@ public class Board {
 
 	private Board(Builder builder) {
 		this.boardConfig = builder.boardConfig;
+		this.enPassantPawn = builder.enPassantPawn;
 		this.whitePieces = getActivePieces(builder, Team.WHITE);
 		this.blackPieces = getActivePieces(builder, Team.BLACK);
-		final List<Move> whiteMoves = getLegalMoves(whitePieces);
-		final List<Move> blackMoves = getLegalMoves(blackPieces);
+		List<Move> whiteMoves = getLegalMoves(whitePieces);
+		List<Move> blackMoves = getLegalMoves(blackPieces);
 		this.whitePlayer = new WhitePlayer(this, whiteMoves, blackMoves);
 		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves);
 		this.currentPlayer = builder.nextMoveMaker == Team.WHITE ? whitePlayer : blackPlayer;
@@ -98,12 +100,8 @@ public class Board {
 		return Move.NULL_MOVE;
 	}
 
-	public static boolean hasGameEnded(Board board) {
-		return board.getCurrentPlayer().isInCheckMate() || board.getCurrentPlayer().isInStaleMate();
-	}
-
 	public boolean hasGameEnded() {
-		return hasGameEnded(this);
+		return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate();
 	}
 
 	// ===== Getters ===== \\
@@ -126,6 +124,10 @@ public class Board {
 
 	public Piece getPiece(int position) {
 		return boardConfig.get(position);
+	}
+
+	public Pawn getEnPassantPawn() {
+		return enPassantPawn;
 	}
 
 	public List<Piece> getWhitePieces() {
@@ -166,6 +168,7 @@ public class Board {
 	public static class Builder {
 		Map<Integer, Piece> boardConfig;
 		Team nextMoveMaker;
+		Pawn enPassantPawn;
 
 		public Builder() {
 			this.boardConfig = new HashMap<Integer, Piece>();
@@ -178,6 +181,11 @@ public class Board {
 
 		public Builder setMoveMaker(Team nextMoveMaker) {
 			this.nextMoveMaker = nextMoveMaker;
+			return this;
+		}
+
+		public Builder setEnPassantPawn(Pawn enPassantPawn) {
+			this.enPassantPawn = enPassantPawn;
 			return this;
 		}
 
