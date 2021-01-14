@@ -40,35 +40,28 @@ public abstract class Move {
 
 	@Override
 	public int hashCode() {
-		int result = movedPiece.hashCode();
+		int result = board.hashCode();
+		result = 10 * result + movedPiece.hashCode();
 		result = 10 * result + pieceDestination;
 		return result;
 	}
 
-	public Board execute() {
-		Builder b = new Builder();
+	public abstract Board execute();
 
-		for (Piece p : board.getCurrentPlayer().getActivePieces()) {
-			if (!movedPiece.equals(p)) {
-				b.setPiece(p);
-			}
-		}
+	public abstract String getNotation();
 
-		for (Piece p : board.getCurrentPlayer().getOpponent().getActivePieces()) {
-			b.setPiece(p);
-		}
-
-		b.setPiece(movedPiece.movePiece(this));
-		b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
-		b.setEnPassantPawn(null);
-
-		return b.build();
-	}
-
-	public String getNotation() {
+	public String standardNotation() {
 		String notation = "";
 		notation += Utils.columns[Utils.getX(pieceDestination)];
 		notation += 8 - Utils.getY(pieceDestination);
+
+		Player newPlayer = execute().getCurrentPlayer();
+		if (newPlayer.isKingInCheck())
+			notation += "+";
+
+		if (newPlayer.isInCheckMate())
+			notation += "+";
+
 		return notation;
 	}
 
@@ -94,7 +87,7 @@ public abstract class Move {
 
 	public static class NullMove extends Move {
 		public NullMove() {
-			super(null, null, 0);
+			super(null, null, -1);
 		}
 
 		@Override
@@ -111,6 +104,27 @@ public abstract class Move {
 	public static class NormalMove extends Move {
 		public NormalMove(final Board board, final Piece movedPiece, final int pieceDestination) {
 			super(board, movedPiece, pieceDestination);
+		}
+
+		@Override
+		public Board execute() {
+			Builder b = new Builder();
+
+			for (Piece p : board.getCurrentPlayer().getActivePieces()) {
+				if (!movedPiece.equals(p)) {
+					b.setPiece(p);
+				}
+			}
+
+			for (Piece p : board.getCurrentPlayer().getOpponent().getActivePieces()) {
+				b.setPiece(p);
+			}
+
+			b.setPiece(movedPiece.movePiece(this));
+			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+			b.setEnPassantPawn(null);
+
+			return b.build();
 		}
 
 		@Override
@@ -138,7 +152,7 @@ public abstract class Move {
 				}
 			}
 
-			return notation + super.getNotation();
+			return notation + standardNotation();
 		}
 	}
 
@@ -204,7 +218,7 @@ public abstract class Move {
 			}
 
 			notation += "x";
-			return notation + super.getNotation();
+			return notation + standardNotation();
 		}
 
 		@Override
@@ -220,10 +234,7 @@ public abstract class Move {
 
 		@Override
 		public String getNotation() {
-			String notation = "";
-			notation += Utils.columns[Utils.getX(pieceDestination)];
-			notation += 8 - Utils.getY(pieceDestination);
-			return notation;
+			return standardNotation();
 		}
 	}
 
@@ -237,9 +248,7 @@ public abstract class Move {
 		public String getNotation() {
 			String notation = "";
 			notation += Utils.columns[Utils.getX(movedPiece.getPosition())] + "x";
-			notation += Utils.columns[Utils.getX(pieceDestination)];
-			notation += 8 - Utils.getY(pieceDestination);
-			return notation;
+			return notation + standardNotation();
 		}
 	}
 

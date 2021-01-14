@@ -40,7 +40,7 @@ public class GUI {
 		Assets.init();
 
 		display = new Display("Chess", 1280, 720);
-		display.setBackground(Color.white);
+//		display.setBackground(Color.white);
 		display.getFrame().addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {

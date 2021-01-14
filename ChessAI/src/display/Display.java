@@ -127,6 +127,11 @@ public class Display implements Runnable {
 
 		running = false;
 	}
+	
+	public void close() {
+		stop();
+		frame.dispose();
+	}
 
 	// ===== Getters ===== \\
 	public JFrame getFrame() {
