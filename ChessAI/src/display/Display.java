@@ -127,7 +127,7 @@ public class Display implements Runnable {
 
 		running = false;
 	}
-	
+
 	public void close() {
 		stop();
 		frame.dispose();
@@ -140,6 +140,10 @@ public class Display implements Runnable {
 
 	public Canvas getCanvas() {
 		return canvas;
+	}
+
+	public boolean isOpen() {
+		return running;
 	}
 
 	// ===== Setters ===== \\
