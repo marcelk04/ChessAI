@@ -18,11 +18,11 @@ public class PawnPromotionGUI {
 	public PawnPromotionGUI(int width, int height, Team currentTeam) {
 		this.display = new Display(width, height, "Pawn Promotion");
 
-		UILabel title = new UILabel("Select a piece");
-		title.setBounds(0, 0, width, 30);
-		title.setHorizontalAlignment(UIObject.CENTER);
-		title.setFont(new Font("Sans Serif", Font.BOLD, 20));
-		display.add(title);
+		UILabel lblTitle = new UILabel("Select a piece");
+		lblTitle.setBounds(0, 0, width, 30);
+		lblTitle.setHorizontalAlignment(UIObject.CENTER);
+		lblTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+		display.add(lblTitle);
 
 		int buttonWidth = width / 4;
 		int buttonHeight = height - 30;
@@ -60,8 +60,6 @@ public class PawnPromotionGUI {
 		btnKnight.setBounds(buttonWidth * 3, 30, buttonWidth, buttonHeight);
 		btnKnight.setClickListener(e -> selectedPiece = PieceType.KNIGHT);
 		display.add(btnKnight);
-
-		display.getFrame().setVisible(true);
 	}
 
 	public static PieceType getPieceInput(int width, int height, Team currentTeam) {
@@ -76,7 +74,7 @@ public class PawnPromotionGUI {
 			}
 		}
 
-		gui.getDisplay().getFrame().dispose();
+		gui.getDisplay().close();
 		return selectedPiece;
 	}
 
@@ -90,9 +88,5 @@ public class PawnPromotionGUI {
 
 	public Display getDisplay() {
 		return display;
-	}
-
-	public static void main(String[] args) {
-		System.out.println(PawnPromotionGUI.getPieceInput(Team.WHITE));
 	}
 }

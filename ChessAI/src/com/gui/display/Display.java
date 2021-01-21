@@ -78,7 +78,11 @@ public class Display {
 		return objects.remove(o);
 	}
 
-	// ===== Getters =====
+	public void close() {
+		frame.dispose();
+	}
+
+	// ===== Getters ===== \\
 	public int getWidth() {
 		return width;
 	}
@@ -124,5 +128,14 @@ public class Display {
 		b.setBounds(10, 40, 100, 30);
 		b.setClickListener(e -> b.setText("Lol"));
 		d.add(b);
+	}
+
+	// ===== Setters ===== \\
+	public void setBackground(Color background) {
+		frame.setBackground(background);
+	}
+
+	public void setTitle(String title) {
+		frame.setTitle(this.title = title);
 	}
 }

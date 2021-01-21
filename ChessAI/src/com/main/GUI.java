@@ -231,6 +231,6 @@ public class GUI {
 	}
 
 	public static void main(String[] args) {
-		new GUI().getDisplay().getFrame().setVisible(true);
+		new GUI();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.chess.pieces.Bishop;
 import com.chess.pieces.Knight;
+import com.chess.pieces.Pawn;
 import com.chess.pieces.Queen;
 import com.chess.pieces.Rook;
 import com.chess.pieces.Team;
@@ -16,6 +17,7 @@ public class Utils {
 	private static final Map<Team, Map<Integer, Rook>> ALL_POSSIBLE_ROOKS = createAllPossibleRooks();
 	private static final Map<Team, Map<Integer, Bishop>> ALL_POSSIBLE_BISHOPS = createAllPossibleBishops();
 	private static final Map<Team, Map<Integer, Knight>> ALL_POSSIBLE_KNIGHTS = createAllPossibleKnights();
+	private static final Map<Team, Map<Integer, Pawn>> ALL_POSSIBLE_PAWNS = createAllPossiblePawns();
 
 	public static boolean inRange(int var, int min, int max) {
 		return var >= min && var <= max;
@@ -56,6 +58,10 @@ public class Utils {
 
 	public static Knight getMovedKnight(Team team, int position) {
 		return ALL_POSSIBLE_KNIGHTS.get(team).get(position);
+	}
+
+	public static Pawn getMovePawn(Team team, int position) {
+		return ALL_POSSIBLE_PAWNS.get(team).get(position);
 	}
 
 	private static Map<Team, Map<Integer, Queen>> createAllPossibleQueens() {
@@ -120,5 +126,21 @@ public class Utils {
 		allPossibleKnights.put(Team.BLACK, allPossibleBlackKnights);
 
 		return allPossibleKnights;
+	}
+
+	private static Map<Team, Map<Integer, Pawn>> createAllPossiblePawns() {
+		Map<Team, Map<Integer, Pawn>> allPossiblePawns = new HashMap<Team, Map<Integer, Pawn>>();
+		Map<Integer, Pawn> allPossibleWhitePawns = new HashMap<Integer, Pawn>();
+		Map<Integer, Pawn> allPossibleBlackPawns = new HashMap<Integer, Pawn>();
+
+		for (int i = 0; i < 64; i++) {
+			allPossibleWhitePawns.put(i, new Pawn(i, Team.WHITE, true));
+			allPossibleBlackPawns.put(i, new Pawn(i, Team.BLACK, true));
+		}
+
+		allPossiblePawns.put(Team.WHITE, allPossibleWhitePawns);
+		allPossiblePawns.put(Team.BLACK, allPossibleBlackPawns);
+
+		return allPossiblePawns;
 	}
 }

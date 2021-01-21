@@ -65,6 +65,10 @@ public abstract class Move {
 		return notation;
 	}
 
+	public Board getBoard() {
+		return board;
+	}
+
 	public Piece getMovedPiece() {
 		return movedPiece;
 	}
@@ -287,6 +291,24 @@ public abstract class Move {
 			b.setEnPassantPawn(movedPawn);
 
 			return b.build();
+		}
+	}
+
+	public static class PawnPromotion extends PawnMove {
+		protected Move executedMove;
+		protected Pawn promotedPawn;
+		protected Piece promotionPiece;
+
+		public PawnPromotion(final PawnMove executedMove, final Piece promotionPiece) {
+			super(executedMove.getBoard(), (Pawn) executedMove.getMovedPiece(), executedMove.getPieceDestination());
+			this.executedMove = executedMove;
+			this.promotedPawn = (Pawn) executedMove.getMovedPiece();
+			this.promotionPiece = promotionPiece;
+		}
+		
+		@Override
+		public boolean isAttackMove() {
+			return executedMove.isAttackMove();
 		}
 	}
 

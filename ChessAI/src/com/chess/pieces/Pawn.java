@@ -74,6 +74,6 @@ public class Pawn extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new Pawn(move.getPieceDestination(), team, true);
+		return Utils.getMovePawn(team, move.getPieceDestination());
 	}
 }
