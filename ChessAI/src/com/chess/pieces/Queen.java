@@ -63,4 +63,9 @@ public class Queen extends Piece {
 	public Piece movePiece(Move move) {
 		return Utils.getMovedQueen(team, move.getPieceDestination());
 	}
+
+	@Override
+	public int positionBonus() {
+		return team.queenBonus(position);
+	}
 }

@@ -127,11 +127,13 @@ public class UITakenPiecesPanel extends UIObject {
 	public void removePiece(Piece p) {
 		whitePieces.remove(p);
 		blackPieces.remove(p);
+		repaint();
 	}
 
 	public void clear() {
 		whitePieces.clear();
 		blackPieces.clear();
+		repaint();
 	}
 
 	// ===== Getters ===== \\

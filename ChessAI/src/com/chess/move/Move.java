@@ -305,7 +305,24 @@ public abstract class Move {
 			this.promotedPawn = (Pawn) executedMove.getMovedPiece();
 			this.promotionPiece = promotionPiece;
 		}
-		
+
+		@Override
+		public Board execute() {
+			Board pawnMovedBoard = executedMove.execute();
+			Builder b = new Builder();
+
+			for (Piece p : pawnMovedBoard.getAllPieces()) {
+				if (!p.equals(promotedPawn)) {
+					b.setPiece(p);
+				}
+			}
+
+			b.setPiece(promotionPiece.movePiece(this));
+			b.setMoveMaker(pawnMovedBoard.getCurrentPlayer().getTeam());
+
+			return b.build();
+		}
+
 		@Override
 		public boolean isAttackMove() {
 			return executedMove.isAttackMove();

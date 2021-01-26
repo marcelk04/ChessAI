@@ -62,6 +62,11 @@ public class King extends Piece {
 		return new King(move.getPieceDestination(), team, true, false, move.isCastlingMove());
 	}
 
+	@Override
+	public int positionBonus() {
+		return team.kingBonus(position);
+	}
+
 	public boolean isCastled() {
 		return isCastled;
 	}

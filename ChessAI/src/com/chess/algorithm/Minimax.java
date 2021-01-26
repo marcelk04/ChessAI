@@ -34,7 +34,7 @@ public class Minimax implements Runnable {
 		this.movesPerBoard = mm.getBoard().getCurrentPlayer().getLegalMoves().size();
 		this.prunedBoards = 0;
 		this.count = 1;
-		evaluator = new SimpleBoardEvaluator();
+		evaluator = new PositionBoardEvaluator();
 		start();
 	}
 

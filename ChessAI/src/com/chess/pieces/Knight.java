@@ -58,4 +58,9 @@ public class Knight extends Piece {
 	public Piece movePiece(Move move) {
 		return Utils.getMovedKnight(team, move.getPieceDestination());
 	}
+
+	@Override
+	public int positionBonus() {
+		return team.knightBonus(position);
+	}
 }

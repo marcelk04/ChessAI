@@ -3,7 +3,6 @@ package com.chess.algorithm;
 import com.chess.Board;
 import com.chess.move.Move;
 import com.chess.pieces.Piece;
-import com.chess.pieces.Team;
 import com.chess.player.Player;
 
 public abstract class BoardEvaluator {
@@ -16,8 +15,7 @@ public abstract class BoardEvaluator {
 			score += p.getValue();
 		}
 
-		if (player.getTeam() == Team.BLACK)
-			score *= -1;
+		score *= -player.getTeam().moveDirection();
 
 		return score;
 	}
@@ -25,8 +23,7 @@ public abstract class BoardEvaluator {
 	protected static int mobilityScore(Player player, int mobilityBonus) {
 		int score = player.getLegalMoves().size() * mobilityBonus;
 
-		if (player.getTeam() == Team.BLACK)
-			score *= -1;
+		score *= -player.getTeam().moveDirection();
 
 		return score;
 	}
@@ -39,8 +36,7 @@ public abstract class BoardEvaluator {
 				score += attackBonus;
 		}
 
-		if (player.getTeam() == Team.BLACK)
-			score *= -1;
+		score *= -player.getTeam().moveDirection();
 
 		return score;
 	}
@@ -48,9 +44,20 @@ public abstract class BoardEvaluator {
 	protected static int kingEscapeScore(Player player, Board board, int kingEscapeBonus) {
 		int score = board.getPossibleMoves(player.getKing()).size() * kingEscapeBonus;
 
-		if (player.getTeam() == Team.BLACK)
-			score *= -1;
+		score *= -player.getTeam().moveDirection();
 
+		return score;
+	}
+	
+	protected static int piecePositionScore(Player player, int positionBonus) {
+		int score = 0;
+		
+		for (Piece p:player.getActivePieces()) {
+			score += p.positionBonus() * positionBonus;
+		}
+		
+		score *= -player.getTeam().moveDirection();
+		
 		return score;
 	}
 }

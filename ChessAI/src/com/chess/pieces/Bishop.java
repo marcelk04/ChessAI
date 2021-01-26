@@ -59,4 +59,9 @@ public class Bishop extends Piece {
 	public Piece movePiece(Move move) {
 		return Utils.getMovedBishop(team, move.getPieceDestination());
 	}
+	
+	@Override
+	public int positionBonus() {
+		return team.bishopBonus(position);
+	}
 }

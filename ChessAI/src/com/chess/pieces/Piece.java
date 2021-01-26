@@ -56,6 +56,8 @@ public abstract class Piece {
 	public abstract List<Move> getMoves(Board board);
 
 	public abstract Piece movePiece(Move move);
+	
+	public abstract int positionBonus();
 
 	// ===== Getters ===== \\
 	public Team getTeam() {
