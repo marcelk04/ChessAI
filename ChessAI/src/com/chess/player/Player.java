@@ -9,7 +9,7 @@ import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.King;
 import com.chess.pieces.Piece;
-import com.chess.pieces.PieceType;
+import com.chess.pieces.Piece.PieceType;
 import com.chess.pieces.Team;
 
 public abstract class Player {

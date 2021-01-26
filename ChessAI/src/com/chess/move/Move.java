@@ -50,6 +50,8 @@ public abstract class Move {
 
 	public abstract String getNotation();
 
+	public abstract Piece getAttackedPiece();
+
 	public String standardNotation() {
 		String notation = "";
 		notation += Utils.columns[Utils.getX(pieceDestination)];
@@ -101,6 +103,11 @@ public abstract class Move {
 
 		@Override
 		public Board execute() {
+			return null;
+		}
+
+		@Override
+		public Piece getAttackedPiece() {
 			return null;
 		}
 	}
@@ -158,6 +165,11 @@ public abstract class Move {
 
 			return notation + standardNotation();
 		}
+
+		@Override
+		public Piece getAttackedPiece() {
+			return null;
+		}
 	}
 
 	public static class AttackMove extends Move {
@@ -167,10 +179,6 @@ public abstract class Move {
 				final Piece attackedPiece) {
 			super(board, movedPiece, pieceDestination);
 			this.attackedPiece = attackedPiece;
-		}
-
-		public Piece getAttackedPiece() {
-			return attackedPiece;
 		}
 
 		@Override
@@ -223,6 +231,11 @@ public abstract class Move {
 
 			notation += "x";
 			return notation + standardNotation();
+		}
+
+		@Override
+		public Piece getAttackedPiece() {
+			return attackedPiece;
 		}
 
 		@Override
@@ -299,7 +312,7 @@ public abstract class Move {
 		protected Pawn promotedPawn;
 		protected Piece promotionPiece;
 
-		public PawnPromotion(final PawnMove executedMove, final Piece promotionPiece) {
+		public PawnPromotion(final Move executedMove, final Piece promotionPiece) {
 			super(executedMove.getBoard(), (Pawn) executedMove.getMovedPiece(), executedMove.getPieceDestination());
 			this.executedMove = executedMove;
 			this.promotedPawn = (Pawn) executedMove.getMovedPiece();
@@ -317,19 +330,41 @@ public abstract class Move {
 				}
 			}
 
-			b.setPiece(promotionPiece.movePiece(this));
+			b.setPiece(promotionPiece);
 			b.setMoveMaker(pawnMovedBoard.getCurrentPlayer().getTeam());
 
 			return b.build();
+		}
+		
+		@Override
+		public String getNotation() {
+			return executedMove.getNotation() + promotionPiece.getType().getLetter();
+		}
+
+		@Override
+		public Piece getAttackedPiece() {
+			return executedMove.getAttackedPiece();
 		}
 
 		@Override
 		public boolean isAttackMove() {
 			return executedMove.isAttackMove();
 		}
+
+		public Move getExecutedMove() {
+			return executedMove;
+		}
+
+		public Pawn getPromotedPawn() {
+			return promotedPawn;
+		}
+
+		public Piece getPromotionPiece() {
+			return promotionPiece;
+		}
 	}
 
-	public static abstract class CastleMove extends Move {
+	public static abstract class CastleMove extends NormalMove {
 		protected final Rook castleRook;
 		protected final int castleRookDestination;
 

@@ -100,6 +100,16 @@ public class Board {
 		return Move.NULL_MOVE;
 	}
 
+	public List<Move> findMoves(int currentPiecePosition, int pieceDestination) {
+		return getAllLegalMoves().stream().filter(m -> {
+			return m.getCurrentPiecePosition() == currentPiecePosition && m.getPieceDestination() == pieceDestination;
+		}).collect(Collectors.toList());
+	}
+
+	public List<Move> findMoves(Piece movedPiece, int pieceDestination) {
+		return findMoves(movedPiece.getPosition(), pieceDestination);
+	}
+
 	public boolean hasGameEnded() {
 		return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate();
 	}

@@ -14,8 +14,8 @@ import javax.swing.JColorChooser;
 import com.chess.Board;
 import com.chess.algorithm.MoveMaker;
 import com.chess.algorithm.PlayerType;
-import com.chess.move.MoveStatus;
 import com.chess.move.Move.AttackMove;
+import com.chess.move.MoveStatus;
 import com.gui.display.Display;
 import com.gui.objects.UIBoardPanel;
 import com.gui.objects.UIConsole;
@@ -64,7 +64,7 @@ public class GUI {
 		panelMoves.setHorizontalAlignment(UIObject.CENTER);
 		display.add(panelMoves);
 
-		boardPanel = new UIBoardPanel();
+		boardPanel = new UIBoardPanel(display);
 		boardPanel.setBounds(220, 10, 600, 600);
 		boardPanel.setBoard(board);
 		boardPanel.setBorder(Color.black);
@@ -78,8 +78,7 @@ public class GUI {
 				boardPanel.setLastMove(e.getExecutedMove());
 				panelMoves.addMove(e.getExecutedMove());
 				if (e.getExecutedMove().isAttackMove()) {
-					AttackMove m = (AttackMove) e.getExecutedMove();
-					panelTakenPieces.addPiece(m.getAttackedPiece());
+					panelTakenPieces.addPiece(e.getExecutedMove().getAttackedPiece());
 				}
 			}
 		});
@@ -210,6 +209,7 @@ public class GUI {
 			} catch (IOException | URISyntaxException e1) {
 				e1.printStackTrace();
 			}
+
 		});
 		display.add(btnGitHub);
 	}

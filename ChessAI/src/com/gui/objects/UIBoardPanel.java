@@ -8,12 +8,16 @@ import java.util.List;
 import com.chess.Board;
 import com.chess.algorithm.MoveMaker;
 import com.chess.move.Move;
+import com.chess.move.Move.PawnPromotion;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.Piece;
+import com.chess.pieces.Piece.PieceType;
 import com.gui.UIUtils;
+import com.gui.display.Display;
 import com.gui.interfaces.Clickable;
 import com.gui.listeners.MoveExecutionListener;
+import com.main.PawnPromotionGUI;
 import com.main.Utils;
 
 public class UIBoardPanel extends UIObject implements Clickable {
@@ -27,8 +31,10 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	private Color[] colors;
 	private MoveMaker moveMaker;
 	private Move lastMove;
+	private Display display;
 
-	public UIBoardPanel() {
+	public UIBoardPanel(Display display) {
+		this.display = display;
 		colors = new Color[64];
 		lightColor = Color.white;
 		darkColor = Color.lightGray;
@@ -70,53 +76,78 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		if (!hovering || board == null || moveMaker == null)
-			return;
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				if (!hovering || !enabled || board == null || moveMaker == null)
+					return;
 
-		int piecePosition = Utils.getIndex((e.getX() - this.x) / pieceWidth, (e.getY() - this.y) / pieceHeight);
+				int clickPosition = Utils.getIndex((e.getX() - x) / pieceWidth, (e.getY() - y) / pieceHeight);
 
-		Piece clickedPiece = board.getPiece(piecePosition);
+				Piece clickedPiece = board.getPiece(clickPosition);
 
-		if (clickedPiece != null && clickedPiece.getTeam() == board.getCurrentPlayer().getTeam()) {
-			clearMoves();
+				if (clickedPiece != null && clickedPiece.getTeam() == board.getCurrentPlayer().getTeam()) {
+					clearMoves();
 
-			selectedPiece = clickedPiece;
-			selectedPiece_moves = board.getPossibleMoves(selectedPiece);
+					selectedPiece = clickedPiece;
+					selectedPiece_moves = board.getPossibleMoves(selectedPiece);
 
-			for (Move m : selectedPiece_moves) {
-				int pieceDestination = m.getPieceDestination();
+					for (Move m : selectedPiece_moves) {
+						int pieceDestination = m.getPieceDestination();
 
-				colors[pieceDestination] = UIUtils.mixColors(colors[pieceDestination], moveColor);
-			}
-		} else {
-			boolean moveFound = false;
+						colors[pieceDestination] = UIUtils.mixColors(colors[pieceDestination], moveColor);
+					}
+				} else {
+					boolean moveFound = false;
 
-			if (selectedPiece_moves != null) {
-				for (Move m : selectedPiece_moves) {
-					if (m.getPieceDestination() == piecePosition) {
-						MoveTransition mt = board.getCurrentPlayer().makeMove(m);
+					if (selectedPiece != null) {
+						List<Move> possibleMoves = board.findMoves(selectedPiece, clickPosition);
 
-						if (mt.getMoveStatus() == MoveStatus.DONE) {
-							if (meListener != null)
-								meListener.onMoveExecution(mt);
+						if (possibleMoves != null) {
+							Move moveToExecute = null;
 
-							moveMaker.moveExecuted(mt);
-							lastMove = m;
+							if (possibleMoves.size() == 1) {
+								moveToExecute = possibleMoves.get(0);
+							} else if (possibleMoves.size() == 4) {
+								PieceType requestedPiece = PawnPromotionGUI
+										.getPieceInput(board.getCurrentPlayer().getTeam(), display);
 
-							moveFound = true;
+								if (requestedPiece != null) {
+									for (Move m : possibleMoves) {
+										if (((PawnPromotion) m).getPromotionPiece().getType() == requestedPiece) {
+											moveToExecute = m;
+											break;
+										}
+									}
+								}
+							}
 
-							fillColorArray();
-							break;
+							if (moveToExecute != null) {
+								MoveTransition mt = board.getCurrentPlayer().makeMove(moveToExecute);
+
+								if (mt.getMoveStatus() == MoveStatus.DONE) {
+									if (meListener != null)
+										meListener.onMoveExecution(mt);
+
+									moveMaker.moveExecuted(mt);
+									lastMove = moveToExecute;
+									moveFound = true;
+
+									fillColorArray();
+								}
+							}
 						}
 					}
-				}
-			}
 
-			if (!moveFound)
-				clearMoves();
-		}
-		
-		repaint();
+					if (!moveFound)
+						clearMoves();
+				}
+
+				repaint();
+			}
+		};
+		t.start();
+
 	}
 
 	private void clearMoves() {

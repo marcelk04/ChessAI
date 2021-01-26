@@ -9,10 +9,8 @@ import javax.swing.JFrame;
 
 import com.gui.input.KeyManager;
 import com.gui.input.MouseManager;
-import com.gui.objects.UILabel;
 import com.gui.objects.UIObject;
 import com.gui.objects.UIPanel;
-import com.gui.objects.UITextButton;
 
 public class Display {
 	private static final int xOffset = 16, yOffset = 39;
@@ -114,20 +112,9 @@ public class Display {
 	public KeyManager getKeyManager() {
 		return keyManager;
 	}
-
-	public static void main(String[] args) {
-		Display d = new Display(1280, 720, "Test");
-
-		UILabel l = new UILabel("Please show this");
-		l.setBounds(10, 10, 1260, 30);
-		l.setBorder(Color.red);
-		l.setHorizontalAlignment(UIObject.CENTER);
-		d.add(l);
-
-		UITextButton b = new UITextButton("Test");
-		b.setBounds(10, 40, 100, 30);
-		b.setClickListener(e -> b.setText("Lol"));
-		d.add(b);
+	
+	public UIPanel getObjects() {
+		return objects;
 	}
 
 	// ===== Setters ===== \\

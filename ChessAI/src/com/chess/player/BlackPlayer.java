@@ -8,7 +8,7 @@ import com.chess.move.Move;
 import com.chess.move.Move.KingSideCastleMove;
 import com.chess.move.Move.QueenSideCastleMove;
 import com.chess.pieces.Piece;
-import com.chess.pieces.PieceType;
+import com.chess.pieces.Piece.PieceType;
 import com.chess.pieces.Rook;
 import com.chess.pieces.Team;
 

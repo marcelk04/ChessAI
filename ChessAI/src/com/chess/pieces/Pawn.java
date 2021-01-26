@@ -9,6 +9,7 @@ import com.chess.move.Move.PawnAttackMove;
 import com.chess.move.Move.PawnEnPassantAttackMove;
 import com.chess.move.Move.PawnJump;
 import com.chess.move.Move.PawnMove;
+import com.chess.move.Move.PawnPromotion;
 import com.gfx.Assets;
 import com.main.Utils;
 
@@ -35,7 +36,17 @@ public class Pawn extends Piece {
 				continue;
 
 			if (currentOffset == 8 && board.getPiece(currentDestination) == null) {
-				moves.add(new PawnMove(board, this, currentDestination));
+				Move move = new PawnMove(board, this, currentDestination);
+
+				if ((Utils.getY(currentDestination) == 0 && team == Team.WHITE)
+						|| (Utils.getY(currentDestination) == 7 && team == Team.BLACK)) {
+					moves.add(new PawnPromotion(move, Utils.getMovedQueen(team, currentDestination)));
+					moves.add(new PawnPromotion(move, Utils.getMovedRook(team, currentDestination)));
+					moves.add(new PawnPromotion(move, Utils.getMovedBishop(team, currentDestination)));
+					moves.add(new PawnPromotion(move, Utils.getMovedKnight(team, currentDestination)));
+				} else {
+					moves.add(move);
+				}
 			} else if (currentOffset == 16 && !movedAtLeastOnce && ((Utils.getY(position) == 1 && team == Team.BLACK)
 					|| (Utils.getY(position) == 6 && team == Team.WHITE))) {
 				if (board.getPiece(currentDestination) == null
@@ -46,12 +57,20 @@ public class Pawn extends Piece {
 				if (!((currentOffset == 9 && Utils.getX(position) == 0
 						|| currentOffset == 7 && Utils.getX(position) == 7) && team == Team.WHITE
 						|| (currentOffset == 7 && Utils.getX(position) == 0
-								|| currentOffset == 9 && Utils.getX(position) == 7) && team == Team.BLACK)
-						&& !(Utils.getY(position) == 0 && team == Team.WHITE
-								|| Utils.getY(position) == 7 && team == Team.BLACK)) {
+								|| currentOffset == 9 && Utils.getX(position) == 7) && team == Team.BLACK)) {
 					Piece pieceAtDestination = board.getPiece(currentDestination);
 					if (pieceAtDestination != null && team != pieceAtDestination.getTeam()) {
-						moves.add(new PawnAttackMove(board, this, currentDestination, pieceAtDestination));
+						Move move = new PawnAttackMove(board, this, currentDestination, pieceAtDestination);
+
+						if ((Utils.getY(currentDestination) == 0 && team == Team.WHITE)
+								|| (Utils.getY(currentDestination) == 7 && team == Team.BLACK)) {
+							moves.add(new PawnPromotion(move, Utils.getMovedQueen(team, currentDestination)));
+							moves.add(new PawnPromotion(move, Utils.getMovedRook(team, currentDestination)));
+							moves.add(new PawnPromotion(move, Utils.getMovedBishop(team, currentDestination)));
+							moves.add(new PawnPromotion(move, Utils.getMovedKnight(team, currentDestination)));
+						} else {
+							moves.add(move);
+						}
 					}
 
 					int sidePiecePosition = Utils.getIndex(Utils.getX(currentDestination),
@@ -63,7 +82,6 @@ public class Pawn extends Piece {
 					if (pieceAtDestination == null && sidePiece != null && enPassantPawn != null
 							&& sidePiece.equals(enPassantPawn)) {
 						moves.add(new PawnEnPassantAttackMove(board, this, currentDestination, enPassantPawn));
-
 					}
 				}
 			}

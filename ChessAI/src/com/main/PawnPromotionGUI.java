@@ -1,9 +1,11 @@
 package com.main;
 
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import com.chess.pieces.PieceType;
+import com.chess.pieces.Piece.PieceType;
 import com.chess.pieces.Team;
 import com.gfx.Assets;
 import com.gui.display.Display;
@@ -12,20 +14,23 @@ import com.gui.objects.UILabel;
 import com.gui.objects.UIObject;
 
 public class PawnPromotionGUI {
-	private final Display display;
-	private PieceType selectedPiece = null;
+	private static PieceType selectedPiece = null;
 
-	public PawnPromotionGUI(int width, int height, Team currentTeam) {
-		this.display = new Display(width, height, "Pawn Promotion");
+	private PawnPromotionGUI() {
+	}
 
-		UILabel lblTitle = new UILabel("Select a piece");
-		lblTitle.setBounds(0, 0, width, 30);
-		lblTitle.setHorizontalAlignment(UIObject.CENTER);
-		lblTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
-		display.add(lblTitle);
+	public static PieceType getPieceInput(Team currentTeam, Display display) {
+		display.getObjects().getObjects().forEach(o -> o.setEnabled(false));
 
-		int buttonWidth = width / 4;
-		int buttonHeight = height - 30;
+		Graphics g = display.getGraphics();
+		g.setColor(new Color(63, 63, 63, 171));
+		g.fillRect(0, 0, display.getWidth(), display.getHeight());
+
+		int buttonWidth = 75;
+		int buttonHeight = buttonWidth;
+
+		int buttonX = display.getWidth() / 2 - buttonWidth * 2;
+		int buttonY = (display.getHeight() - buttonHeight) / 2;
 
 		BufferedImage[] images = new BufferedImage[4];
 
@@ -41,52 +46,50 @@ public class PawnPromotionGUI {
 			images[3] = Assets.black_knight;
 		}
 
+		selectedPiece = null;
+
+		UILabel lblTitle = new UILabel("Select a piece");
+		lblTitle.setBounds(buttonX, buttonY - 30, buttonWidth * 4, 30);
+		lblTitle.setHorizontalAlignment(UIObject.CENTER);
+		lblTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+		display.add(lblTitle);
+
 		UIImageButton btnQueen = new UIImageButton(images[0], false);
-		btnQueen.setBounds(buttonWidth * 0, 30, buttonWidth, buttonHeight);
+		btnQueen.setBounds(buttonX + buttonWidth * 0, buttonY, buttonWidth, buttonHeight);
 		btnQueen.setClickListener(e -> selectedPiece = PieceType.QUEEN);
 		display.add(btnQueen);
 
 		UIImageButton btnRook = new UIImageButton(images[1], false);
-		btnRook.setBounds(buttonWidth * 1, 30, buttonWidth, buttonHeight);
+		btnRook.setBounds(buttonX + buttonWidth * 1, buttonY, buttonWidth, buttonHeight);
 		btnRook.setClickListener(e -> selectedPiece = PieceType.ROOK);
 		display.add(btnRook);
 
 		UIImageButton btnBishop = new UIImageButton(images[2], false);
-		btnBishop.setBounds(buttonWidth * 2, 30, buttonWidth, buttonHeight);
+		btnBishop.setBounds(buttonX + buttonWidth * 2, buttonY, buttonWidth, buttonHeight);
 		btnBishop.setClickListener(e -> selectedPiece = PieceType.BISHOP);
 		display.add(btnBishop);
 
 		UIImageButton btnKnight = new UIImageButton(images[3], false);
-		btnKnight.setBounds(buttonWidth * 3, 30, buttonWidth, buttonHeight);
+		btnKnight.setBounds(buttonX + buttonWidth * 3, buttonY, buttonWidth, buttonHeight);
 		btnKnight.setClickListener(e -> selectedPiece = PieceType.KNIGHT);
 		display.add(btnKnight);
-	}
 
-	public static PieceType getPieceInput(int width, int height, Team currentTeam) {
-		PawnPromotionGUI gui = new PawnPromotionGUI(width, height, currentTeam);
-		PieceType selectedPiece;
-
-		while ((selectedPiece = gui.getSelectedPiece()) == null) {
+		while (selectedPiece == null) {
 			try {
 				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
 			}
 		}
 
-		gui.getDisplay().close();
+		display.remove(btnQueen);
+		display.remove(btnRook);
+		display.remove(btnBishop);
+		display.remove(btnKnight);
+
+		display.getObjects().getObjects().forEach(o -> o.setEnabled(true));
+		display.getObjects().repaint();
+
 		return selectedPiece;
-	}
-
-	public static PieceType getPieceInput(Team currentTeam) {
-		return getPieceInput(300, 105, currentTeam);
-	}
-
-	public PieceType getSelectedPiece() {
-		return selectedPiece;
-	}
-
-	public Display getDisplay() {
-		return display;
 	}
 }

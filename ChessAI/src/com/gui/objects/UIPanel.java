@@ -91,7 +91,6 @@ public class UIPanel extends UIObject implements Clickable, Typeable {
 	public UIObject add(UIObject o) {
 		objects.add(o);
 		o.setGraphics(g);
-		repaint();
 		return o;
 	}
 
@@ -105,5 +104,10 @@ public class UIPanel extends UIObject implements Clickable, Typeable {
 		objects.remove(o);
 		repaint();
 		return o;
+	}
+
+	// ===== Getters ===== \\
+	public List<UIObject> getObjects() {
+		return objects;
 	}
 }
