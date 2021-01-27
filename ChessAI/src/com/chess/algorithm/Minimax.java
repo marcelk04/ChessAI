@@ -74,11 +74,13 @@ public class Minimax implements Runnable {
 
 		MoveTransition mt = currentPlayer.makeMove(bestMove);
 
-		time = (System.currentTimeMillis() - time) / 1000d;
-		UIConsole.log("Evaluated Boards:" + evaluatedBoards + "|Depth:" + depth + "|Best Move:" + bestMove.getNotation()
-				+ "|Best Eval:" + bestEval + "|Time: " + time + "s|Times pruned:" + timesPruned
-				+ "|Approx pruned boards:" + Math.round(prunedBoards) + "|in %:"
-				+ Math.round(prunedBoards / (evaluatedBoards + prunedBoards) * 10000) / 100d);
+		if (running) {
+			time = (System.currentTimeMillis() - time) / 1000d;
+			UIConsole.log("Evaluated Boards:" + evaluatedBoards + "|Depth:" + depth + "|Best Move:"
+					+ bestMove.getNotation() + "|Best Eval:" + bestEval + "|Time: " + time + "s|Times pruned:"
+					+ timesPruned + "|Approx pruned boards:" + Math.round(prunedBoards) + "|in %:"
+					+ Math.round(prunedBoards / (evaluatedBoards + prunedBoards) * 10000) / 100d);
+		}
 
 		if (running)
 			mm.moveExecuted(mt);

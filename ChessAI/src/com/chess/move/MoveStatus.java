@@ -20,5 +20,5 @@ public enum MoveStatus {
 		}
 	};
 
-	abstract boolean isDone();
+	public abstract boolean isDone();
 }

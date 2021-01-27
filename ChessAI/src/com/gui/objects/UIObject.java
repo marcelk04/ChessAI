@@ -23,12 +23,12 @@ public abstract class UIObject {
 	/**
 	 * The default text color.
 	 */
-	protected static final Color standard_text_color = Color.black;
+	public static final Color STANDARD_TEXT_COLOR = Color.black;
 
 	/**
 	 * The default font used for text rendering.
 	 */
-	protected static final Font standard_font = new Font("Sans Serif", Font.PLAIN, 13);
+	public static final Font STANDARD_FONT = new Font("Sans Serif", Font.PLAIN, 13);
 
 	/**
 	 * The position of the object.
@@ -73,12 +73,12 @@ public abstract class UIObject {
 	/**
 	 * The color of the text.
 	 */
-	protected Color textColor = standard_text_color;
+	protected Color textColor = STANDARD_TEXT_COLOR;
 
 	/**
 	 * The font used for text rendering.
 	 */
-	protected Font font = standard_font;
+	protected Font font = STANDARD_FONT;
 
 	protected Graphics g;
 
@@ -243,7 +243,7 @@ public abstract class UIObject {
 		if (textColor != null)
 			this.textColor = textColor;
 		else
-			this.textColor = standard_text_color;
+			this.textColor = STANDARD_TEXT_COLOR;
 		repaint();
 	}
 
@@ -251,7 +251,7 @@ public abstract class UIObject {
 		if (font != null)
 			this.font = font;
 		else
-			this.font = standard_font;
+			this.font = STANDARD_FONT;
 		repaint();
 	}
 

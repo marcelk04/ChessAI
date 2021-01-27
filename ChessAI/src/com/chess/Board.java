@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.chess.move.Move;
+import com.chess.move.MoveTransition;
 import com.chess.pieces.Bishop;
 import com.chess.pieces.King;
 import com.chess.pieces.Knight;
@@ -27,6 +28,7 @@ public class Board {
 	private final WhitePlayer whitePlayer;
 	private final BlackPlayer blackPlayer;
 	private final Player currentPlayer;
+	private MoveTransition lastMoveTransition = null;
 
 	private Board(Builder builder) {
 		this.boardConfig = builder.boardConfig;
@@ -172,6 +174,23 @@ public class Board {
 	public List<Move> getAllLegalMoves() {
 		return Stream.concat(whitePlayer.getLegalMoves().stream(), blackPlayer.getLegalMoves().stream())
 				.collect(Collectors.toList());
+	}
+
+	public Team getWinner() {
+		if (whitePlayer.isInCheckMate())
+			return Team.BLACK;
+		else if (blackPlayer.isInCheckMate())
+			return Team.WHITE;
+		return null;
+	}
+
+	public MoveTransition getLastMoveTransition() {
+		return lastMoveTransition;
+	}
+
+	// ===== Setters ===== \\
+	public void setLastMoveTransition(MoveTransition lastMoveTransition) {
+		this.lastMoveTransition = lastMoveTransition;
 	}
 
 	// ===== Inner classes ===== \\

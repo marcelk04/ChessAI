@@ -76,78 +76,74 @@ public class UIBoardPanel extends UIObject implements Clickable {
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		Thread t = new Thread() {
-			@Override
-			public void run() {
-				if (!hovering || !enabled || board == null || moveMaker == null)
-					return;
+		Thread t = new Thread(() -> {
+			if (!hovering || !enabled || board == null || moveMaker == null)
+				return;
 
-				int clickPosition = Utils.getIndex((e.getX() - x) / pieceWidth, (e.getY() - y) / pieceHeight);
+			int clickPosition = Utils.getIndex((e.getX() - x) / pieceWidth, (e.getY() - y) / pieceHeight);
 
-				Piece clickedPiece = board.getPiece(clickPosition);
+			Piece clickedPiece = board.getPiece(clickPosition);
 
-				if (clickedPiece != null && clickedPiece.getTeam() == board.getCurrentPlayer().getTeam()) {
-					clearMoves();
+			if (clickedPiece != null && clickedPiece.getTeam() == board.getCurrentPlayer().getTeam()) {
+				clearMoves();
 
-					selectedPiece = clickedPiece;
-					selectedPiece_moves = board.getPossibleMoves(selectedPiece);
+				selectedPiece = clickedPiece;
+				selectedPiece_moves = board.getPossibleMoves(selectedPiece);
 
-					for (Move m : selectedPiece_moves) {
-						int pieceDestination = m.getPieceDestination();
+				for (Move m : selectedPiece_moves) {
+					int pieceDestination = m.getPieceDestination();
 
-						colors[pieceDestination] = UIUtils.mixColors(colors[pieceDestination], moveColor);
-					}
-				} else {
-					boolean moveFound = false;
+					colors[pieceDestination] = UIUtils.mixColors(colors[pieceDestination], moveColor);
+				}
+			} else {
+				boolean moveFound = false;
 
-					if (selectedPiece != null) {
-						List<Move> possibleMoves = board.findMoves(selectedPiece, clickPosition);
+				if (selectedPiece != null) {
+					List<Move> possibleMoves = board.findMoves(selectedPiece, clickPosition);
 
-						if (possibleMoves != null) {
-							Move moveToExecute = null;
+					if (possibleMoves != null) {
+						Move moveToExecute = null;
 
-							if (possibleMoves.size() == 1) {
-								moveToExecute = possibleMoves.get(0);
-							} else if (possibleMoves.size() == 4) {
-								PieceType requestedPiece = PawnPromotionGUI
-										.getPieceInput(board.getCurrentPlayer().getTeam(), display);
+						if (possibleMoves.size() == 1) {
+							moveToExecute = possibleMoves.get(0);
+						} else if (possibleMoves.size() == 4) {
+							PieceType requestedPiece = PawnPromotionGUI
+									.getPieceInput(board.getCurrentPlayer().getTeam(), display);
 
-								if (requestedPiece != null) {
-									for (Move m : possibleMoves) {
-										if (((PawnPromotion) m).getPromotionPiece().getType() == requestedPiece) {
-											moveToExecute = m;
-											break;
-										}
+							if (requestedPiece != null) {
+								for (Move m : possibleMoves) {
+									if (((PawnPromotion) m).getPromotionPiece().getType() == requestedPiece) {
+										moveToExecute = m;
+										break;
 									}
 								}
 							}
+						}
 
-							if (moveToExecute != null) {
-								MoveTransition mt = board.getCurrentPlayer().makeMove(moveToExecute);
+						if (moveToExecute != null) {
+							MoveTransition mt = board.getCurrentPlayer().makeMove(moveToExecute);
 
-								if (mt.getMoveStatus() == MoveStatus.DONE) {
-									if (meListener != null)
-										meListener.onMoveExecution(mt);
+							if (mt.getMoveStatus() == MoveStatus.DONE) {
+								if (meListener != null)
+									meListener.onMoveExecution(mt);
 
-									moveMaker.moveExecuted(mt);
-									lastMove = moveToExecute;
-									moveFound = true;
+								moveMaker.moveExecuted(mt);
+								lastMove = moveToExecute;
+								moveFound = true;
 
-									fillColorArray();
-								}
+								fillColorArray();
 							}
 						}
 					}
-
-					if (!moveFound)
-						clearMoves();
 				}
 
-				repaint();
+				if (!moveFound)
+					clearMoves();
 			}
-		};
-		t.start();
 
+			repaint();
+		});
+		t.start();
 	}
 
 	private void clearMoves() {

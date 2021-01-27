@@ -42,7 +42,6 @@ public abstract class Player {
 		}
 
 		return new MoveTransition(board, newBoard, move, MoveStatus.DONE);
-
 	}
 
 	private King findKing() {

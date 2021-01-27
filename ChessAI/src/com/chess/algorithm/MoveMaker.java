@@ -16,6 +16,9 @@ public class MoveMaker {
 	private MoveExecutionListener moveExecutionListener;
 	private boolean stopped = false;
 
+	private int depth = 3;
+	private boolean usingPruning = true;
+
 	public MoveMaker(PlayerType player1, PlayerType player2, UIBoardPanel boardPanel) {
 		this.player1 = player1;
 		this.player2 = player2;
@@ -37,14 +40,17 @@ public class MoveMaker {
 			UIConsole.log("Couldn't execute move|" + m);
 			throw new RuntimeException();
 		}
-//		boardPanel.repaint();
 		makeNextMove();
 	}
 
 	public void makeNextMove() {
 		if (!stopped) {
 			if (board.hasGameEnded()) {
-				UIConsole.log(board.getCurrentPlayer().getOpponent().getTeam() + " has won!");
+				Team winner = board.getWinner();
+				if (winner != null)
+					UIConsole.log(winner + " has won!");
+				else
+					UIConsole.log("The game is a draw!");
 				boardPanel.setMoveMaker(null);
 			} else {
 				if ((currentTeam == Team.WHITE && player1 == PlayerType.HUMAN)
@@ -52,7 +58,7 @@ public class MoveMaker {
 					boardPanel.setMoveMaker(this);
 				} else {
 					boardPanel.setMoveMaker(null);
-					new Minimax(this, 3, true);
+					new Minimax(this, depth, usingPruning);
 				}
 			}
 		}
@@ -88,6 +94,14 @@ public class MoveMaker {
 		return moveExecutionListener;
 	}
 
+	public int getDepth() {
+		return depth;
+	}
+
+	public boolean isUsingPruning() {
+		return usingPruning;
+	}
+
 	// ===== Setters ===== \\
 	public void setPlayers(PlayerType player1, PlayerType player2) {
 		this.player1 = player1;
@@ -102,9 +116,18 @@ public class MoveMaker {
 
 	public void setBoard(Board board) {
 		this.board = board;
+		this.currentTeam = board.getCurrentPlayer().getTeam();
 	}
 
 	public void setMoveExecutionListener(MoveExecutionListener moveExecutionListener) {
 		this.moveExecutionListener = moveExecutionListener;
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
+
+	public void setUsingPruning(boolean usingPruning) {
+		this.usingPruning = usingPruning;
 	}
 }

@@ -13,6 +13,8 @@ public class MoveTransition {
 		this.newBoard = newBoard;
 		this.executedMove = executedMove;
 		this.moveStatus = moveStatus;
+
+		newBoard.setLastMoveTransition(this);
 	}
 
 	@Override

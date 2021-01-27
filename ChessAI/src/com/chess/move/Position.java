@@ -8,6 +8,10 @@ public class Position {
 		this.y = y;
 	}
 
+	public Position() {
+		this(0, 0);
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		if (this == other)
