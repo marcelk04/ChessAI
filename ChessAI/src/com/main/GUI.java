@@ -85,7 +85,7 @@ public class GUI {
 		});
 
 		UIPanel panelSettings = new UIPanel();
-		panelSettings.setBounds(1090, 10, 180, 280);
+		panelSettings.setBounds(1090, 10, 180, 315);
 		panelSettings.setBorder(Color.black);
 		display.add(panelSettings);
 
@@ -135,13 +135,20 @@ public class GUI {
 		boxUsePruning.setSelectedIndex(1);
 		panelSettings.add(boxUsePruning);
 
+		UISelectionBox<String> boxOrderMoves = new UISelectionBox<String>(
+				new String[] { "Not ordering moves", "Ordering moves" });
+		boxOrderMoves.setBounds(1105, 255, 150, 25);
+		boxOrderMoves.setTextColor(Color.white);
+		boxOrderMoves.setBackground(Color.black);
+		panelSettings.add(boxOrderMoves);
+
 		UITextButton btnSave = new UITextButton("Save Settings");
-		btnSave.setBounds(1100, 255, 160, 25);
+		btnSave.setBounds(1100, 290, 160, 25);
 		btnSave.setTextColor(Color.white);
 		btnSave.setBackground(Color.black);
 		btnSave.setClickListener(e -> {
 			saveSettings(boxPlayer1.getSelectedElement(), boxPlayer2.getSelectedElement(),
-					boxDepth.getSelectedElement(), boxUsePruning.getSelectedIndex());
+					boxDepth.getSelectedElement(), boxUsePruning.getSelectedIndex(), boxOrderMoves.getSelectedIndex());
 		});
 		panelSettings.add(btnSave);
 
@@ -245,6 +252,8 @@ public class GUI {
 			panelTakenPieces.clear();
 			panelMoves.clear();
 			mm = new MoveMaker(boxPlayer1.getSelectedElement(), boxPlayer2.getSelectedElement(), boardPanel);
+			mm.setDepth(boxDepth.getSelectedElement());
+			mm.setUsingPruning(boxUsePruning.getSelectedIndex() == 1);
 			mm.setMoveExecutionListener(m -> {
 				if (m.getMoveStatus().isDone()) {
 					boardPanel.setBoard(board = m.getNewBoard());
@@ -271,12 +280,14 @@ public class GUI {
 		panelUtilities.add(btnGitHub);
 	}
 
-	private void saveSettings(PlayerType player1, PlayerType player2, int depth, int usePruning) {
+	private void saveSettings(PlayerType player1, PlayerType player2, int depth, int usePruning, int orderMoves) {
 		mm.setPlayers(player1, player2);
 		mm.setDepth(depth);
 		mm.setUsingPruning(usePruning == 1);
+		mm.setOrderingMoves(orderMoves == 1);
 		UIConsole.log("Set Player 1 to " + player1.toString() + "; Set Player 2 to " + player2.toString()
-				+ "; Set search depth to " + depth + "; " + (usePruning == 0 ? "Not using Pruning" : "Using Pruning"));
+				+ "; Set search depth to " + depth + "; " + (usePruning == 0 ? "Not using Pruning" : "Using Pruning")
+				+ "; " + (orderMoves == 0 ? "Not ordering moves" : "Ordering moves"));
 	}
 
 	// ===== Getters ===== \\

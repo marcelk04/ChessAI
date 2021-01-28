@@ -15,20 +15,21 @@ public class Minimax implements Runnable {
 	private Thread thread;
 	private boolean running;
 
-	private MoveMaker mm;
-	private int depth;
-	private boolean usePruning;
+	private final MoveMaker mm;
+	private final int depth;
+	private final boolean usePruning, orderMoves;
+	private final BoardEvaluator evaluator;
 	private long evaluatedBoards, timesPruned;
 	private double movesPerBoard, prunedBoards;
 	private int count;
-	private BoardEvaluator evaluator;
 
 	private static List<Minimax> list = new ArrayList<Minimax>();
 
-	public Minimax(MoveMaker mm, int depth, boolean usePruning) {
+	public Minimax(MoveMaker mm, int depth, boolean usePruning, boolean orderMoves) {
 		this.mm = mm;
 		this.depth = depth;
 		this.usePruning = usePruning;
+		this.orderMoves = orderMoves;
 		this.evaluatedBoards = 0;
 		this.timesPruned = 0;
 		this.movesPerBoard = mm.getBoard().getCurrentPlayer().getLegalMoves().size();
@@ -46,10 +47,14 @@ public class Minimax implements Runnable {
 		int bestEval;
 		double time = System.currentTimeMillis();
 
+		List<Move> moves = currentPlayer.getLegalMoves();
+		if (orderMoves)
+			moves = MoveOrdering.calculateSimpleMoveOrder(moves);
+
 		if (currentPlayer.getTeam() == Team.WHITE) {
 			bestEval = Integer.MIN_VALUE;
 
-			for (Move m : currentPlayer.getLegalMoves()) {
+			for (Move m : moves) {
 				MoveTransition moveTransition = currentPlayer.makeMove(m);
 				int currentEval = min(moveTransition.getNewBoard(), depth, bestEval, Integer.MAX_VALUE);
 
@@ -61,7 +66,7 @@ public class Minimax implements Runnable {
 		} else {
 			bestEval = Integer.MAX_VALUE;
 
-			for (Move m : currentPlayer.getLegalMoves()) {
+			for (Move m : moves) {
 				MoveTransition moveTransition = currentPlayer.makeMove(m);
 				int currentEval = max(moveTransition.getNewBoard(), depth, Integer.MIN_VALUE, bestEval);
 
