@@ -3,10 +3,12 @@ package com.gui.input;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import com.gui.objects.UIPanel;
 
-public class MouseManager implements MouseListener, MouseMotionListener {
+public class MouseManager implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private final UIPanel panel;
 
 	private int mouseX, mouseY;
@@ -72,5 +74,10 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 
 	public boolean isRightPressed() {
 		return rightPressed;
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		panel.onMouseScroll(e);
 	}
 }

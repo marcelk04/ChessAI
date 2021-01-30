@@ -4,6 +4,10 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -61,11 +65,20 @@ public class Display {
 		mouseManager = new MouseManager(objects);
 		frame.addMouseListener(mouseManager);
 		frame.addMouseMotionListener(mouseManager);
+		frame.addMouseWheelListener(mouseManager);
 		canvas.addMouseListener(mouseManager);
 		canvas.addMouseMotionListener(mouseManager);
+		canvas.addMouseWheelListener(mouseManager);
 
 		keyManager = new KeyManager(objects);
 		frame.addKeyListener(keyManager);
+
+		frame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				objects.repaint();
+			}
+		});
 	}
 
 	public UIObject add(UIObject o) {
@@ -112,7 +125,7 @@ public class Display {
 	public KeyManager getKeyManager() {
 		return keyManager;
 	}
-	
+
 	public UIPanel getObjects() {
 		return objects;
 	}

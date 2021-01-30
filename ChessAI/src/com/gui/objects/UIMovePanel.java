@@ -27,11 +27,11 @@ public class UIMovePanel extends UITextArea {
 		String text = "";
 		Move m;
 
-		for (int i = 0; i < moves.size(); i++) {
+		for (int i = moves.size() - 1; i >= 0; i--) {
 			m = moves.get(i);
 			text += m.getMovedPiece().getTeam().toString() + ": " + m.getNotation();
 
-			if (i < moves.size() - 1)
+			if (i > 0)
 				text += "\n";
 		}
 
@@ -39,8 +39,11 @@ public class UIMovePanel extends UITextArea {
 	}
 
 	public void addMove(Move m) {
-		moves.add(0, m);
-		convertList();
+		moves.add(m);
+		if (super.text != null && !super.text.equals(""))
+			super.setText(super.text + "\n" + m.getMovedPiece().getTeam().toString() + ": " + m.getNotation());
+		else
+			super.setText(m.getMovedPiece().getTeam().toString() + ": " + m.getNotation());
 	}
 
 	public void removeMove(Move m) {

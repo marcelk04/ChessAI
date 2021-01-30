@@ -18,7 +18,10 @@ public class UIConsole extends UITextArea {
 	}
 
 	private void addText(String text) {
-		super.setText(text + "\n" + super.getText());
+		if (super.text != null && !super.text.equals(""))
+			super.setText(super.text + "\n" + text);
+		else
+			super.setText(text);
 	}
 
 	@Override

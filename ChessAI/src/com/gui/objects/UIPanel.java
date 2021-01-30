@@ -3,10 +3,12 @@ package com.gui.objects;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.gui.interfaces.Clickable;
+import com.gui.interfaces.Scrollable;
 import com.gui.interfaces.Typeable;
 
 /**
@@ -16,7 +18,7 @@ import com.gui.interfaces.Typeable;
  * 
  * @author DefensivLord
  */
-public class UIPanel extends UIObject implements Clickable, Typeable {
+public class UIPanel extends UIObject implements Clickable, Typeable, Scrollable {
 	private List<UIObject> objects;
 
 	/**
@@ -78,6 +80,16 @@ public class UIPanel extends UIObject implements Clickable, Typeable {
 			for (UIObject o : objects) {
 				if (o instanceof Clickable)
 					((Clickable) o).onMouseRelease(e);
+			}
+		}
+	}
+
+	@Override
+	public void onMouseScroll(MouseWheelEvent e) {
+		if (enabled) {
+			for (UIObject o : objects) {
+				if (o instanceof Scrollable)
+					((Scrollable) o).onMouseScroll(e);
 			}
 		}
 	}

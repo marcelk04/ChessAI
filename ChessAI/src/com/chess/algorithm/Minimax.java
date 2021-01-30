@@ -19,9 +19,10 @@ public class Minimax implements Runnable {
 	private final int depth;
 	private final boolean usePruning, orderMoves;
 	private final BoardEvaluator evaluator;
+	
 	private long evaluatedBoards, timesPruned;
 	private double movesPerBoard, prunedBoards;
-	private int count;
+	private int movesPerBoardCount;
 
 	private static List<Minimax> list = new ArrayList<Minimax>();
 
@@ -34,7 +35,7 @@ public class Minimax implements Runnable {
 		this.timesPruned = 0;
 		this.movesPerBoard = mm.getBoard().getCurrentPlayer().getLegalMoves().size();
 		this.prunedBoards = 0;
-		this.count = 1;
+		this.movesPerBoardCount = 1;
 		evaluator = new PositionBoardEvaluator();
 		start();
 	}
@@ -99,7 +100,7 @@ public class Minimax implements Runnable {
 		}
 
 		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
-		movesPerBoard = (movesPerBoard * count + moves.size()) / ++count;
+		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
 		int minEval = beta;
 
 		for (int i = 0; i < moves.size(); i++) {
@@ -129,7 +130,7 @@ public class Minimax implements Runnable {
 		}
 
 		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
-		movesPerBoard = (movesPerBoard * count + moves.size()) / ++count;
+		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
 		int maxEval = alpha;
 
 		for (int i = 0; i < moves.size(); i++) {
