@@ -111,11 +111,13 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 					break;
 				case CENTER:
 					displayPositions[i] = new Position(
-							x + Math.round((width - (float) UIUtils.getStringWidth(displayText[i], font)) / 2f), y);
+							x + Math.round(
+									(width - (float) UIUtils.getStringWidth(displayText[i + beginIndex], font)) / 2f),
+							y);
 					break;
 				case RIGHT:
-					displayPositions[i] = new Position(
-							x + width - hgap - Math.round((float) UIUtils.getStringWidth(displayText[i], font)), y);
+					displayPositions[i] = new Position(x + width - hgap
+							- Math.round((float) UIUtils.getStringWidth(displayText[i + beginIndex], font)), y);
 					break;
 				}
 			}

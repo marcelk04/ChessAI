@@ -14,6 +14,8 @@ public class MoveOrdering {
 	private static final BoardEvaluator evaluator = new SimpleBoardEvaluator();
 	private static final int ORDER_SEARCH_DEPTH = 2;
 
+	private static double orderTime = 0, orderCount = 0;
+
 	public static List<Move> orderMoves(Board board) {
 		return orderMoves(board, ORDER_SEARCH_DEPTH);
 	}
@@ -54,22 +56,26 @@ public class MoveOrdering {
 	}
 
 	public static List<Move> calculateSimpleMoveOrder(List<Move> moves) {
+		long time = System.currentTimeMillis();
+
 		List<Move> orderedMoves = new ArrayList<Move>();
 		orderedMoves.addAll(moves);
 
 		orderedMoves.sort((o1, o2) -> {
-			if (!(o1.isAttackMove() && o2.isAttackMove()))
-				return -1;
-			if (attackScore(o1) >= attackScore(o2))
-				return -1;
-			return 1;
+			return attackScore(o2) - attackScore(o1);
 		});
+
+		orderTime += System.currentTimeMillis() - time;
+		orderCount++;
+
 		return orderedMoves;
 	}
 
 	private static int attackScore(Move move) {
-		int score = move.getAttackedPiece().getValue() - move.getMovedPiece().getValue();
-		return score * -move.getMovedPiece().getTeam().moveDirection();
+		return move.isAttackMove()
+				? (move.getAttackedPiece().getValue() - move.getMovedPiece().getValue())
+						* -move.getMovedPiece().getTeam().moveDirection()
+				: 0;
 	}
 
 	private static int min(Board board, int depth) {
@@ -112,6 +118,15 @@ public class MoveOrdering {
 		}
 
 		return maxEval;
+	}
+
+	public static double getOrderTime() {
+		return orderTime / orderCount;
+	}
+
+	public static void reset() {
+		orderTime = 0;
+		orderCount = 0;
 	}
 
 	// ===== Inner Classes ===== \\
