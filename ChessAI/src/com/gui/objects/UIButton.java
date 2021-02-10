@@ -36,7 +36,6 @@ public abstract class UIButton extends UIObject implements Clickable {
 		if (hovering && enabled && visible) {
 			if (clickListener != null)
 				clickListener.onClick(e);
-			repaint();
 		}
 	}
 

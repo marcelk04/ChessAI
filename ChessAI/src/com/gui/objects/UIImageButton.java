@@ -90,7 +90,11 @@ public class UIImageButton extends UIButton {
 			imageX = x + (width - imageWidth) / 2;
 			imageY = y + (height - imageHeight) / 2;
 		}
-		
+	}
+
+	@Override
+	protected void propertyChanged() {
+		calculateImageBounds();
 		repaint();
 	}
 
@@ -120,15 +124,11 @@ public class UIImageButton extends UIButton {
 	}
 
 	// ===== Setters ===== \\
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		super.setBounds(x, y, width, height);
-		calculateImageBounds();
-	}
-
 	public void setButtonImage(Image buttonImage) {
-		this.buttonImage = buttonImage;
-		calculateImageBounds();
+		if (this.buttonImage == null || !this.buttonImage.equals(buttonImage)) {
+			this.buttonImage = buttonImage;
+			propertyChanged();
+		}
 	}
 
 	public void setImageBounds(int imageX, int imageY, int imageWidth, int imageHeight) {
@@ -140,7 +140,9 @@ public class UIImageButton extends UIButton {
 	}
 
 	public void setStretchingImage(boolean stretchingImage) {
-		this.stretchingImage = stretchingImage;
-		calculateImageBounds();
+		if (this.stretchingImage != stretchingImage) {
+			this.stretchingImage = stretchingImage;
+			propertyChanged();
+		}
 	}
 }

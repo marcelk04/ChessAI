@@ -126,6 +126,10 @@ public abstract class UIObject {
 		}
 	}
 
+	protected void propertyChanged() {
+		repaint();
+	}
+
 	/**
 	 * A helper method used by the subclasses to check whether a specific point is
 	 * within their bounds or not.
@@ -196,12 +200,25 @@ public abstract class UIObject {
 	}
 
 	// ===== Setters ===== \\
+	public void setPosition(int x, int y) {
+		if (this.x != x && this.y != y) {
+			this.x = x;
+			this.y = y;
+			propertyChanged();
+		}
+	}
+
+	public void setSize(int width, int height) {
+		if (this.width != width && this.height != height) {
+			this.width = width;
+			this.height = height;
+			propertyChanged();
+		}
+	}
+
 	public void setBounds(int x, int y, int width, int height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		repaint();
+		setPosition(x, y);
+		setSize(width, height);
 	}
 
 	public void setBounds(Rectangle bounds) {
@@ -210,53 +227,73 @@ public abstract class UIObject {
 	}
 
 	public void setVisible(boolean visible) {
-		this.visible = visible;
-		repaint();
+		if (this.visible != visible) {
+			this.visible = visible;
+			propertyChanged();
+		}
 	}
 
 	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-		repaint();
+		if (this.enabled != enabled) {
+			this.enabled = enabled;
+			propertyChanged();
+		}
 	}
 
 	public void setHorizontalAlignment(int horizontalAlignment) {
-		this.horizontalAlignment = horizontalAlignment;
-		repaint();
+		if (this.horizontalAlignment != horizontalAlignment) {
+			this.horizontalAlignment = horizontalAlignment;
+			propertyChanged();
+		}
 	}
 
 	public void setVerticalAlignment(int verticalAlignment) {
-		this.verticalAlignment = verticalAlignment;
-		repaint();
+		if (this.verticalAlignment != verticalAlignment) {
+			this.verticalAlignment = verticalAlignment;
+			propertyChanged();
+		}
 	}
 
 	public void setBackground(Color background) {
-		this.background = background;
-		repaint();
+		if (this.background == null || !this.background.equals(background)) {
+			this.background = background;
+			propertyChanged();
+		}
 	}
 
 	public void setBorder(Color border) {
-		this.border = border;
-		repaint();
+		if (this.border == null || !this.border.equals(border)) {
+			this.border = border;
+			propertyChanged();
+		}
 	}
 
 	public void setTextColor(Color textColor) {
-		if (textColor != null)
-			this.textColor = textColor;
-		else
-			this.textColor = STANDARD_TEXT_COLOR;
-		repaint();
+		if (!this.textColor.equals(textColor)) {
+			if (textColor != null)
+				this.textColor = textColor;
+			else
+				this.textColor = STANDARD_TEXT_COLOR;
+
+			propertyChanged();
+		}
 	}
 
 	public void setFont(Font font) {
-		if (font != null)
-			this.font = font;
-		else
-			this.font = STANDARD_FONT;
-		repaint();
+		if (!this.font.equals(font)) {
+			if (font != null)
+				this.font = font;
+			else
+				this.font = STANDARD_FONT;
+
+			propertyChanged();
+		}
 	}
 
 	public void setGraphics(Graphics g) {
-		this.g = g;
-		repaint();
+		if (this.g == null || !this.g.equals(g)) {
+			this.g = g;
+			propertyChanged();
+		}
 	}
 }

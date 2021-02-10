@@ -85,13 +85,13 @@ public class UISelectionBox<E> extends UITextButton {
 
 		index = 0;
 
-		repaint();
+		propertyChanged();
 	}
 
 	public void setSelectedIndex(int index) {
 		if (elements != null && Utils.inRange(index, 0, elements.length - 1)) {
 			text = elements[this.index = index].toString();
-			repaint();
+			propertyChanged();
 		}
 	}
 }

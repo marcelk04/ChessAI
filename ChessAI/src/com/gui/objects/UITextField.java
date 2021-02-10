@@ -1,7 +1,6 @@
 package com.gui.objects;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -9,7 +8,6 @@ import java.awt.event.MouseEvent;
 import com.gui.UIUtils;
 import com.gui.interfaces.Clickable;
 import com.gui.interfaces.Typeable;
-
 
 public class UITextField extends UIObject implements Clickable, Typeable {
 	private String text = "";
@@ -42,13 +40,12 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 		if (selected) {
 			if ((44 <= e.getKeyCode() && e.getKeyCode() <= 126) || e.getKeyCode() == KeyEvent.VK_SPACE) {
 				text += e.getKeyChar();
-				calculateTextPos();
+				propertyChanged();
 			} else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && !text.isEmpty()) {
 				text = text.substring(0, text.length() - 1);
-				calculateTextPos();
+				propertyChanged();
 			}
 		}
-		repaint();
 	}
 
 	@Override
@@ -68,13 +65,12 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 		if (hovering && enabled) {
 			selected = true;
 			end = "_";
-			calculateTextPos();
 		} else {
 			selected = false;
 			end = "";
-			calculateTextPos();
 		}
-		repaint();
+
+		propertyChanged();
 	}
 
 	protected void calculateTextPos() {
@@ -83,6 +79,11 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 		textY = y + height / 2;
 		if (border != null)
 			textX += 2;
+	}
+
+	@Override
+	public void propertyChanged() {
+		calculateTextPos();
 		repaint();
 	}
 
@@ -93,19 +94,9 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 
 	// ===== Setter ===== \\
 	public void setText(String text) {
-		this.text = text;
-		calculateTextPos();
-	}
-
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		super.setBounds(x, y, width, height);
-		calculateTextPos();
-	}
-
-	@Override
-	public void setFont(Font font) {
-		super.setFont(font);
-		calculateTextPos();
+		if (this.text == null || !this.text.equals(text)) {
+			this.text = text;
+			propertyChanged();
+		}
 	}
 }

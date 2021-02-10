@@ -20,6 +20,7 @@ import com.chess.move.MoveTransition;
 import com.gui.display.Display;
 import com.gui.objects.UIBoardPanel;
 import com.gui.objects.UIConsole;
+import com.gui.objects.UIDialog;
 import com.gui.objects.UILabel;
 import com.gui.objects.UIMovePanel;
 import com.gui.objects.UIObject;
@@ -84,10 +85,10 @@ public class GUI {
 			}
 		});
 
-		UIPanel panelSettings = new UIPanel();
+		UIDialog panelSettings = new UIDialog();
 		panelSettings.setBounds(1090, 10, 180, 315);
 		panelSettings.setBorder(Color.black);
-		display.add(panelSettings);
+//		display.add(panelSettings);
 
 		UILabel lblPlayer1 = new UILabel("Player 1 (White)");
 		lblPlayer1.setBounds(1100, 15, 160, 20);
@@ -136,7 +137,7 @@ public class GUI {
 		panelSettings.add(boxUsePruning);
 
 		UISelectionBox<String> boxOrderMoves = new UISelectionBox<String>(
-				new String[] { "Not ordering moves", "Ordering moves" });
+				new String[] { "Not ordering moves", "Ordering moves simple", "Ordering moves complex" });
 		boxOrderMoves.setBounds(1105, 255, 150, 25);
 		boxOrderMoves.setTextColor(Color.white);
 		boxOrderMoves.setBackground(Color.black);
@@ -151,6 +152,15 @@ public class GUI {
 					boxDepth.getSelectedElement(), boxUsePruning.getSelectedIndex(), boxOrderMoves.getSelectedIndex());
 		});
 		panelSettings.add(btnSave);
+
+		UITextButton btnConfigureAI = new UITextButton("Configure AI");
+		btnConfigureAI.setBounds(1100, 15, 160, 25);
+		btnConfigureAI.setTextColor(Color.white);
+		btnConfigureAI.setBackground(Color.black);
+		btnConfigureAI.setClickListener(e -> {
+			display.showDialog(panelSettings);
+		});
+		display.add(btnConfigureAI);
 
 		UIPanel panelColors = new UIPanel();
 		panelColors.setBounds(1090, 435, 180, 150);
@@ -279,15 +289,21 @@ public class GUI {
 		});
 		panelUtilities.add(btnGitHub);
 	}
+	
+	private void showConfigurationDialog() {
+		
+	}
 
 	private void saveSettings(PlayerType player1, PlayerType player2, int depth, int usePruning, int orderMoves) {
 		mm.setPlayers(player1, player2);
 		mm.setDepth(depth);
 		mm.setUsingPruning(usePruning == 1);
-		mm.setOrderingMoves(orderMoves == 1);
+		mm.setOrderingMovesSimple(orderMoves == 1);
+		mm.setOrderingMovesComplex(orderMoves == 2);
 		UIConsole.log("Set Player 1 to " + player1.toString() + "; Set Player 2 to " + player2.toString()
 				+ "; Set search depth to " + depth + "; " + (usePruning == 0 ? "Not using Pruning" : "Using Pruning")
 				+ "; " + (orderMoves == 0 ? "Not ordering moves" : "Ordering moves"));
+		display.removeLastDialog();
 	}
 
 	// ===== Getters ===== \\

@@ -1,6 +1,5 @@
 package com.gui.objects;
 
-import java.awt.Font;
 import java.awt.Graphics;
 
 import com.gui.UIUtils;
@@ -68,7 +67,11 @@ public class UILabel extends UIObject {
 		}
 
 		textY = y + height / 2;
+	}
 
+	@Override
+	protected void propertyChanged() {
+		calculateTextPos();
 		repaint();
 	}
 
@@ -79,25 +82,9 @@ public class UILabel extends UIObject {
 
 	// ===== Setter ===== \\
 	public void setText(String text) {
-		this.text = text != null ? text : "";
-		calculateTextPos();
-	}
-
-	@Override
-	public void setHorizontalAlignment(int horizontalAlignment) {
-		this.horizontalAlignment = horizontalAlignment;
-		calculateTextPos();
-	}
-
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		super.setBounds(x, y, width, height);
-		calculateTextPos();
-	}
-
-	@Override
-	public void setFont(Font font) {
-		super.setFont(font);
-		calculateTextPos();
+		if (this.text == null || !this.text.equals(text)) {
+			this.text = text != null ? text : "";
+			propertyChanged();
+		}
 	}
 }

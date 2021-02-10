@@ -1,7 +1,6 @@
 package com.gui.objects;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -39,7 +38,7 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 		this.scrollBarWidth = 5;
 		scrollBarColor = new Color(63, 63, 63, 171);
 
-		calculateTextPositionsUpdated();
+		calculateTextPositions();
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 		}
 	}
 
-	private void calculateTextPositionsUpdated() {
+	private void calculateTextPositions() {
 		if (text != null && !text.equals("")) {
 			float textHeight = (float) UIUtils.getStringHeight(text, font);
 			int maxLines = (int) (height / (textHeight + vgap));
@@ -132,66 +131,6 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 		repaint();
 	}
 
-	private void calculateTextPositions() {
-		if (text != null && !text.equals("")) {
-			float textHeight = (float) UIUtils.getStringHeight(text, font);
-			int maxLines = (int) (height / textHeight);
-			int maxTextWidth = width - hgap * 2;
-
-			String[] splitText = text.split("\n");
-			displayText = new String[Math.min(splitText.length, maxLines)];
-
-			for (int i = 0; i < displayText.length; i++) {
-				displayText[i] = UIUtils.shortenText(splitText[i], maxTextWidth, font);
-			}
-
-			float totalHeight = (textHeight + vgap) * displayText.length - vgap;
-
-			displayText = UIUtils.shortenArray(displayText, maxTextWidth, height, vgap, font);
-
-			int yBegin;
-
-			switch (verticalAlignment) {
-			case TOP:
-				yBegin = y + vgap;
-				break;
-			case CENTER:
-				yBegin = y + Math.round((height - totalHeight) / 2);
-				break;
-			case BOTTOM:
-				yBegin = y + height - Math.round(totalHeight) - vgap;
-				break;
-			default:
-				yBegin = y + vgap;
-			}
-
-			displayPositions = new Position[displayText.length];
-
-			for (int i = 0; i < displayText.length; i++) {
-				int y = Math.round(yBegin + textHeight + (textHeight + vgap) * i);
-
-				switch (horizontalAlignment) {
-				case LEFT:
-					displayPositions[i] = new Position(x + hgap, y);
-					break;
-				case CENTER:
-					displayPositions[i] = new Position(
-							x + Math.round((width - (float) UIUtils.getStringWidth(displayText[i], font)) / 2f), y);
-					break;
-				case RIGHT:
-					displayPositions[i] = new Position(
-							x + width - hgap - Math.round((float) UIUtils.getStringWidth(displayText[i], font)), y);
-					break;
-				}
-			}
-		} else {
-			displayText = new String[0];
-			displayPositions = new Position[0];
-		}
-
-		repaint();
-	}
-
 	@Override
 	public void onMouseMove(MouseEvent e) {
 		if (boundsContain(e.getX(), e.getY()) && enabled && visible)
@@ -208,13 +147,19 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 	public void onMouseScroll(MouseWheelEvent e) {
 		if (hovering && enabled && visible) {
 			beginIndex += e.getWheelRotation();
-			calculateTextPositionsUpdated();
+			propertyChanged();
 		}
 	}
 
 	public void clear() {
 		text = "";
+		propertyChanged();
+	}
+
+	@Override
+	protected void propertyChanged() {
 		calculateTextPositions();
+		repaint();
 	}
 
 	// ===== Getters ===== \\
@@ -239,31 +184,25 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 	}
 
 	// ===== Setters ===== \\
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		super.setBounds(x, y, width, height);
-		calculateTextPositionsUpdated();
-	}
-
-	@Override
-	public void setFont(Font font) {
-		super.setFont(font);
-		calculateTextPositionsUpdated();
-	}
-
 	public void setHgap(int hgap) {
-		this.hgap = hgap;
-		calculateTextPositionsUpdated();
+		if (this.hgap != hgap) {
+			this.hgap = hgap;
+			propertyChanged();
+		}
 	}
 
 	public void setVgap(int vgap) {
-		this.vgap = vgap;
-		calculateTextPositionsUpdated();
+		if (this.vgap != vgap) {
+			this.vgap = vgap;
+			propertyChanged();
+		}
 	}
 
 	public void setText(String text) {
-		this.text = text;
-		calculateTextPositionsUpdated();
+		if (this.text == null || !this.text.equals(text)) {
+			this.text = text;
+			propertyChanged();
+		}
 	}
 
 	public void setScrollBarWidth(int scrollBarWidth) {

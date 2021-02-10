@@ -17,7 +17,7 @@ public class MoveMaker {
 	private boolean stopped = false;
 
 	private int depth = 3;
-	private boolean usingPruning = true, orderMoves = false;
+	private boolean usingPruning = true, orderMovesSimple = false, orderMovesComplex = false;
 
 	public MoveMaker(PlayerType player1, PlayerType player2, UIBoardPanel boardPanel) {
 		this.player1 = player1;
@@ -58,7 +58,8 @@ public class MoveMaker {
 					boardPanel.setMoveMaker(this);
 				} else {
 					boardPanel.setMoveMaker(null);
-					new Minimax(this, depth, usingPruning, orderMoves);
+					new Minimax(this, depth, usingPruning, orderMovesSimple, orderMovesComplex,
+							PositionBoardEvaluator.get());
 				}
 			}
 		}
@@ -66,7 +67,7 @@ public class MoveMaker {
 
 	public void reset() {
 		Minimax.stopAll();
-		stopped = true;
+//		stopped = true;
 	}
 
 	// ===== Getters ===== \\
@@ -102,8 +103,12 @@ public class MoveMaker {
 		return usingPruning;
 	}
 
-	public boolean isOrderingMoves() {
-		return orderMoves;
+	public boolean isOrderingMovesSimple() {
+		return orderMovesSimple;
+	}
+
+	public boolean isOrderingMovesComplex() {
+		return orderMovesComplex;
 	}
 
 	// ===== Setters ===== \\
@@ -135,7 +140,11 @@ public class MoveMaker {
 		this.usingPruning = usingPruning;
 	}
 
-	public void setOrderingMoves(boolean orderingMoves) {
-		this.orderMoves = orderingMoves;
+	public void setOrderingMovesSimple(boolean orderingMovesSimple) {
+		this.orderMovesSimple = orderingMovesSimple;
+	}
+
+	public void setOrderingMovesComplex(boolean orderingMovesComplex) {
+		this.orderMovesComplex = orderingMovesComplex;
 	}
 }

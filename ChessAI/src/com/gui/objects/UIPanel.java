@@ -19,7 +19,7 @@ import com.gui.interfaces.Typeable;
  * @author DefensivLord
  */
 public class UIPanel extends UIObject implements Clickable, Typeable, Scrollable {
-	private List<UIObject> objects;
+	protected List<UIObject> objects;
 
 	/**
 	 * The constructor for instances of the class UIPanel.
@@ -106,6 +106,11 @@ public class UIPanel extends UIObject implements Clickable, Typeable, Scrollable
 		return o;
 	}
 
+	public UIObject addRelative(UIObject o) {
+		o.setPosition(this.x + o.getX(), this.y + o.getY());
+		return add(o);
+	}
+
 	/**
 	 * Removes a UIObject from the panel.
 	 * 
@@ -121,5 +126,11 @@ public class UIPanel extends UIObject implements Clickable, Typeable, Scrollable
 	// ===== Getters ===== \\
 	public List<UIObject> getObjects() {
 		return objects;
+	}
+
+	// ===== Setters ===== \\
+	public void setGraphics(Graphics g) {
+		super.setGraphics(g);
+		objects.forEach(o -> o.setGraphics(g));
 	}
 }

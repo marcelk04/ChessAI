@@ -14,37 +14,47 @@ public class MoveOrdering {
 	private static final BoardEvaluator evaluator = new SimpleBoardEvaluator();
 	private static final int ORDER_SEARCH_DEPTH = 2;
 
-	private static double orderTime = 0, orderCount = 0;
+	private static double simpleOrderTime = 0, simpleOrderCount = 0;
+	private static double complexOrderTime = 0, complexOrderCount = 0;
 
 	public static List<Move> orderMoves(Board board) {
 		return orderMoves(board, ORDER_SEARCH_DEPTH);
 	}
 
 	public static List<Move> orderMoves(Board board, int depth) {
-		List<MoveOrderEntry> moveOrderEntries = new ArrayList<MoveOrderEntry>();
+		final long time = System.currentTimeMillis();
+
+		final List<MoveOrderEntry> moveOrderEntries = new ArrayList<MoveOrderEntry>();
 
 		for (Move move : board.getCurrentPlayer().getLegalMoves()) {
 			MoveTransition mt = board.getCurrentPlayer().makeMove(move);
 
 			if (mt.getMoveStatus().isDone()) {
 				int attackBonus = calculateAttackBonus(board.getCurrentPlayer(), move);
-				int currentEval = attackBonus
-						+ (board.getCurrentPlayer().getTeam() == Team.WHITE ? min(mt.getNewBoard(), depth - 1)
-								: max(mt.getNewBoard(), depth - 1));
+				int currentEval = attackBonus + (board.getCurrentPlayer().getTeam() == Team.WHITE
+						? min(mt.getNewBoard(), depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE)
+						: max(mt.getNewBoard(), depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE));
 				moveOrderEntries.add(new MoveOrderEntry(move, currentEval));
 			}
 		}
 
-		moveOrderEntries.sort((o1, o2) -> {
-			if (o1.getEval() <= o2.getEval())
-				return 1;
-			return -1;
-		});
+		if (board.getCurrentPlayer().getTeam() == Team.WHITE) {
+			moveOrderEntries.sort((o1, o2) -> {
+				return o2.getEval() - o1.getEval();
+			});
+		} else {
+			moveOrderEntries.sort((o1, o2) -> {
+				return o1.getEval() - o2.getEval();
+			});
+		}
 
 		List<Move> orderedMoves = new ArrayList<Move>();
 		for (MoveOrderEntry entry : moveOrderEntries) {
 			orderedMoves.add(entry.getMove());
 		}
+
+		complexOrderTime += System.currentTimeMillis() - time;
+		complexOrderCount++;
 
 		return orderedMoves;
 	}
@@ -55,18 +65,18 @@ public class MoveOrdering {
 		return attackBonus;
 	}
 
-	public static List<Move> calculateSimpleMoveOrder(List<Move> moves) {
-		long time = System.currentTimeMillis();
+	public static List<Move> calculateSimpleMoveOrder(final List<Move> moves) {
+		final long time = System.currentTimeMillis();
 
-		List<Move> orderedMoves = new ArrayList<Move>();
+		final List<Move> orderedMoves = new ArrayList<Move>();
 		orderedMoves.addAll(moves);
 
 		orderedMoves.sort((o1, o2) -> {
 			return attackScore(o2) - attackScore(o1);
 		});
 
-		orderTime += System.currentTimeMillis() - time;
-		orderCount++;
+		simpleOrderTime += System.currentTimeMillis() - time;
+		simpleOrderCount++;
 
 		return orderedMoves;
 	}
@@ -78,55 +88,67 @@ public class MoveOrdering {
 				: 0;
 	}
 
-	private static int min(Board board, int depth) {
+	private static int min(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			return evaluator.evaluate(board, depth);
 		}
 
 		final List<Move> moves = calculateSimpleMoveOrder(board.getCurrentPlayer().getLegalMoves());
-		int minEval = Integer.MAX_VALUE;
+		int minEval = beta;
 
 		for (int i = 0; i < moves.size(); i++) {
 			MoveTransition mt = board.getCurrentPlayer().makeMove(moves.get(i));
 
 			if (mt.getMoveStatus() == MoveStatus.DONE) {
-				int currentEval = max(mt.getNewBoard(), depth - 1);
+				int currentEval = max(mt.getNewBoard(), depth - 1, alpha, minEval);
 
 				minEval = Math.min(minEval, currentEval);
+
+				if (minEval <= beta)
+					break;
 			}
 		}
 
 		return minEval;
 	}
 
-	private static int max(Board board, int depth) {
+	private static int max(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			return evaluator.evaluate(board, depth);
 		}
 
 		final List<Move> moves = calculateSimpleMoveOrder(board.getCurrentPlayer().getLegalMoves());
-		int maxEval = Integer.MIN_VALUE;
+		int maxEval = alpha;
 
 		for (int i = 0; i < moves.size(); i++) {
 			MoveTransition mt = board.getCurrentPlayer().makeMove(moves.get(i));
 
 			if (mt.getMoveStatus() == MoveStatus.DONE) {
-				int currentEval = min(mt.getNewBoard(), depth - 1);
+				int currentEval = min(mt.getNewBoard(), depth - 1, maxEval, beta);
 
 				maxEval = Math.max(maxEval, currentEval);
+
+				if (maxEval >= beta)
+					break;
 			}
 		}
 
 		return maxEval;
 	}
 
-	public static double getOrderTime() {
-		return orderTime / orderCount;
+	public static double getSimpleOrderTime() {
+		return simpleOrderTime / simpleOrderCount;
+	}
+
+	public static double getComplexOrderTime() {
+		return complexOrderTime / complexOrderCount;
 	}
 
 	public static void reset() {
-		orderTime = 0;
-		orderCount = 0;
+		simpleOrderTime = 0;
+		simpleOrderCount = 0;
+		complexOrderTime = 0;
+		complexOrderCount = 0;
 	}
 
 	// ===== Inner Classes ===== \\

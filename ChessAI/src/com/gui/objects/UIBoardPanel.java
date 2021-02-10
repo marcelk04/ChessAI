@@ -108,7 +108,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 							moveToExecute = possibleMoves.get(0);
 						} else if (possibleMoves.size() == 4) {
 							PieceType requestedPiece = PawnPromotionGUI
-									.getPieceInput(board.getCurrentPlayer().getTeam(), display);
+									.getPieceInput(board.getCurrentPlayer().getTeam(), display, this);
 
 							if (requestedPiece != null) {
 								for (Move m : possibleMoves) {
@@ -151,7 +151,6 @@ public class UIBoardPanel extends UIObject implements Clickable {
 		selectedPiece_moves = null;
 
 		fillColorArray();
-		repaint();
 	}
 
 	private void fillColorArray() {
@@ -168,6 +167,8 @@ public class UIBoardPanel extends UIObject implements Clickable {
 			colors[lastMove.getPieceDestination()] = UIUtils.mixColors(colors[lastMove.getPieceDestination()],
 					lastMoveColor);
 		}
+		
+		propertyChanged();
 	}
 
 	// ===== Getters ===== \\
@@ -251,6 +252,5 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	public void setLastMove(Move lastMove) {
 		this.lastMove = lastMove;
 		fillColorArray();
-		repaint();
 	}
 }

@@ -6,11 +6,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
 import com.gui.input.KeyManager;
 import com.gui.input.MouseManager;
+import com.gui.objects.UIDialog;
 import com.gui.objects.UIObject;
 import com.gui.objects.UIPanel;
 
@@ -28,6 +31,8 @@ public class Display {
 
 	private MouseManager mouseManager;
 	private KeyManager keyManager;
+
+	private List<UIDialog> activeDialogs;
 
 	public Display(int width, int height, String title) {
 		this.width = width;
@@ -77,6 +82,8 @@ public class Display {
 				objects.repaint();
 			}
 		});
+
+		activeDialogs = new ArrayList<UIDialog>();
 	}
 
 	public UIObject add(UIObject o) {
@@ -89,6 +96,42 @@ public class Display {
 
 	public void close() {
 		frame.dispose();
+	}
+
+	public void showDialog(UIDialog dialog) {
+		int size = activeDialogs.size();
+		if (size > 0) {
+			UIDialog topDialog = activeDialogs.get(--size);
+			topDialog.setVisible(false);
+			topDialog.setEnabled(false);
+		} else {
+			objects.getObjects().forEach(o -> o.setEnabled(false));
+			g.setColor(new Color(63, 63, 63, 171));
+			g.fillRect(0, 0, width, height);
+		}
+
+		dialog.activate();
+		activeDialogs.add(dialog);
+		objects.add(dialog);
+	}
+
+	public void removeLastDialog() {
+		int size = activeDialogs.size();
+		if (size > 0) {
+			UIDialog topDialog = activeDialogs.get(--size);
+			activeDialogs.remove(topDialog);
+			objects.remove(topDialog);
+			topDialog.deactivate();
+			if (size > 0) {
+				topDialog = activeDialogs.get(--size);
+				topDialog.setVisible(true);
+				topDialog.setEnabled(true);
+			} else {
+				objects.getObjects().forEach(o -> o.setEnabled(true));
+			}
+		}
+		
+		objects.repaint();
 	}
 
 	// ===== Getters ===== \\

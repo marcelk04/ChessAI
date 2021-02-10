@@ -4,7 +4,6 @@ import java.awt.Graphics;
 
 import com.gui.UIUtils;
 
-
 /**
  * The class UITextButton is a simple button which displays a String.
  * 
@@ -47,7 +46,9 @@ public class UITextButton extends UIButton {
 
 	// ===== Setters ===== \\
 	public void setText(String text) {
-		this.text = text;
-		repaint();
+		if (this.text == null || !this.text.equals(text)) {
+			this.text = text;
+			propertyChanged();
+		}
 	}
 }

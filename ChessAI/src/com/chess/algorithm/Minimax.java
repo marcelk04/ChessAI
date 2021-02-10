@@ -17,26 +17,25 @@ public class Minimax implements Runnable {
 
 	private final MoveMaker mm;
 	private final int depth;
-	private final boolean usePruning, orderMoves;
+	private final boolean usePruning, orderMovesSimple, orderMovesComplex;
 	private final BoardEvaluator evaluator;
 
-	private long evaluatedBoards, timesPruned;
-	private double movesPerBoard, prunedBoards;
-	private int movesPerBoardCount;
+	private long evaluatedBoards = 0, timesPruned = 0;
+	private double movesPerBoard, prunedBoards = 0;
+	private int movesPerBoardCount = 1;
 
 	private static List<Minimax> list = new ArrayList<Minimax>();
 
-	public Minimax(MoveMaker mm, int depth, boolean usePruning, boolean orderMoves) {
+	public Minimax(MoveMaker mm, int depth, boolean usePruning, boolean orderMovesSimple, boolean orderMovesComplex,
+			BoardEvaluator evaluator) {
 		this.mm = mm;
 		this.depth = depth;
 		this.usePruning = usePruning;
-		this.orderMoves = orderMoves;
-		this.evaluatedBoards = 0;
-		this.timesPruned = 0;
+		this.orderMovesSimple = orderMovesSimple;
+		this.orderMovesComplex = orderMovesComplex;
 		this.movesPerBoard = mm.getBoard().getCurrentPlayer().getLegalMoves().size();
-		this.prunedBoards = 0;
-		this.movesPerBoardCount = 1;
-		evaluator = new PositionBoardEvaluator();
+		this.evaluator = evaluator;
+
 		start();
 	}
 
@@ -44,13 +43,11 @@ public class Minimax implements Runnable {
 	public void run() {
 		final Board board = mm.getBoard();
 		final Player currentPlayer = board.getCurrentPlayer();
+		final List<Move> moves = currentPlayer.getLegalMoves();
+
 		Move bestMove = null;
 		int bestEval;
 		double time = System.currentTimeMillis();
-
-		List<Move> moves = currentPlayer.getLegalMoves();
-		if (orderMoves)
-			moves = MoveOrdering.calculateSimpleMoveOrder(moves);
 
 		if (currentPlayer.getTeam() == Team.WHITE) {
 			bestEval = Integer.MIN_VALUE;
@@ -78,8 +75,6 @@ public class Minimax implements Runnable {
 			}
 		}
 
-		MoveTransition mt = currentPlayer.makeMove(bestMove);
-
 		if (running) {
 			time = (System.currentTimeMillis() - time) / 1000d;
 			UIConsole.log("Evaluated Boards:" + evaluatedBoards + "|Depth:" + depth + "|Best Move:"
@@ -87,13 +82,15 @@ public class Minimax implements Runnable {
 					+ timesPruned + "|Approx pruned boards:" + Math.round(prunedBoards) + "|in %:"
 					+ Math.round(prunedBoards / (evaluatedBoards + prunedBoards) * 10000) / 100d);
 
-			if (orderMoves)
-				UIConsole.log("Avg. time to order moves: " + MoveOrdering.getOrderTime() + "ms");
-			MoveOrdering.reset();
+			if (orderMovesSimple || orderMovesComplex) {
+				UIConsole.log("Avg. time to order moves: " + MoveOrdering.getSimpleOrderTime() + "ms (simple)/"
+						+ MoveOrdering.getComplexOrderTime() + "ms (complex)");
+				MoveOrdering.reset();
+			}
 		}
 
 		if (running)
-			mm.moveExecuted(mt);
+			mm.moveExecuted(currentPlayer.makeMove(bestMove));
 		stop();
 	}
 
@@ -104,8 +101,10 @@ public class Minimax implements Runnable {
 		}
 
 		List<Move> moves = board.getCurrentPlayer().getLegalMoves();
-		if (orderMoves)
+		if (orderMovesSimple)
 			moves = MoveOrdering.calculateSimpleMoveOrder(moves);
+		else if (orderMovesComplex)
+			moves = MoveOrdering.orderMoves(board);
 
 		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
 		int minEval = beta;
@@ -137,8 +136,10 @@ public class Minimax implements Runnable {
 		}
 
 		List<Move> moves = board.getCurrentPlayer().getLegalMoves();
-		if (orderMoves)
+		if (orderMovesSimple)
 			moves = MoveOrdering.calculateSimpleMoveOrder(moves);
+		else if (orderMovesComplex)
+			moves = MoveOrdering.orderMoves(board);
 
 		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
 		int maxEval = alpha;
