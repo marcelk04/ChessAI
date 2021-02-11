@@ -21,6 +21,9 @@ import com.main.PawnPromotionGUI;
 import com.main.Utils;
 
 public class UIBoardPanel extends UIObject implements Clickable {
+	public static final Color STANDARD_LIGHT_COLOR = Color.white, STANDARD_DARK_COLOR = Color.lightGray,
+			STANDARD_MOVE_COLOR = Color.orange, STANDARD_LAST_MOVE_COLOR = Color.green;
+
 	private boolean hovering = false;
 	private Board board;
 	private int pieceWidth, pieceHeight;
@@ -36,10 +39,10 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	public UIBoardPanel(Display display) {
 		this.display = display;
 		colors = new Color[64];
-		lightColor = Color.white;
-		darkColor = Color.lightGray;
-		moveColor = Color.orange;
-		lastMoveColor = Color.green;
+		lightColor = STANDARD_LIGHT_COLOR;
+		darkColor = STANDARD_DARK_COLOR;
+		moveColor = STANDARD_MOVE_COLOR;
+		lastMoveColor = STANDARD_LAST_MOVE_COLOR;
 		fillColorArray();
 	}
 
@@ -108,7 +111,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 							moveToExecute = possibleMoves.get(0);
 						} else if (possibleMoves.size() == 4) {
 							PieceType requestedPiece = PawnPromotionGUI
-									.getPieceInput(board.getCurrentPlayer().getTeam(), display, this);
+									.getPieceInput(board.getCurrentPlayer().getTeam(), display);
 
 							if (requestedPiece != null) {
 								for (Move m : possibleMoves) {
@@ -167,7 +170,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 			colors[lastMove.getPieceDestination()] = UIUtils.mixColors(colors[lastMove.getPieceDestination()],
 					lastMoveColor);
 		}
-		
+
 		propertyChanged();
 	}
 

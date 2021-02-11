@@ -14,7 +14,6 @@ public class MoveMaker {
 	private Board board;
 	private Team currentTeam;
 	private MoveExecutionListener moveExecutionListener;
-	private boolean stopped = false;
 
 	private int depth = 3;
 	private boolean usingPruning = true, orderMovesSimple = false, orderMovesComplex = false;
@@ -44,30 +43,28 @@ public class MoveMaker {
 	}
 
 	public void makeNextMove() {
-		if (!stopped) {
-			if (board.hasGameEnded()) {
-				Team winner = board.getWinner();
-				if (winner != null)
-					UIConsole.log(winner + " has won!");
-				else
-					UIConsole.log("The game is a draw!");
-				boardPanel.setMoveMaker(null);
+		if (board.hasGameEnded()) {
+			Team winner = board.getWinner();
+			if (winner != null)
+				UIConsole.log(winner + " has won!");
+			else
+				UIConsole.log("The game is a draw!");
+			boardPanel.setMoveMaker(null);
+		} else {
+			if ((currentTeam == Team.WHITE && player1 == PlayerType.HUMAN)
+					|| (currentTeam == Team.BLACK && player2 == PlayerType.HUMAN)) {
+				boardPanel.setMoveMaker(this);
 			} else {
-				if ((currentTeam == Team.WHITE && player1 == PlayerType.HUMAN)
-						|| (currentTeam == Team.BLACK && player2 == PlayerType.HUMAN)) {
-					boardPanel.setMoveMaker(this);
-				} else {
-					boardPanel.setMoveMaker(null);
-					new Minimax(this, depth, usingPruning, orderMovesSimple, orderMovesComplex,
-							PositionBoardEvaluator.get());
-				}
+				boardPanel.setMoveMaker(null);
+				new Minimax(this, depth, usingPruning, orderMovesSimple, orderMovesComplex,
+						PositionBoardEvaluator.get());
 			}
 		}
+
 	}
 
 	public void reset() {
 		Minimax.stopAll();
-//		stopped = true;
 	}
 
 	// ===== Getters ===== \\
@@ -115,7 +112,6 @@ public class MoveMaker {
 	public void setPlayers(PlayerType player1, PlayerType player2) {
 		this.player1 = player1;
 		this.player2 = player2;
-		stopped = false;
 		makeNextMove();
 	}
 

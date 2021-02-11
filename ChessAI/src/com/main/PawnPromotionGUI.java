@@ -8,7 +8,6 @@ import com.chess.pieces.Piece.PieceType;
 import com.chess.pieces.Team;
 import com.gfx.Assets;
 import com.gui.display.Display;
-import com.gui.objects.UIBoardPanel;
 import com.gui.objects.UIDialog;
 import com.gui.objects.UIImageButton;
 import com.gui.objects.UILabel;
@@ -20,7 +19,7 @@ public class PawnPromotionGUI {
 	private PawnPromotionGUI() {
 	}
 
-	public static PieceType getPieceInput(Team currentTeam, Display display, UIBoardPanel boardPanel) {
+	public static PieceType getPieceInput(Team currentTeam, Display display) {
 		BufferedImage[] images = new BufferedImage[4];
 
 		if (currentTeam == Team.WHITE) {
@@ -39,7 +38,7 @@ public class PawnPromotionGUI {
 
 		UIDialog dialog = new UIDialog();
 		dialog.setSize(300, 105);
-		dialog.setLocationRelativeTo(boardPanel);
+		dialog.setPositionRelativeTo(display.getObjects());
 		dialog.setBorder(Color.black);
 
 		UILabel lblTitle = new UILabel("Select a piece");

@@ -36,6 +36,14 @@ public class UIUtils {
 		return font.getStringBounds(text, frc).getHeight();
 	}
 
+	public static int getStringWidth(String text, Font font, Graphics g) {
+		return g.getFontMetrics(font).stringWidth(text);
+	}
+
+	public static int getStringHeight(Font font, Graphics g) {
+		return g.getFontMetrics(font).getHeight();
+	}
+
 	public static boolean contains(int x, int y, int width, int height, int pointX, int pointY) {
 		if (x <= pointX && pointX <= x + width && y <= pointY && pointY <= y + height)
 			return true;

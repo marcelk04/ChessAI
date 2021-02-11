@@ -1,6 +1,8 @@
 package com.gui.objects;
 
 public class UIDialog extends UIPanel {
+	public static final int NO_OPTION = 0, YES_OPTION = 1, CANCEL_OPTION = 2;
+
 	private boolean closed = false;
 
 	public void activate() {
@@ -19,7 +21,7 @@ public class UIDialog extends UIPanel {
 		return closed;
 	}
 
-	public void setLocationRelativeTo(UIObject object) {
+	public void setPositionRelativeTo(UIObject object) {
 		int centerX = object.getX() + object.getWidth() / 2;
 		int centerY = object.getY() + object.getHeight() / 2;
 

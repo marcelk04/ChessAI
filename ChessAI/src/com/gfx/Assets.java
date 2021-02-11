@@ -14,6 +14,8 @@ public class Assets {
 
 	// black pieces
 	public static BufferedImage black_king, black_queen, black_rook, black_bishop, black_knight, black_pawn;
+	
+	public static BufferedImage pencil;
 
 	/**
 	 * Initializes all the images so they can be rendered by the pieces.
@@ -34,5 +36,7 @@ public class Assets {
 		black_bishop = sheet.crop(WIDTH * 3, HEIGHT, WIDTH, HEIGHT);
 		black_knight = sheet.crop(WIDTH * 4, HEIGHT, WIDTH, HEIGHT);
 		black_pawn = sheet.crop(WIDTH * 5, HEIGHT, WIDTH, HEIGHT);
+		
+		pencil = ImageLoader.loadImage("/pencil.png");
 	}
 }

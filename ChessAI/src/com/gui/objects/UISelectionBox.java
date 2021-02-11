@@ -94,4 +94,13 @@ public class UISelectionBox<E> extends UITextButton {
 			propertyChanged();
 		}
 	}
+
+	public void setSelectedElement(E element) {
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i].equals(element)) {
+				setSelectedIndex(i);
+				break;
+			}
+		}
+	}
 }
