@@ -44,10 +44,7 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 	@Override
 	public void render(Graphics g) {
 		if (visible) {
-			if (background != null) {
-				g.setColor(background);
-				g.fillRect(x, y, width, height);
-			}
+			drawBackground();
 
 			try {
 				for (int i = 0; i <= endIndex - beginIndex; i++) {
@@ -58,12 +55,10 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 			}
 
 			g.setColor(scrollBarColor);
-			g.fillRect(this.x + this.width - scrollBarWidth, scrollBarY, scrollBarWidth, scrollBarHeight);
+			g.fillRoundRect(this.x + this.width - scrollBarWidth, scrollBarY, scrollBarWidth, scrollBarHeight, arcWidth,
+					arcHeight);
 
-			if (border != null) {
-				g.setColor(border);
-				g.drawRect(x, y, width, height);
-			}
+			drawBorder();
 		}
 	}
 

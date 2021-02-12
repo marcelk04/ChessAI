@@ -31,16 +31,9 @@ public class UIPanel extends UIObject implements Clickable, Typeable, Scrollable
 	@Override
 	public void render(Graphics g) {
 		if (visible) {
-			if (background != null) {
-				g.setColor(background);
-				g.fillRect(x, y, width, height);
-			}
-			if (border != null) {
-				g.setColor(border);
-				g.drawRect(x, y, width, height);
-			}
-
+			drawBackground();
 			objects.forEach(o -> o.repaint());
+			drawBorder();
 		}
 	}
 
@@ -130,7 +123,7 @@ public class UIPanel extends UIObject implements Clickable, Typeable, Scrollable
 
 	// ===== Setters ===== \\
 	public void setGraphics(Graphics g) {
-		super.setGraphics(g);
 		objects.forEach(o -> o.setGraphics(g));
+		super.setGraphics(g);
 	}
 }

@@ -31,10 +31,7 @@ public class UITakenPiecesPanel extends UIObject {
 	@Override
 	public void render(Graphics g) {
 		if (visible) {
-			if (background != null) {
-				g.setColor(background);
-				g.fillRect(x, y, width, height);
-			}
+			drawBackground();
 
 			Position pos;
 
@@ -52,10 +49,7 @@ public class UITakenPiecesPanel extends UIObject {
 					blackPieces.get(i).render(g, pos.x, pos.y, pieceWidth, pieceHeight);
 			}
 
-			if (border != null) {
-				g.setColor(border);
-				g.drawRect(x, y, width, height);
-			}
+			drawBorder();
 		}
 	}
 

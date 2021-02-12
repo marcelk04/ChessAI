@@ -5,7 +5,6 @@ import java.awt.event.MouseEvent;
 import com.gui.interfaces.Clickable;
 import com.gui.listeners.ClickListener;
 
-
 /**
  * The class UIButton serves as a framework for every button that should be
  * added to the GUI, for example a text button or an image button.
@@ -33,7 +32,7 @@ public abstract class UIButton extends UIObject implements Clickable {
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		if (hovering && enabled && visible) {
+		if (e.getButton() == MouseEvent.BUTTON1 && hovering && enabled && visible) {
 			if (clickListener != null)
 				clickListener.onClick(e);
 		}

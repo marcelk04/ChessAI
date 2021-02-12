@@ -33,15 +33,9 @@ public class UILabel extends UIObject {
 	@Override
 	public void render(Graphics g) {
 		if (visible) {
-			if (background != null) {
-				g.setColor(background);
-				g.fillRect(x, y, width, height);
-			}
-			if (border != null) {
-				g.setColor(border);
-				g.drawRect(x, y, width, height);
-			}
+			drawBackground();
 			UIUtils.drawString(g, text, textX, textY, true, textColor, font);
+			drawBorder();
 		}
 	}
 

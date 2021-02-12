@@ -23,15 +23,9 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 	@Override
 	public void render(Graphics g) {
 		if (visible) {
-			if (background != null) {
-				g.setColor(background);
-				g.fillRect(x, y, width, height);
-			}
-			if (border != null) {
-				g.setColor(border);
-				g.drawRect(x, y, width, height);
-			}
+			drawBackground();
 			UIUtils.drawString(g, text + end, textX, textY, true, textColor, font);
+			drawBorder();
 		}
 	}
 
@@ -54,7 +48,7 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 
 	@Override
 	public void onMouseMove(MouseEvent e) {
-		if (visible && boundsContain(e.getX(), e.getY()))
+		if (boundsContain(e.getX(), e.getY()) && enabled && visible)
 			hovering = true;
 		else
 			hovering = false;
@@ -62,7 +56,7 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 
 	@Override
 	public void onMouseRelease(MouseEvent e) {
-		if (hovering && enabled) {
+		if (e.getButton() == MouseEvent.BUTTON1 && hovering && enabled && visible) {
 			selected = true;
 			end = "_";
 		} else {

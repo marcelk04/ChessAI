@@ -40,6 +40,8 @@ public abstract class UIObject {
 	 */
 	protected int width, height;
 
+	protected int arcWidth, arcHeight;
+
 	/**
 	 * The visibiliy of the object.
 	 */
@@ -130,6 +132,20 @@ public abstract class UIObject {
 		repaint();
 	}
 
+	protected void drawBackground() {
+		if (background != null) {
+			g.setColor(background);
+			g.fillRoundRect(x, y, width, height, arcWidth, arcHeight);
+		}
+	}
+
+	protected void drawBorder() {
+		if (border != null) {
+			g.setColor(border);
+			g.drawRoundRect(x, y, width, height, arcWidth, arcHeight);
+		}
+	}
+
 	/**
 	 * A helper method used by the subclasses to check whether a specific point is
 	 * within their bounds or not.
@@ -161,6 +177,14 @@ public abstract class UIObject {
 
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
+	}
+
+	public int getArcWidth() {
+		return arcWidth;
+	}
+
+	public int getArcHeight() {
+		return arcHeight;
 	}
 
 	public boolean isVisible() {
@@ -201,7 +225,7 @@ public abstract class UIObject {
 
 	// ===== Setters ===== \\
 	public void setPosition(int x, int y) {
-		if (this.x != x && this.y != y) {
+		if (this.x != x || this.y != y) {
 			this.x = x;
 			this.y = y;
 			propertyChanged();
@@ -209,7 +233,7 @@ public abstract class UIObject {
 	}
 
 	public void setSize(int width, int height) {
-		if (this.width != width && this.height != height) {
+		if (this.width != width || this.height != height) {
 			this.width = width;
 			this.height = height;
 			propertyChanged();
@@ -224,6 +248,14 @@ public abstract class UIObject {
 	public void setBounds(Rectangle bounds) {
 		if (bounds != null)
 			setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+	}
+
+	public void setArcBounds(int arcWidth, int arcHeight) {
+		if (this.arcWidth != arcWidth || this.arcHeight != arcHeight) {
+			this.arcWidth = arcWidth;
+			this.arcHeight = arcHeight;
+			propertyChanged();
+		}
 	}
 
 	public void setVisible(boolean visible) {

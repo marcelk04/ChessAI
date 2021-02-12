@@ -47,15 +47,9 @@ public class UIImageButton extends UIButton {
 	@Override
 	public void render(Graphics g) {
 		if (visible) {
-			if (background != null) {
-				g.setColor(background);
-				g.fillRect(x, y, width, height);
-			}
-			if (border != null) {
-				g.setColor(border);
-				g.drawRect(x, y, width, height);
-			}
+			drawBackground();
 			g.drawImage(buttonImage, imageX, imageY, imageWidth, imageHeight, null);
+			drawBorder();
 		}
 	}
 

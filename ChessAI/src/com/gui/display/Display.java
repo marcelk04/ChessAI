@@ -130,7 +130,7 @@ public class Display {
 				objects.getObjects().forEach(o -> o.setEnabled(true));
 			}
 		}
-		
+
 		objects.repaint();
 	}
 

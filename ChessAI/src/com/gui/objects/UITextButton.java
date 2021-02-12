@@ -27,15 +27,9 @@ public class UITextButton extends UIButton {
 	@Override
 	public void render(Graphics g) {
 		if (visible) {
-			if (background != null) {
-				g.setColor(background);
-				g.fillRect(x, y, width, height);
-			}
-			if (border != null) {
-				g.setColor(border);
-				g.drawRect(x, y, width, height);
-			}
+			drawBackground();
 			UIUtils.drawString(g, text, x + width / 2, y + height / 2, true, textColor, font);
+			drawBorder();
 		}
 	}
 
