@@ -12,9 +12,9 @@ import java.net.URL;
 import javax.swing.JColorChooser;
 
 import com.chess.Board;
-import com.chess.algorithm.Minimax;
-import com.chess.algorithm.MoveMaker;
-import com.chess.algorithm.PlayerType;
+import com.chess.ai.Minimax;
+import com.chess.ai.MoveMaker;
+import com.chess.ai.PlayerType;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.file.ColorSaver;
@@ -56,7 +56,7 @@ public class GUI {
 
 		colorSaver = new ColorSaver("res/colorConfig.txt");
 
-		board = Board.create();
+//		board = Board.create();
 
 		UITakenPiecesPanel panelTakenPieces = new UITakenPiecesPanel(0, 0);
 		panelTakenPieces.setBounds(10, 10, 200, 600);
@@ -80,7 +80,7 @@ public class GUI {
 
 		boardPanel = new UIBoardPanel(display);
 		boardPanel.setBounds(220, 10, 600, 600);
-		boardPanel.setBoard(board);
+//		boardPanel.setBoard(board);
 		boardPanel.setBorder(border_color);
 		boardPanel.setLightColor(colorSaver.getLightColor());
 		boardPanel.setDarkColor(colorSaver.getDarkColor());
@@ -100,6 +100,7 @@ public class GUI {
 				}
 			}
 		});
+		boardPanel.setBoard(board = mm.getBoard());
 
 		UITextButton btnConfigureAI = new UITextButton("Configure AI");
 		btnConfigureAI.setBounds(1100, 15, 160, 25);
@@ -195,6 +196,8 @@ public class GUI {
 			}
 		});
 		panelUtilities.add(btnGitHub);
+		
+		display.getObjects().repaint();
 	}
 
 	private void showConfigurationDialog() {

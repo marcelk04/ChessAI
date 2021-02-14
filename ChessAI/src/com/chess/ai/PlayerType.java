@@ -1,4 +1,4 @@
-package com.chess.algorithm;
+package com.chess.ai;
 
 public enum PlayerType {
 	HUMAN {

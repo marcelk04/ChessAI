@@ -1,9 +1,10 @@
-package com.chess.algorithm;
+package com.chess.ai;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.chess.Board;
+import com.chess.ai.evaluation.BoardEvaluator;
 import com.chess.move.Move;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
@@ -97,7 +98,10 @@ public class Minimax implements Runnable {
 	private int min(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-			return evaluator.evaluate(board, depth);
+
+			if (depth == 0 || board.getWinner() == null)
+				return evaluator.evaluate(board, depth);
+			return 10000 - depth;
 		}
 
 		List<Move> moves = board.getCurrentPlayer().getLegalMoves();
@@ -132,7 +136,10 @@ public class Minimax implements Runnable {
 	private int max(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-			return evaluator.evaluate(board, depth);
+
+			if (depth == 0 || board.getWinner() == null)
+				return evaluator.evaluate(board, depth);
+			return -10000 + depth;
 		}
 
 		List<Move> moves = board.getCurrentPlayer().getLegalMoves();

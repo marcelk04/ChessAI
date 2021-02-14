@@ -1,4 +1,4 @@
-package com.chess.algorithm.tree;
+package com.chess.ai.tree;
 
 import java.util.ArrayList;
 import java.util.List;

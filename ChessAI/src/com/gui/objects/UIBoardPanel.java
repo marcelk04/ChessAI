@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import com.chess.Board;
-import com.chess.algorithm.MoveMaker;
+import com.chess.ai.MoveMaker;
 import com.chess.move.Move;
 import com.chess.move.Move.PawnPromotion;
 import com.chess.move.MoveStatus;

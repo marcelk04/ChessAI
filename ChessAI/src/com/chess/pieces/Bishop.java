@@ -18,8 +18,7 @@ public class Bishop extends Piece {
 	}
 
 	public Bishop(int position, Team team, boolean movedAtLeastOnce) {
-		super(position, team, PieceType.BISHOP);
-		this.movedAtLeastOnce = movedAtLeastOnce;
+		super(position, team, PieceType.BISHOP, movedAtLeastOnce);
 		this.texture = team == Team.WHITE ? Assets.white_bishop : Assets.black_bishop;
 	}
 
@@ -30,25 +29,26 @@ public class Bishop extends Piece {
 		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
 			int currentDestination = position;
 
-			while (Utils.inRange(currentDestination, 0, 63)) {
+			while (true) {
 				if ((Utils.getX(currentDestination) == 0 && (currentOffset == -9 || currentOffset == 7))
-						|| (Utils.getX(currentDestination) == 7 && (currentOffset == 9 || currentOffset == -7))) {
-					// if bishop is in left- or rightmost column; can't move any further
-					break;
-				}
+						|| (Utils.getX(currentDestination) == 7 && (currentOffset == 9 || currentOffset == -7)))
+					break; // if bishop is in left- or rightmost column; can't move any further
+
 				currentDestination += currentOffset;
 
-				if (Utils.inRange(currentDestination, 0, 63)) {
-					Piece pieceAtDestination = board.getPiece(currentDestination);
+				if (!Utils.inRange(currentDestination, 0, 63)) // if bishop would move off the board
+					break;
 
-					if (pieceAtDestination == null) {
-						moves.add(new NormalMove(board, this, currentDestination));
-					} else {
-						if (team != pieceAtDestination.getTeam())
-							moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
-						break;
-					}
+				final Piece pieceAtDestination = board.getPiece(currentDestination);
+
+				if (pieceAtDestination != null) { // if a piece is obstructing the path
+					if (team != pieceAtDestination.getTeam())
+						moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
+
+					break;
 				}
+
+				moves.add(new NormalMove(board, this, currentDestination));
 			}
 		}
 
@@ -59,7 +59,7 @@ public class Bishop extends Piece {
 	public Piece movePiece(Move move) {
 		return Utils.getMovedBishop(team, move.getPieceDestination());
 	}
-	
+
 	@Override
 	public int positionBonus() {
 		return team.bishopBonus(position);

@@ -18,37 +18,35 @@ public class Knight extends Piece {
 	}
 
 	public Knight(int position, Team team, boolean movedAtLeastOnce) {
-		super(position, team, PieceType.KNIGHT);
-		this.movedAtLeastOnce = movedAtLeastOnce;
+		super(position, team, PieceType.KNIGHT, movedAtLeastOnce);
 		this.texture = team == Team.WHITE ? Assets.white_knight : Assets.black_knight;
 	}
 
 	@Override
 	public List<Move> getMoves(Board board) {
-		List<Move> moves = new ArrayList<Move>();
+		final List<Move> moves = new ArrayList<Move>();
 
 		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
-			int x = Utils.getX(position);
 			if ((x == 0 && (currentOffset == -17 || currentOffset == -10 || currentOffset == 6 || currentOffset == 15))
 					|| (x == 1 && (currentOffset == -10 || currentOffset == 6))
 					|| (x == 6 && (currentOffset == -6 || currentOffset == 10)) || (x == 7 && (currentOffset == -15
 							|| currentOffset == -6 || currentOffset == 10 || currentOffset == 17))) {
-				// if knight is in 1st, 2nd, 7th or 8th column & would move further out
+				continue; // if knight is in 1st, 2nd, 7th or 8th column & would move further out
+			}
+
+			final int currentDestination = position + currentOffset;
+
+			if (!Utils.inRange(currentDestination, 0, 63)) // if knight would move off the board
+				continue;
+
+			final Piece pieceAtDestination = board.getPiece(currentDestination);
+
+			if (pieceAtDestination != null && team != pieceAtDestination.getTeam()) {
+				moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
 				continue;
 			}
 
-			int currentDestination = position + currentOffset;
-
-			if (Utils.inRange(currentDestination, 0, 63)) {
-				Piece pieceAtDestination = board.getPiece(currentDestination);
-
-				if (pieceAtDestination == null) {
-					moves.add(new NormalMove(board, this, currentDestination));
-				} else {
-					if (team != pieceAtDestination.getTeam())
-						moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
-				}
-			}
+			moves.add(new NormalMove(board, this, currentDestination));
 		}
 
 		return moves;

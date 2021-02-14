@@ -60,7 +60,7 @@ public class Utils {
 		return ALL_POSSIBLE_KNIGHTS.get(team).get(position);
 	}
 
-	public static Pawn getMovePawn(Team team, int position) {
+	public static Pawn getMovedPawn(Team team, int position) {
 		return ALL_POSSIBLE_PAWNS.get(team).get(position);
 	}
 

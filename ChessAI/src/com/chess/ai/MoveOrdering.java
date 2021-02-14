@@ -1,9 +1,11 @@
-package com.chess.algorithm;
+package com.chess.ai;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.chess.Board;
+import com.chess.ai.evaluation.BoardEvaluator;
+import com.chess.ai.evaluation.SimpleBoardEvaluator;
 import com.chess.move.Move;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;

@@ -1,16 +1,12 @@
-package com.chess.algorithm;
+package com.chess.ai.evaluation;
 
 import com.chess.Board;
 import com.chess.player.Player;
 
 public class PositionBoardEvaluator extends SimpleBoardEvaluator {
-	private static final PositionBoardEvaluator INSTANCE = new PositionBoardEvaluator();
+	public static final PositionBoardEvaluator INSTANCE = new PositionBoardEvaluator();
 
 	protected static final int POSITION_BONUS = 1;
-
-	public static PositionBoardEvaluator get() {
-		return INSTANCE;
-	}
 
 	@Override
 	public int evaluate(Board board, int depth) {

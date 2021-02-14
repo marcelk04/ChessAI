@@ -21,37 +21,35 @@ public class King extends Piece {
 	}
 
 	private King(int position, Team team, boolean movedAtLeastOnce, boolean canCastle, boolean isCastled) {
-		super(position, team, PieceType.KING);
+		super(position, team, PieceType.KING, movedAtLeastOnce);
 		this.isCastled = isCastled;
 		this.canCastle = canCastle;
-		this.movedAtLeastOnce = movedAtLeastOnce;
 		this.texture = team == Team.WHITE ? Assets.white_king : Assets.black_king;
 	}
 
 	@Override
 	public List<Move> getMoves(Board board) {
-		List<Move> moves = new ArrayList<Move>();
+		final List<Move> moves = new ArrayList<Move>();
 
 		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
-			if ((Utils.getX(position) == 0 && (currentOffset == -9 || currentOffset == -1 || currentOffset == 7))
-					|| (Utils.getX(position) == 7
-							&& (currentOffset == 9 || currentOffset == 1 || currentOffset == -7))) {
-				// if king is in left- or rightmost column; can't move any further
+			if ((x == 0 && (currentOffset == -9 || currentOffset == -1 || currentOffset == 7))
+					|| (x == 7 && (currentOffset == 9 || currentOffset == 1 || currentOffset == -7))) {
+				continue; // if king is in left- or rightmost column; can't move any further
+			}
+
+			final int currentDestination = position + currentOffset;
+
+			if (!Utils.inRange(currentDestination, 0, 63)) // if king would move off the board
+				continue;
+
+			final Piece pieceAtDestination = board.getPiece(currentDestination);
+
+			if (pieceAtDestination != null && team != pieceAtDestination.getTeam()) {
+				moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
 				continue;
 			}
 
-			int currentDestination = position + currentOffset;
-
-			if (Utils.inRange(currentDestination, 0, 63)) {
-				Piece pieceAtDestination = board.getPiece(currentDestination);
-
-				if (pieceAtDestination == null) {
-					moves.add(new NormalMove(board, this, currentDestination));
-				} else {
-					if (team != pieceAtDestination.getTeam())
-						moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
-				}
-			}
+			moves.add(new NormalMove(board, this, currentDestination));
 		}
 
 		return moves;

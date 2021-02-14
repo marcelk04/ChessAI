@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.chess.move.Move;
 import com.chess.move.MoveTransition;
@@ -103,9 +101,13 @@ public class Board {
 	}
 
 	public List<Move> findMoves(int currentPiecePosition, int pieceDestination) {
-		return getAllLegalMoves().stream().filter(m -> {
-			return m.getCurrentPiecePosition() == currentPiecePosition && m.getPieceDestination() == pieceDestination;
-		}).collect(Collectors.toList());
+		List<Move> moves = new ArrayList<Move>();
+		for (Move m : getAllLegalMoves()) { // search through all moves
+			if (m.getCurrentPiecePosition() != currentPiecePosition || m.getPieceDestination() != pieceDestination)
+				continue; // if not equal, skip
+			moves.add(m); // else, add to moves
+		}
+		return moves;
 	}
 
 	public List<Move> findMoves(Piece movedPiece, int pieceDestination) {
@@ -131,7 +133,9 @@ public class Board {
 	}
 
 	private List<Move> getLegalMoves(List<Piece> pieces) {
-		return pieces.stream().flatMap(p -> p.getMoves(this).stream()).collect(Collectors.toList());
+		List<Move> legalMoves = new ArrayList<Move>();
+		pieces.forEach(p -> legalMoves.addAll(p.getMoves(this)));
+		return legalMoves;
 	}
 
 	public Piece getPiece(int position) {
@@ -163,17 +167,29 @@ public class Board {
 	}
 
 	public List<Piece> getAllPieces() {
-		return Stream.concat(whitePieces.stream(), blackPieces.stream()).collect(Collectors.toList());
+		List<Piece> allPieces = new ArrayList<Piece>();
+		allPieces.addAll(whitePieces);
+		allPieces.addAll(blackPieces);
+		return allPieces;
 	}
 
 	public List<Move> getPossibleMoves(Piece piece) {
-		return (piece.getTeam() == Team.WHITE ? whitePlayer.getLegalMoves() : blackPlayer.getLegalMoves()).stream()
-				.filter(m -> piece.equals(m.getMovedPiece())).collect(Collectors.toList());
+		List<Move> movesToSearch = piece.getTeam() == Team.WHITE ? whitePlayer.getLegalMoves()
+				: blackPlayer.getLegalMoves();
+		List<Move> possibleMoves = new ArrayList<Move>();
+		for (Move m : movesToSearch) {
+			if (m.getMovedPiece().equals(piece)) {
+				possibleMoves.add(m);
+			}
+		}
+		return possibleMoves;
 	}
 
 	public List<Move> getAllLegalMoves() {
-		return Stream.concat(whitePlayer.getLegalMoves().stream(), blackPlayer.getLegalMoves().stream())
-				.collect(Collectors.toList());
+		List<Move> allLegalMoves = new ArrayList<Move>();
+		allLegalMoves.addAll(whitePlayer.getLegalMoves());
+		allLegalMoves.addAll(blackPlayer.getLegalMoves());
+		return allLegalMoves;
 	}
 
 	public Team getWinner() {

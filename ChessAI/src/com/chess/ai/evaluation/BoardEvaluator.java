@@ -1,8 +1,10 @@
-package com.chess.algorithm;
+package com.chess.ai.evaluation;
 
 import com.chess.Board;
+import com.chess.ai.PawnStructureAnalyzer;
 import com.chess.move.Move;
 import com.chess.pieces.Piece;
+import com.chess.pieces.Team;
 import com.chess.player.Player;
 
 public abstract class BoardEvaluator {
@@ -48,16 +50,24 @@ public abstract class BoardEvaluator {
 
 		return score;
 	}
-	
+
 	protected static int piecePositionScore(Player player, int positionBonus) {
 		int score = 0;
-		
-		for (Piece p:player.getActivePieces()) {
+
+		for (Piece p : player.getActivePieces()) {
 			score += p.positionBonus() * positionBonus;
 		}
-		
+
 		score *= -player.getTeam().moveDirection();
-		
+
+		return score;
+	}
+
+	protected static int passedPawnScore(Board board, Team team, int passedPawnBonus) {
+		int score = PawnStructureAnalyzer.INSTANCE.findPassedPawns(board, team).size() * passedPawnBonus;
+
+		score *= -team.moveDirection();
+
 		return score;
 	}
 }

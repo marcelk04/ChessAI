@@ -1,6 +1,7 @@
-package com.chess.algorithm;
+package com.chess.ai;
 
 import com.chess.Board;
+import com.chess.ai.evaluation.PositionBoardEvaluator;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.Team;
@@ -57,7 +58,7 @@ public class MoveMaker {
 			} else {
 				boardPanel.setMoveMaker(null);
 				new Minimax(this, depth, usingPruning, orderMovesSimple, orderMovesComplex,
-						PositionBoardEvaluator.get());
+						PositionBoardEvaluator.INSTANCE);
 			}
 		}
 

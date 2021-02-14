@@ -21,17 +21,16 @@ public class Pawn extends Piece {
 	}
 
 	public Pawn(int position, Team team, boolean movedAtLeastOnce) {
-		super(position, team, PieceType.PAWN);
-		this.movedAtLeastOnce = movedAtLeastOnce;
+		super(position, team, PieceType.PAWN, movedAtLeastOnce);
 		this.texture = team == Team.WHITE ? Assets.white_pawn : Assets.black_pawn;
 	}
 
 	@Override
 	public List<Move> getMoves(Board board) {
-		List<Move> moves = new ArrayList<Move>();
+		final List<Move> moves = new ArrayList<Move>();
 
 		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
-			int currentDestination = position + currentOffset * team.moveDirection();
+			final int currentDestination = position + currentOffset * team.moveDirection();
 			if (!Utils.inRange(currentDestination, 0, 63))
 				continue;
 
@@ -47,17 +46,15 @@ public class Pawn extends Piece {
 				} else {
 					moves.add(move);
 				}
-			} else if (currentOffset == 16 && !movedAtLeastOnce && ((Utils.getY(position) == 1 && team == Team.BLACK)
-					|| (Utils.getY(position) == 6 && team == Team.WHITE))) {
+			} else if (currentOffset == 16 && !movedAtLeastOnce
+					&& ((y == 1 && team == Team.BLACK) || (y == 6 && team == Team.WHITE))) {
 				if (board.getPiece(currentDestination) == null
 						&& board.getPiece(position + 8 * team.moveDirection()) == null) {
 					moves.add(new PawnJump(board, this, currentDestination));
 				}
 			} else if (currentOffset == 7 || currentOffset == 9) {
-				if (!((currentOffset == 9 && Utils.getX(position) == 0
-						|| currentOffset == 7 && Utils.getX(position) == 7) && team == Team.WHITE
-						|| (currentOffset == 7 && Utils.getX(position) == 0
-								|| currentOffset == 9 && Utils.getX(position) == 7) && team == Team.BLACK)) {
+				if (!((currentOffset == 9 && x == 0 || currentOffset == 7 && x == 7) && team == Team.WHITE
+						|| (currentOffset == 7 && x == 0 || currentOffset == 9 && x == 7) && team == Team.BLACK)) {
 					Piece pieceAtDestination = board.getPiece(currentDestination);
 					if (pieceAtDestination != null && team != pieceAtDestination.getTeam()) {
 						Move move = new PawnAttackMove(board, this, currentDestination, pieceAtDestination);
@@ -92,7 +89,7 @@ public class Pawn extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return Utils.getMovePawn(team, move.getPieceDestination());
+		return Utils.getMovedPawn(team, move.getPieceDestination());
 	}
 
 	@Override

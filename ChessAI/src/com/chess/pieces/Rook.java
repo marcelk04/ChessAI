@@ -18,37 +18,37 @@ public class Rook extends Piece {
 	}
 
 	public Rook(int position, Team team, boolean movedAtLeastOnce) {
-		super(position, team, PieceType.ROOK);
-		this.movedAtLeastOnce = movedAtLeastOnce;
+		super(position, team, PieceType.ROOK, movedAtLeastOnce);
 		this.texture = team == Team.WHITE ? Assets.white_rook : Assets.black_rook;
 	}
 
 	@Override
 	public List<Move> getMoves(Board board) {
-		List<Move> moves = new ArrayList<Move>();
+		final List<Move> moves = new ArrayList<Move>();
 
 		for (int currentOffset : CANDIDATE_MOVE_COORDINATES) {
 			int currentDestination = position;
 
 			while (Utils.inRange(currentDestination, 0, 63)) {
 				if ((Utils.getX(currentDestination) == 0 && currentOffset == -1)
-						|| (Utils.getX(currentDestination) == 7 && currentOffset == 1)) {
-					break;
-				}
+						|| (Utils.getX(currentDestination) == 7 && currentOffset == 1))
+					break; // if rook is in left- or rightmost column; can't move any further
 
 				currentDestination += currentOffset;
 
-				if (Utils.inRange(currentDestination, 0, 63)) {
-					Piece pieceAtDestination = board.getPiece(currentDestination);
+				if (!Utils.inRange(currentDestination, 0, 63)) // if rook would move off the board
+					break;
 
-					if (pieceAtDestination == null) {
-						moves.add(new NormalMove(board, this, currentDestination));
-					} else {
-						if (team != pieceAtDestination.getTeam())
-							moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
-						break;
-					}
+				final Piece pieceAtDestination = board.getPiece(currentDestination);
+
+				if (pieceAtDestination != null) { // if a piece is obstructing the path
+					if (team != pieceAtDestination.getTeam())
+						moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
+
+					break;
 				}
+
+				moves.add(new NormalMove(board, this, currentDestination));
 			}
 		}
 

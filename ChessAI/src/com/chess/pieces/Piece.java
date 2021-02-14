@@ -6,20 +6,25 @@ import java.util.List;
 
 import com.chess.Board;
 import com.chess.move.Move;
+import com.main.Utils;
 
 public abstract class Piece {
 	public static final int PIECE_WIDTH = 80, PIECE_HEIGHT = 80;
 
-	protected int position;
-	protected Team team;
+	protected final int position;
+	protected final int x, y;
+	protected final Team team;
+	protected final boolean movedAtLeastOnce;
+	protected final PieceType type;
 	protected BufferedImage texture;
-	protected boolean movedAtLeastOnce = false;
-	protected PieceType type;
 
-	public Piece(int position, Team team, PieceType type) {
+	public Piece(int position, Team team, PieceType type, boolean movedAtLeastOnce) {
 		this.position = position;
+		this.x = Utils.getX(position);
+		this.y = Utils.getY(position);
 		this.team = team;
 		this.type = type;
+		this.movedAtLeastOnce = movedAtLeastOnce;
 	}
 
 	@Override
