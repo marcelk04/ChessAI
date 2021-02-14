@@ -36,10 +36,10 @@ public abstract class Player {
 	}
 
 	public MoveTransition makeMove(Move move) {
-		if (!legalMoves.contains(move)) {
+		if (!legalMoves.contains(move) || move.isAttackMove() && move.getAttackedPiece().getType() == PieceType.KING) {
 			return new MoveTransition(board, board, move, MoveStatus.ILLEGAL_MOVE);
 		}
-
+		
 		Board newBoard = move.execute();
 
 		if (newBoard.getCurrentPlayer().getOpponent().isKingInCheck()) {

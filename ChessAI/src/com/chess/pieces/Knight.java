@@ -41,12 +41,13 @@ public class Knight extends Piece {
 
 			final Piece pieceAtDestination = board.getPiece(currentDestination);
 
-			if (pieceAtDestination != null && team != pieceAtDestination.getTeam()) {
-				moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
+			if (pieceAtDestination == null) {
+				moves.add(new NormalMove(board, this, currentDestination));
 				continue;
 			}
 
-			moves.add(new NormalMove(board, this, currentDestination));
+			if (pieceAtDestination != null && team != pieceAtDestination.getTeam())
+				moves.add(new AttackMove(board, this, currentDestination, pieceAtDestination));
 		}
 
 		return moves;

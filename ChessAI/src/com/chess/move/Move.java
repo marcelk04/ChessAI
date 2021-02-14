@@ -134,7 +134,7 @@ public abstract class Move {
 			b.setPiece(movedPiece.movePiece(this));
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
-
+			
 			return b.build();
 		}
 

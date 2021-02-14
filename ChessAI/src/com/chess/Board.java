@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.chess.ai.hashing.ZobristHashing;
 import com.chess.move.Move;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.Bishop;
@@ -27,6 +28,7 @@ public class Board {
 	private final BlackPlayer blackPlayer;
 	private final Player currentPlayer;
 	private MoveTransition lastMoveTransition = null;
+	private final long zobristHash;
 
 	private Board(Builder builder) {
 		this.boardConfig = builder.boardConfig;
@@ -38,6 +40,7 @@ public class Board {
 		this.whitePlayer = new WhitePlayer(this, whiteMoves, blackMoves);
 		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves);
 		this.currentPlayer = builder.nextMoveMaker == Team.WHITE ? whitePlayer : blackPlayer;
+		this.zobristHash = ZobristHashing.getZobristHash(this);
 	}
 
 	@Override
@@ -202,6 +205,10 @@ public class Board {
 
 	public MoveTransition getLastMoveTransition() {
 		return lastMoveTransition;
+	}
+
+	public long getZobristHash() {
+		return zobristHash;
 	}
 
 	// ===== Setters ===== \\

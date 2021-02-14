@@ -15,6 +15,7 @@ import com.chess.Board;
 import com.chess.ai.Minimax;
 import com.chess.ai.MoveMaker;
 import com.chess.ai.PlayerType;
+import com.chess.ai.hashing.ZobristHashing;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.file.ColorSaver;
@@ -80,7 +81,6 @@ public class GUI {
 
 		boardPanel = new UIBoardPanel(display);
 		boardPanel.setBounds(220, 10, 600, 600);
-//		boardPanel.setBoard(board);
 		boardPanel.setBorder(border_color);
 		boardPanel.setLightColor(colorSaver.getLightColor());
 		boardPanel.setDarkColor(colorSaver.getDarkColor());
@@ -196,7 +196,7 @@ public class GUI {
 			}
 		});
 		panelUtilities.add(btnGitHub);
-		
+
 		display.getObjects().repaint();
 	}
 

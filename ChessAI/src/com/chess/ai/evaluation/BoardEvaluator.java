@@ -2,13 +2,29 @@ package com.chess.ai.evaluation;
 
 import com.chess.Board;
 import com.chess.ai.PawnStructureAnalyzer;
+import com.chess.ai.hashing.TranspositionTable;
 import com.chess.move.Move;
 import com.chess.pieces.Piece;
 import com.chess.pieces.Team;
 import com.chess.player.Player;
 
 public abstract class BoardEvaluator {
-	public abstract int evaluate(Board board, int depth);
+	public int transpositions = 0;
+
+	public abstract int evaluateWithoutHashing(Board board, int depth);
+
+	public int evaluate(Board board, int depth) {
+		long zobristHash = board.getZobristHash();
+		Integer eval = TranspositionTable.get(zobristHash);
+		if (eval != null) {
+			transpositions++;
+			return eval;
+		}
+
+		eval = evaluateWithoutHashing(board, depth);
+		TranspositionTable.put(zobristHash, eval);
+		return eval;
+	}
 
 	protected static int pieceScore(Player player) {
 		int score = 0;
