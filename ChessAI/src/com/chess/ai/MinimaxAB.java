@@ -11,13 +11,15 @@ import com.chess.pieces.Team;
 import com.chess.player.Player;
 import com.gui.objects.UIConsole;
 
-public class Minimax extends MinimaxAlgorithm {
-	private long evaluatedBoards, timeInMs;
+public class MinimaxAB extends MinimaxAlgorithm {
+	private long evaluatedBoards, timesPruned, timeInMs;
+	private double movesPerBoard, prunedBoards;
+	private int movesPerBoardCount = 1;
 
 	private Move bestMove;
 	private int bestEval;
 
-	public Minimax(MoveMaker mm, int depth, BoardEvaluator evaluator) {
+	public MinimaxAB(MoveMaker mm, int depth, BoardEvaluator evaluator) {
 		super(mm, depth, evaluator);
 	}
 
@@ -34,7 +36,7 @@ public class Minimax extends MinimaxAlgorithm {
 
 			for (Move m : moves) {
 				MoveTransition moveTransition = currentPlayer.makeMove(m);
-				int currentEval = min(moveTransition.getNewBoard(), depth);
+				int currentEval = min(moveTransition.getNewBoard(), depth, bestEval, Integer.MAX_VALUE);
 
 				if (currentEval > bestEval && moveTransition.getMoveStatus() == MoveStatus.DONE) {
 					bestEval = currentEval;
@@ -46,7 +48,7 @@ public class Minimax extends MinimaxAlgorithm {
 
 			for (Move m : moves) {
 				MoveTransition moveTransition = currentPlayer.makeMove(m);
-				int currentEval = max(moveTransition.getNewBoard(), depth);
+				int currentEval = max(moveTransition.getNewBoard(), depth, Integer.MIN_VALUE, bestEval);
 
 				if (currentEval < bestEval && moveTransition.getMoveStatus() == MoveStatus.DONE) {
 					bestEval = currentEval;
@@ -62,7 +64,10 @@ public class Minimax extends MinimaxAlgorithm {
 
 	@Override
 	public void printOutData() {
-		double time = (double) timeInMs / 100d;
+		double time = (double) timeInMs / 1000d;
+		double approxPrunedBoards = Math.round(this.prunedBoards);
+		double percentageOfPrunedBoards = Math.round(this.prunedBoards / (evaluatedBoards + this.prunedBoards) * 10000)
+				/ 100d;
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Evaluated Boards:" + evaluatedBoards);
@@ -75,6 +80,12 @@ public class Minimax extends MinimaxAlgorithm {
 		sb.append("|");
 		sb.append("Time:" + time + "s");
 		sb.append("|");
+		sb.append("Times pruned:" + timesPruned);
+		sb.append("|");
+		sb.append("Approx pruned boards:" + approxPrunedBoards);
+		sb.append("|");
+		sb.append("in %:" + percentageOfPrunedBoards);
+		sb.append("|");
 		sb.append("Transpositions:" + evaluator.getTranspositions());
 
 		evaluator.resetTranspositions();
@@ -82,7 +93,7 @@ public class Minimax extends MinimaxAlgorithm {
 		UIConsole.log(sb.toString());
 	}
 
-	private int min(Board board, int depth) {
+	private int min(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
 
@@ -91,24 +102,32 @@ public class Minimax extends MinimaxAlgorithm {
 			return 10000 - depth;
 		}
 
-		List<Move> moves = board.getCurrentPlayer().getLegalMoves();
+		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
 
-		int minEval = Integer.MAX_VALUE;
+		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
+		int minEval = beta;
 
 		for (int i = 0; i < moves.size(); i++) {
 			MoveTransition mt = board.getCurrentPlayer().makeMove(moves.get(i));
 
 			if (mt.getMoveStatus() == MoveStatus.DONE) {
-				int currentEval = max(mt.getNewBoard(), depth - 1);
+				int currentEval = max(mt.getNewBoard(), depth - 1, alpha, minEval);
 
 				minEval = Math.min(minEval, currentEval);
+
+				if (minEval <= alpha) {
+					timesPruned++;
+					if (depth > 1)
+						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
+					break;
+				}
 			}
 		}
 
 		return minEval;
 	}
 
-	private int max(Board board, int depth) {
+	private int max(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
 
@@ -117,17 +136,25 @@ public class Minimax extends MinimaxAlgorithm {
 			return -10000 + depth;
 		}
 
-		List<Move> moves = board.getCurrentPlayer().getLegalMoves();
+		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
 
-		int maxEval = Integer.MIN_VALUE;
+		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
+		int maxEval = alpha;
 
 		for (int i = 0; i < moves.size(); i++) {
 			MoveTransition mt = board.getCurrentPlayer().makeMove(moves.get(i));
 
 			if (mt.getMoveStatus() == MoveStatus.DONE) {
-				int currentEval = min(mt.getNewBoard(), depth - 1);
+				int currentEval = min(mt.getNewBoard(), depth - 1, maxEval, beta);
 
 				maxEval = Math.max(maxEval, currentEval);
+
+				if (maxEval >= beta) {
+					timesPruned++;
+					if (depth > 1)
+						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
+					break;
+				}
 			}
 		}
 

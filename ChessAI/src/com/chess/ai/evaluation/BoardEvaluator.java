@@ -9,9 +9,12 @@ import com.chess.pieces.Team;
 import com.chess.player.Player;
 
 public abstract class BoardEvaluator {
-	public int transpositions = 0;
+	private int transpositions = 0;
 
 	public abstract int evaluateWithoutHashing(Board board, int depth);
+
+	@Override
+	public abstract String toString();
 
 	public int evaluate(Board board, int depth) {
 		long zobristHash = board.getZobristHash();
@@ -85,5 +88,14 @@ public abstract class BoardEvaluator {
 		score *= -team.moveDirection();
 
 		return score;
+	}
+
+	public void resetTranspositions() {
+		transpositions = 0;
+	}
+
+	// ===== Getters ===== \\
+	public int getTranspositions() {
+		return transpositions;
 	}
 }

@@ -16,4 +16,9 @@ public class PositionBoardEvaluator extends SimpleBoardEvaluator {
 	protected static int score(Player player, Board board, int depth) {
 		return SimpleBoardEvaluator.score(player, board, depth) + piecePositionScore(player, POSITION_BONUS);
 	}
+
+	@Override
+	public String toString() {
+		return "Position Evaluator";
+	}
 }

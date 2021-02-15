@@ -1,7 +1,9 @@
 package com.chess.ai;
 
 import com.chess.Board;
-import com.chess.ai.evaluation.PositionBoardEvaluator;
+import com.chess.ai.MinimaxAlgorithm.AIType;
+import com.chess.ai.evaluation.BoardEvaluator;
+import com.chess.ai.evaluation.SimpleBoardEvaluator;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.Team;
@@ -17,7 +19,8 @@ public class MoveMaker {
 	private MoveExecutionListener moveExecutionListener;
 
 	private int depth = 3;
-	private boolean usingPruning = true, orderMovesSimple = false, orderMovesComplex = false;
+	private AIType aiType = AIType.MINIMAX;
+	private BoardEvaluator evaluator = SimpleBoardEvaluator.INSTANCE;
 
 	public MoveMaker(PlayerType player1, PlayerType player2, UIBoardPanel boardPanel) {
 		this.player1 = player1;
@@ -57,15 +60,14 @@ public class MoveMaker {
 				boardPanel.setMoveMaker(this);
 			} else {
 				boardPanel.setMoveMaker(null);
-				new Minimax(this, depth, usingPruning, orderMovesSimple, orderMovesComplex,
-						PositionBoardEvaluator.INSTANCE);
+				aiType.createNew(this, depth, evaluator);
 			}
 		}
 
 	}
 
 	public void reset() {
-		Minimax.stopAll();
+		MinimaxAlgorithm.stopAll();
 	}
 
 	// ===== Getters ===== \\
@@ -97,16 +99,12 @@ public class MoveMaker {
 		return depth;
 	}
 
-	public boolean isUsingPruning() {
-		return usingPruning;
+	public AIType getAIType() {
+		return aiType;
 	}
 
-	public boolean isOrderingMovesSimple() {
-		return orderMovesSimple;
-	}
-
-	public boolean isOrderingMovesComplex() {
-		return orderMovesComplex;
+	public BoardEvaluator getEvaluator() {
+		return evaluator;
 	}
 
 	// ===== Setters ===== \\
@@ -133,15 +131,11 @@ public class MoveMaker {
 		this.depth = depth;
 	}
 
-	public void setUsingPruning(boolean usingPruning) {
-		this.usingPruning = usingPruning;
+	public void setAIType(AIType aiType) {
+		this.aiType = aiType;
 	}
 
-	public void setOrderingMovesSimple(boolean orderingMovesSimple) {
-		this.orderMovesSimple = orderingMovesSimple;
-	}
-
-	public void setOrderingMovesComplex(boolean orderingMovesComplex) {
-		this.orderMovesComplex = orderingMovesComplex;
+	public void setEvaluator(BoardEvaluator evaluator) {
+		this.evaluator = evaluator;
 	}
 }

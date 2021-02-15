@@ -4,7 +4,7 @@ import com.chess.Board;
 import com.chess.player.Player;
 
 public class SimpleBoardEvaluator extends BoardEvaluator {
-	public static SimpleBoardEvaluator INSTANCE = new SimpleBoardEvaluator();
+	public static final SimpleBoardEvaluator INSTANCE = new SimpleBoardEvaluator();
 
 	protected static final int MOBILITY_BONUS = 10;
 	protected static final int ATTACK_BONUS = 5;
@@ -18,5 +18,10 @@ public class SimpleBoardEvaluator extends BoardEvaluator {
 	protected static int score(Player player, Board board, int depth) {
 		return pieceScore(player) + mobilityScore(player, MOBILITY_BONUS) + attackScore(player, ATTACK_BONUS)
 				+ kingEscapeScore(player, board, KING_ESCAPE_BONUS);
+	}
+
+	@Override
+	public String toString() {
+		return "Simple Evaluator";
 	}
 }

@@ -17,4 +17,9 @@ public class PawnPositionBoardEvaluator extends PositionBoardEvaluator {
 		return PositionBoardEvaluator.score(player, board, depth)
 				+ passedPawnScore(board, player.getTeam(), PASSED_PAWN_BONUS);
 	}
+
+	@Override
+	public String toString() {
+		return "Pawn Position Evaluator";
+	}
 }

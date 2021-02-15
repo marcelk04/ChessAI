@@ -12,10 +12,15 @@ import java.net.URL;
 import javax.swing.JColorChooser;
 
 import com.chess.Board;
-import com.chess.ai.Minimax;
+import com.chess.ai.MinimaxAlgorithm;
+import com.chess.ai.MinimaxAlgorithm.AIType;
 import com.chess.ai.MoveMaker;
 import com.chess.ai.PlayerType;
-import com.chess.ai.hashing.ZobristHashing;
+import com.chess.ai.evaluation.BoardEvaluator;
+import com.chess.ai.evaluation.PawnPositionBoardEvaluator;
+import com.chess.ai.evaluation.PositionBoardEvaluator;
+import com.chess.ai.evaluation.SimpleBoardEvaluator;
+import com.chess.ai.hashing.TranspositionTable;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.file.ColorSaver;
@@ -47,17 +52,15 @@ public class GUI {
 
 	public GUI() {
 		display = new Display(1280, 720, "Chess");
-//		display.setBackground(Color.white);
 		display.getFrame().addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				mm.reset();
+//				TranspositionTable.dumpTableIntoFile("res/transpositionTable.txt");
 			}
 		});
 
 		colorSaver = new ColorSaver("res/colorConfig.txt");
-
-//		board = Board.create();
 
 		UITakenPiecesPanel panelTakenPieces = new UITakenPiecesPanel(0, 0);
 		panelTakenPieces.setBounds(10, 10, 200, 600);
@@ -116,7 +119,7 @@ public class GUI {
 		btnStopAI.setTextColor(text_color);
 		btnStopAI.setBackground(button_background_color);
 		btnStopAI.setClickListener(e -> {
-			Minimax.stopAll();
+			MinimaxAlgorithm.stopAll();
 			mm.setPlayers(PlayerType.HUMAN, PlayerType.HUMAN);
 		});
 		display.add(btnStopAI);
@@ -144,7 +147,7 @@ public class GUI {
 			MoveTransition lastMoveTransition = board.getLastMoveTransition();
 
 			if (lastMoveTransition != null) {
-				Minimax.stopAll();
+				MinimaxAlgorithm.stopAll();
 
 				board = lastMoveTransition.getOldBoard();
 				mm.setBoard(board);
@@ -202,7 +205,7 @@ public class GUI {
 
 	private void showConfigurationDialog() {
 		UIDialog dialog = new UIDialog();
-		dialog.setSize(350, 230);
+		dialog.setSize(350, 265);
 		dialog.setPositionRelativeTo(display.getObjects());
 		dialog.setArcBounds(arc_width, arc_height);
 		dialog.setBorder(border_color);
@@ -230,8 +233,7 @@ public class GUI {
 		lblPlayer2.setFont(bold_font);
 		dialog.addRelative(lblPlayer2);
 
-		UISelectionBox<PlayerType> boxPlayer2 = new UISelectionBox<PlayerType>(
-				new PlayerType[] { PlayerType.HUMAN, PlayerType.AI });
+		UISelectionBox<PlayerType> boxPlayer2 = new UISelectionBox<PlayerType>(PlayerType.values());
 		boxPlayer2.setBounds(180, 40, 160, 25);
 		boxPlayer2.setArcBounds(arc_width, arc_height);
 		boxPlayer2.setTextColor(text_color);
@@ -252,41 +254,38 @@ public class GUI {
 		boxDepth.setSelectedIndex(mm.getDepth() - 1);
 		dialog.addRelative(boxDepth);
 
-		UISelectionBox<String> boxUsePruning = new UISelectionBox<String>(
-				new String[] { "Not using pruning", "Using pruning" });
-		boxUsePruning.setBounds(10, 120, 160, 25);
-		boxUsePruning.setArcBounds(arc_width, arc_height);
-		boxUsePruning.setTextColor(text_color);
-		boxUsePruning.setBackground(button_background_color);
-		boxUsePruning.setSelectedIndex(mm.isUsingPruning() ? 1 : 0);
-		dialog.addRelative(boxUsePruning);
+		UISelectionBox<AIType> boxAIType = new UISelectionBox<AIType>(AIType.values());
+		boxAIType.setBounds(10, 120, 330, 25);
+		boxAIType.setArcBounds(arc_width, arc_height);
+		boxAIType.setTextColor(text_color);
+		boxAIType.setBackground(button_background_color);
+		boxAIType.setSelectedElement(mm.getAIType());
+		dialog.addRelative(boxAIType);
 
-		UISelectionBox<String> boxOrderMoves = new UISelectionBox<String>(
-				new String[] { "Not ordering moves", "Ordering moves simple", "Ordering moves complex" });
-		boxOrderMoves.setBounds(180, 120, 160, 25);
-		boxOrderMoves.setArcBounds(arc_width, arc_height);
-		boxOrderMoves.setTextColor(text_color);
-		boxOrderMoves.setBackground(button_background_color);
-		if (mm.isOrderingMovesSimple())
-			boxOrderMoves.setSelectedIndex(1);
-		else if (mm.isOrderingMovesComplex())
-			boxOrderMoves.setSelectedIndex(2);
-		dialog.addRelative(boxOrderMoves);
+		UISelectionBox<BoardEvaluator> boxEvaluatorType = new UISelectionBox<BoardEvaluator>(new BoardEvaluator[] {
+				SimpleBoardEvaluator.INSTANCE, PositionBoardEvaluator.INSTANCE, PawnPositionBoardEvaluator.INSTANCE });
+		boxEvaluatorType.setBounds(10, 155, 330, 25);
+		boxEvaluatorType.setArcBounds(arc_width, arc_height);
+		boxEvaluatorType.setTextColor(text_color);
+		boxEvaluatorType.setBackground(button_background_color);
+		boxEvaluatorType.setSelectedElement(mm.getEvaluator());
+		dialog.addRelative(boxEvaluatorType);
 
 		UITextButton btnSave = new UITextButton("Save & Exit");
-		btnSave.setBounds(10, 160, 330, 25);
+		btnSave.setBounds(10, 195, 330, 25);
 		btnSave.setArcBounds(arc_width, arc_height);
 		btnSave.setTextColor(text_color);
 		btnSave.setBackground(button_background_color);
 		btnSave.setClickListener(e -> {
 			saveSettings(boxPlayer1.getSelectedElement(), boxPlayer2.getSelectedElement(),
-					boxDepth.getSelectedElement(), boxUsePruning.getSelectedIndex(), boxOrderMoves.getSelectedIndex());
+					boxDepth.getSelectedElement(), boxAIType.getSelectedElement(),
+					boxEvaluatorType.getSelectedElement());
 			display.removeLastDialog();
 		});
 		dialog.addRelative(btnSave);
 
 		UITextButton btnExit = new UITextButton("Exit");
-		btnExit.setBounds(10, 195, 330, 25);
+		btnExit.setBounds(10, 230, 330, 25);
 		btnExit.setArcBounds(arc_width, arc_height);
 		btnExit.setTextColor(text_color);
 		btnExit.setBackground(button_background_color);
@@ -296,15 +295,25 @@ public class GUI {
 		display.showDialog(dialog);
 	}
 
-	private void saveSettings(PlayerType player1, PlayerType player2, int depth, int usePruning, int orderMoves) {
+	private void saveSettings(PlayerType player1, PlayerType player2, int depth, AIType aiType,
+			BoardEvaluator evaluator) {
 		mm.setPlayers(player1, player2);
 		mm.setDepth(depth);
-		mm.setUsingPruning(usePruning == 1);
-		mm.setOrderingMovesSimple(orderMoves == 1);
-		mm.setOrderingMovesComplex(orderMoves == 2);
-		UIConsole.log("Set Player 1 to " + player1.toString() + "; Set Player 2 to " + player2.toString()
-				+ "; Set search depth to " + depth + "; " + (usePruning == 0 ? "Not using Pruning" : "Using Pruning")
-				+ "; " + (orderMoves == 0 ? "Not ordering moves" : "Ordering moves"));
+		mm.setAIType(aiType);
+		mm.setEvaluator(evaluator);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("Set WHITE to " + player1);
+		sb.append("|");
+		sb.append("Set BLACK to " + player2);
+		sb.append("|");
+		sb.append("Set search depth to " + depth);
+		sb.append("|");
+		sb.append("Set AIType to " + aiType);
+		sb.append("|");
+		sb.append("Set BoardEvaluator to " + evaluator);
+
+		UIConsole.log(sb.toString());
 	}
 
 	private void showColorDialog() {
