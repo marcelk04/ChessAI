@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.chess.Board;
 import com.chess.Board.Builder;
+import com.chess.CastlingConfiguration;
 import com.chess.move.Move;
 import com.chess.pieces.King;
 import com.chess.pieces.Rook;
@@ -27,6 +28,7 @@ class CastleTest {
 		b.setPiece(new Rook(63, Team.WHITE));
 
 		b.setMoveMaker(Team.WHITE);
+		b.setCastlingConfiguration(CastlingConfiguration.ALL_TRUE);
 
 		Board board = b.build();
 

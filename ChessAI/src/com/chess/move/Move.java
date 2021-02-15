@@ -5,10 +5,13 @@ import java.util.stream.Collectors;
 
 import com.chess.Board;
 import com.chess.Board.Builder;
+import com.chess.CastlingConfiguration;
 import com.chess.pieces.King;
 import com.chess.pieces.Pawn;
 import com.chess.pieces.Piece;
 import com.chess.pieces.Rook;
+import com.chess.pieces.Team;
+import com.chess.pieces.Piece.PieceType;
 import com.chess.player.Player;
 import com.main.Utils;
 
@@ -65,6 +68,44 @@ public abstract class Move {
 			notation += "+";
 
 		return notation;
+	}
+
+	public CastlingConfiguration setCastlingConfiguration(Builder b) {
+		CastlingConfiguration c = new CastlingConfiguration();
+
+		// white
+		Piece pieceAtWhiteKingPosition = board.getPiece(60);
+		if (pieceAtWhiteKingPosition != null && !pieceAtWhiteKingPosition.gotMovedAtLeastOnce()
+				&& pieceAtWhiteKingPosition.getType() == PieceType.KING
+				&& !pieceAtWhiteKingPosition.equals(movedPiece)) {
+			// king has not been moved
+			Piece kingSideRook = board.getPiece(63);
+			c.canWhiteKingSideCastle = kingSideRook != null && !kingSideRook.gotMovedAtLeastOnce()
+					&& kingSideRook.getType() == PieceType.ROOK && !kingSideRook.equals(movedPiece);
+
+			Piece queenSideRook = board.getPiece(56);
+			c.canWhiteQueenSideCastle = queenSideRook != null && !queenSideRook.gotMovedAtLeastOnce()
+					&& queenSideRook.getType() == PieceType.ROOK && !queenSideRook.equals(movedPiece);
+		}
+
+		// black
+		Piece pieceAtBlackKingPosition = board.getPiece(4);
+		if (pieceAtBlackKingPosition != null && !pieceAtBlackKingPosition.gotMovedAtLeastOnce()
+				&& pieceAtBlackKingPosition.getType() == PieceType.KING
+				&& !pieceAtBlackKingPosition.equals(movedPiece)) {
+			// king has not been moved
+			Piece kingSideRook = board.getPiece(7);
+			c.canBlackKingSideCastle = kingSideRook != null && !kingSideRook.gotMovedAtLeastOnce()
+					&& kingSideRook.getType() == PieceType.ROOK && !kingSideRook.equals(movedPiece);
+
+			Piece queenSideRook = board.getPiece(0);
+			c.canBlackQueenSideCastle = queenSideRook != null && !queenSideRook.gotMovedAtLeastOnce()
+					&& queenSideRook.getType() == PieceType.ROOK && !queenSideRook.equals(movedPiece);
+		}
+
+		b.setCastlingConfiguration(c);
+
+		return c;
 	}
 
 	public Board getBoard() {
@@ -134,7 +175,11 @@ public abstract class Move {
 			b.setPiece(movedPiece.movePiece(this));
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
-			
+			b.setHalfmoveClock(board.getHalfmoveClock() + 1);
+			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+
+			setCastlingConfiguration(b);
+
 			return b.build();
 		}
 
@@ -200,6 +245,10 @@ public abstract class Move {
 			b.setPiece(movedPiece.movePiece(this));
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
+			b.setHalfmoveClock(0);
+			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+
+			setCastlingConfiguration(b);
 
 			return b.build();
 		}
@@ -253,6 +302,31 @@ public abstract class Move {
 		public String getNotation() {
 			return standardNotation();
 		}
+
+		@Override
+		public Board execute() {
+			Builder b = new Builder();
+
+			for (Piece p : board.getCurrentPlayer().getActivePieces()) {
+				if (!movedPiece.equals(p)) {
+					b.setPiece(p);
+				}
+			}
+
+			for (Piece p : board.getCurrentPlayer().getOpponent().getActivePieces()) {
+				b.setPiece(p);
+			}
+
+			b.setPiece(movedPiece.movePiece(this));
+			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+			b.setEnPassantPawn(null);
+			b.setHalfmoveClock(0);
+			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+
+			setCastlingConfiguration(b);
+
+			return b.build();
+		}
 	}
 
 	public static class PawnAttackMove extends AttackMove {
@@ -302,6 +376,10 @@ public abstract class Move {
 			b.setPiece(movedPawn);
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(movedPawn);
+			b.setHalfmoveClock(0);
+			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+
+			setCastlingConfiguration(b);
 
 			return b.build();
 		}
@@ -332,10 +410,15 @@ public abstract class Move {
 
 			b.setPiece(promotionPiece);
 			b.setMoveMaker(pawnMovedBoard.getCurrentPlayer().getTeam());
+			b.setEnPassantPawn(null);
+			b.setHalfmoveClock(0);
+			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+
+			setCastlingConfiguration(b);
 
 			return b.build();
 		}
-		
+
 		@Override
 		public String getNotation() {
 			return executedMove.getNotation() + promotionPiece.getType().getLetter();
@@ -397,6 +480,46 @@ public abstract class Move {
 			b.setPiece(new Rook(castleRookDestination, castleRook.getTeam(), true));
 			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
+			b.setHalfmoveClock(board.getHalfmoveClock() + 1);
+			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+
+			CastlingConfiguration c = new CastlingConfiguration();
+
+			if (movedPiece.getTeam() == Team.WHITE) { // white castling
+				c.canWhiteKingSideCastle = false;
+				c.canWhiteQueenSideCastle = false;
+
+				Piece pieceAtBlackKingPosition = board.getPiece(4);
+				if (pieceAtBlackKingPosition != null && !pieceAtBlackKingPosition.gotMovedAtLeastOnce()
+						&& pieceAtBlackKingPosition.getType() == PieceType.KING) {
+					// king has not been moved
+					Piece kingSideRook = board.getPiece(7);
+					c.canBlackKingSideCastle = kingSideRook != null && !kingSideRook.gotMovedAtLeastOnce()
+							&& kingSideRook.getType() == PieceType.ROOK;
+
+					Piece queenSideRook = board.getPiece(0);
+					c.canBlackQueenSideCastle = queenSideRook != null && !queenSideRook.gotMovedAtLeastOnce()
+							&& queenSideRook.getType() == PieceType.ROOK;
+				}
+			} else { // black castling
+				c.canBlackKingSideCastle = false;
+				c.canBlackQueenSideCastle = false;
+
+				Piece pieceAtWhiteKingPosition = board.getPiece(60);
+				if (pieceAtWhiteKingPosition != null && !pieceAtWhiteKingPosition.gotMovedAtLeastOnce()
+						&& pieceAtWhiteKingPosition.getType() == PieceType.KING) {
+					// king has not been moved
+					Piece kingSideRook = board.getPiece(63);
+					c.canWhiteKingSideCastle = kingSideRook != null && !kingSideRook.gotMovedAtLeastOnce()
+							&& kingSideRook.getType() == PieceType.ROOK;
+
+					Piece queenSideRook = board.getPiece(56);
+					c.canWhiteQueenSideCastle = queenSideRook != null && !queenSideRook.gotMovedAtLeastOnce()
+							&& queenSideRook.getType() == PieceType.ROOK;
+				}
+			}
+
+			b.setCastlingConfiguration(c);
 
 			return b.build();
 		}

@@ -62,7 +62,7 @@ public class MoveMaker implements MoveExecutionListener {
 			} else {
 				boardPanel.setMoveMaker(null);
 				aiType.createNew(this, board, depth, evaluator, true);
-//				new IterativeDeepening(aiType, this, board, evaluator, 5000, 3);
+//				new IterativeDeepening(aiType, this, board, evaluator, 10000, 10);
 			}
 		}
 

@@ -19,6 +19,7 @@ import com.chess.pieces.Team;
 import com.chess.player.BlackPlayer;
 import com.chess.player.Player;
 import com.chess.player.WhitePlayer;
+import com.main.Utils;
 
 public class Board {
 	private final Map<Integer, Piece> boardConfig;
@@ -27,8 +28,9 @@ public class Board {
 	private final WhitePlayer whitePlayer;
 	private final BlackPlayer blackPlayer;
 	private final Player currentPlayer;
-	private MoveTransition lastMoveTransition = null;
 	private final long zobristHash;
+	private final int halfmoveClock, halfmoveCounter;
+	private MoveTransition lastMoveTransition = null;
 
 	private Board(Builder builder) {
 		this.boardConfig = builder.boardConfig;
@@ -37,10 +39,16 @@ public class Board {
 		this.blackPieces = getActivePieces(builder, Team.BLACK);
 		List<Move> whiteMoves = getLegalMoves(whitePieces);
 		List<Move> blackMoves = getLegalMoves(blackPieces);
-		this.whitePlayer = new WhitePlayer(this, whiteMoves, blackMoves);
-		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves);
+		this.whitePlayer = new WhitePlayer(this, whiteMoves, blackMoves,
+				builder.castlingConfiguration.canWhiteKingSideCastle,
+				builder.castlingConfiguration.canWhiteQueenSideCastle);
+		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves,
+				builder.castlingConfiguration.canBlackKingSideCastle,
+				builder.castlingConfiguration.canBlackQueenSideCastle);
 		this.currentPlayer = builder.nextMoveMaker == Team.WHITE ? whitePlayer : blackPlayer;
 		this.zobristHash = ZobristHashing.getZobristHash(this);
+		this.halfmoveClock = builder.halfmoveClock;
+		this.halfmoveCounter = builder.halfmoveCounter;
 	}
 
 	@Override
@@ -90,6 +98,10 @@ public class Board {
 		b.setPiece(new Rook(63, Team.WHITE));
 
 		b.setMoveMaker(Team.WHITE);
+		b.setEnPassantPawn(null);
+		b.setCastlingConfiguration(CastlingConfiguration.ALL_TRUE);
+		b.setHalfmoveClock(0);
+		b.setHalfmoveCounter(1);
 
 		return b.build();
 	}
@@ -119,6 +131,100 @@ public class Board {
 
 	public boolean hasGameEnded() {
 		return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate();
+	}
+
+	public String convertToFEN() {
+		StringBuilder sb = new StringBuilder();
+
+		// append piece positions
+		for (int y = 0; y < 8; y++) {
+			int squaresSincePiece = 0;
+
+			for (int x = 0; x < 8; x++) {
+				Piece p = getPiece(Utils.getIndex(x, y));
+				if (p != null) {
+					if (squaresSincePiece != 0)
+						sb.append(squaresSincePiece);
+
+					sb.append(p.getTeam() == Team.WHITE ? p.getType().getLetter()
+							: (p.getType().getLetter() + "").toLowerCase());
+
+					squaresSincePiece = 0;
+				} else {
+					squaresSincePiece++;
+
+					if (x == 7)
+						sb.append(squaresSincePiece);
+				}
+			}
+
+			if (y != 7)
+				sb.append("/");
+		}
+
+		sb.append(" ");
+
+		// append current side to move
+		if (currentPlayer.getTeam() == Team.WHITE)
+			sb.append("w");
+		else
+			sb.append("b");
+
+		sb.append(" ");
+
+		// append castling rights
+		int castlingRights = 0;
+
+		if (whitePlayer.canKingSideCastle()) {
+			sb.append("K");
+			castlingRights++;
+		}
+
+		if (whitePlayer.canQueenSideCastle()) {
+			sb.append("Q");
+			castlingRights++;
+		}
+
+		if (blackPlayer.canKingSideCastle()) {
+			sb.append("k");
+			castlingRights++;
+		}
+
+		if (blackPlayer.canQueenSideCastle()) {
+			sb.append("q");
+			castlingRights++;
+		}
+
+		if (castlingRights == 0) {
+			sb.append("-");
+		}
+
+		sb.append(" ");
+
+		// en passant
+		if (enPassantPawn != null) {
+			sb.append(Utils.columns[Utils.getX(enPassantPawn.getPosition())]);
+
+			if (enPassantPawn.getTeam() == Team.WHITE) {
+				sb.append(7 - Utils.getY(enPassantPawn.getPosition()));
+			} else {
+				sb.append(9 - Utils.getY(enPassantPawn.getPosition()));
+			}
+		} else {
+			sb.append("-");
+		}
+
+		sb.append(" ");
+
+		// halfmove clock
+		sb.append(halfmoveClock);
+
+		sb.append(" ");
+
+		// fullmove counter
+		sb.append(Math.round(halfmoveCounter / 2f));
+
+		return sb.toString();
 	}
 
 	// ===== Getters ===== \\
@@ -211,6 +317,14 @@ public class Board {
 		return zobristHash;
 	}
 
+	public int getHalfmoveClock() {
+		return halfmoveClock;
+	}
+
+	public int getHalfmoveCounter() {
+		return halfmoveCounter;
+	}
+
 	// ===== Setters ===== \\
 	public void setLastMoveTransition(MoveTransition lastMoveTransition) {
 		this.lastMoveTransition = lastMoveTransition;
@@ -221,6 +335,9 @@ public class Board {
 		Map<Integer, Piece> boardConfig;
 		Team nextMoveMaker;
 		Pawn enPassantPawn;
+		CastlingConfiguration castlingConfiguration;
+		int halfmoveClock;
+		int halfmoveCounter;
 
 		public Builder() {
 			this.boardConfig = new HashMap<Integer, Piece>();
@@ -238,6 +355,21 @@ public class Board {
 
 		public Builder setEnPassantPawn(Pawn enPassantPawn) {
 			this.enPassantPawn = enPassantPawn;
+			return this;
+		}
+
+		public Builder setCastlingConfiguration(CastlingConfiguration castlingConfiguration) {
+			this.castlingConfiguration = castlingConfiguration;
+			return this;
+		}
+
+		public Builder setHalfmoveClock(int halfmoveClock) {
+			this.halfmoveClock = halfmoveClock;
+			return this;
+		}
+
+		public Builder setHalfmoveCounter(int halfmoveCounter) {
+			this.halfmoveCounter = halfmoveCounter;
 			return this;
 		}
 

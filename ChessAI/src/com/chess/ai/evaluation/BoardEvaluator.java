@@ -70,6 +70,13 @@ public abstract class BoardEvaluator {
 		return score;
 	}
 
+	protected static int winScore(Board board, int depth, int winBonus) {
+		if (board.getWinner() == null)
+			return 0;
+
+		return (winBonus - depth) * -board.getWinner().moveDirection();
+	}
+
 	protected static int piecePositionScore(Player player, int positionBonus) {
 		int score = 0;
 

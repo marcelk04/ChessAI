@@ -44,8 +44,8 @@ public class ZobristHashing {
 
 		blackToMove = rnd.nextLong();
 
-		castlingRandoms = new long[2];
-		for (int i = 0; i < 2; i++) {
+		castlingRandoms = new long[4];
+		for (int i = 0; i < 4; i++) {
 			castlingRandoms[i] = rnd.nextLong();
 		}
 
@@ -67,11 +67,17 @@ public class ZobristHashing {
 		if (board.getCurrentPlayer().getTeam() == Team.BLACK)
 			hash ^= blackToMove;
 
-		if (board.getBlackPlayer().canCastle())
+		if (board.getWhitePlayer().canKingSideCastle())
 			hash ^= castlingRandoms[0];
-
-		if (board.getWhitePlayer().canCastle())
+		
+		if (board.getWhitePlayer().canQueenSideCastle())
 			hash ^= castlingRandoms[1];
+		
+		if (board.getBlackPlayer().canKingSideCastle())
+			hash ^= castlingRandoms[2];
+		
+		if (board.getBlackPlayer().canQueenSideCastle())
+			hash ^= castlingRandoms[3];
 
 		if (board.getEnPassantPawn() != null)
 			hash ^= enPassantFiles[Utils.getX(board.getEnPassantPawn().getPosition())];

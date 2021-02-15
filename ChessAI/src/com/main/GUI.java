@@ -100,9 +100,13 @@ public class GUI {
 				if (e.getExecutedMove().isAttackMove()) {
 					panelTakenPieces.addPiece(e.getExecutedMove().getAttackedPiece());
 				}
+				
+				UIConsole.log(board.convertToFEN());
 			}
 		});
 		boardPanel.setBoard(board = mm.getBoard());
+		
+		UIConsole.log(board.convertToFEN());
 
 		UITextButton btnConfigureAI = new UITextButton("Configure AI");
 		btnConfigureAI.setBounds(1100, 15, 160, 25);

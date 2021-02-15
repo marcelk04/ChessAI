@@ -17,10 +17,14 @@ public abstract class Player {
 	protected final King playerKing;
 	protected final List<Move> legalMoves;
 	protected final boolean kingInCheck;
+	protected final boolean canKingSideCastle, canQueenSideCastle;
 
-	public Player(final Board board, final List<Move> playerLegals, final List<Move> opponentLegals) {
+	public Player(final Board board, final List<Move> playerLegals, final List<Move> opponentLegals,
+			final boolean canKingSideCastle, final boolean canQueenSideCastle) {
 		this.board = board;
 		this.playerKing = findKing();
+		this.canKingSideCastle = canKingSideCastle;
+		this.canQueenSideCastle = canQueenSideCastle;
 		playerLegals.addAll(calculateCastleMoves(opponentLegals));
 		this.legalMoves = playerLegals;
 		this.kingInCheck = !calculateAttacksOnTile(playerKing.getPosition(), opponentLegals).isEmpty();
@@ -39,7 +43,7 @@ public abstract class Player {
 		if (!legalMoves.contains(move) || move.isAttackMove() && move.getAttackedPiece().getType() == PieceType.KING) {
 			return new MoveTransition(board, board, move, MoveStatus.ILLEGAL_MOVE);
 		}
-		
+
 		Board newBoard = move.execute();
 
 		if (newBoard.getCurrentPlayer().getOpponent().isKingInCheck()) {
@@ -98,5 +102,13 @@ public abstract class Player {
 
 	public King getKing() {
 		return playerKing;
+	}
+
+	public boolean canKingSideCastle() {
+		return canKingSideCastle;
+	}
+
+	public boolean canQueenSideCastle() {
+		return canQueenSideCastle;
 	}
 }

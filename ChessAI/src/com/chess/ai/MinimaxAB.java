@@ -101,10 +101,7 @@ public class MinimaxAB extends MinimaxAlgorithm {
 	private int min(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-
-			if (depth == 0 || board.getWinner() == null)
-				return evaluator.evaluate(board, depth);
-			return 10000 - depth;
+			return evaluator.evaluate(board, depth);
 		}
 
 		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();
@@ -135,10 +132,7 @@ public class MinimaxAB extends MinimaxAlgorithm {
 	private int max(Board board, int depth, int alpha, int beta) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-
-			if (depth == 0 || board.getWinner() == null)
-				return evaluator.evaluate(board, depth);
-			return -10000 + depth;
+			return evaluator.evaluate(board, depth);
 		}
 
 		final List<Move> moves = board.getCurrentPlayer().getLegalMoves();

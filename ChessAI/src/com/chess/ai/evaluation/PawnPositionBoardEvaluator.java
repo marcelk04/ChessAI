@@ -20,6 +20,6 @@ public class PawnPositionBoardEvaluator extends PositionBoardEvaluator {
 
 	@Override
 	public String toString() {
-		return "Pawn Position Evaluator";
+		return "Pawn + Position Evaluator";
 	}
 }

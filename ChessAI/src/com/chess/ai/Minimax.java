@@ -90,10 +90,7 @@ public class Minimax extends MinimaxAlgorithm {
 	private int min(Board board, int depth) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-
-			if (depth == 0 || board.getWinner() == null)
-				return evaluator.evaluate(board, depth);
-			return 10000 - depth;
+			return evaluator.evaluate(board, depth);
 		}
 
 		List<Move> moves = board.getCurrentPlayer().getLegalMoves();
@@ -116,10 +113,7 @@ public class Minimax extends MinimaxAlgorithm {
 	private int max(Board board, int depth) {
 		if (depth == 0 || board.hasGameEnded()) {
 			evaluatedBoards++;
-
-			if (depth == 0 || board.getWinner() == null)
-				return evaluator.evaluate(board, depth);
-			return -10000 + depth;
+			return evaluator.evaluate(board, depth);
 		}
 
 		List<Move> moves = board.getCurrentPlayer().getLegalMoves();
