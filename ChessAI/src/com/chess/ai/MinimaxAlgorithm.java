@@ -3,8 +3,10 @@ package com.chess.ai;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.chess.Board;
 import com.chess.ai.evaluation.BoardEvaluator;
 import com.chess.move.Move;
+import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIConsole;
 
 public abstract class MinimaxAlgorithm implements Runnable {
@@ -13,14 +15,19 @@ public abstract class MinimaxAlgorithm implements Runnable {
 	protected Thread thread;
 	protected boolean running = false;
 
-	protected final MoveMaker mm;
+	protected final MoveExecutionListener meListener;
+	protected final Board board;
 	protected final int depth;
 	protected final BoardEvaluator evaluator;
+	protected final boolean printOutData;
 
-	public MinimaxAlgorithm(MoveMaker mm, int depth, BoardEvaluator evaluator) {
-		this.mm = mm;
+	public MinimaxAlgorithm(MoveExecutionListener meListener, Board board, int depth, BoardEvaluator evaluator,
+			boolean printOutData) {
+		this.meListener = meListener;
+		this.board = board;
 		this.depth = depth;
 		this.evaluator = evaluator;
+		this.printOutData = printOutData;
 
 		start();
 	}
@@ -32,9 +39,10 @@ public abstract class MinimaxAlgorithm implements Runnable {
 	@Override
 	public void run() {
 		Move bestMove = findBestMove();
-		printOutData();
+		if (printOutData)
+			printOutData();
 		if (running)
-			mm.moveExecuted(mm.getBoard().getCurrentPlayer().makeMove(bestMove));
+			meListener.onMoveExecution(board.getCurrentPlayer().makeMove(bestMove));
 		stop();
 	}
 
@@ -69,8 +77,9 @@ public abstract class MinimaxAlgorithm implements Runnable {
 	public static enum AIType {
 		MINIMAX(0) {
 			@Override
-			public MinimaxAlgorithm createNew(MoveMaker mm, int depth, BoardEvaluator evaluator) {
-				return new Minimax(mm, depth, evaluator);
+			public MinimaxAlgorithm createNew(MoveExecutionListener meListener, Board board, int depth,
+					BoardEvaluator evaluator, boolean printOutData) {
+				return new Minimax(meListener, board, depth, evaluator, printOutData);
 			}
 
 			@Override
@@ -80,8 +89,9 @@ public abstract class MinimaxAlgorithm implements Runnable {
 		},
 		MINIMAX_AB(1) {
 			@Override
-			public MinimaxAlgorithm createNew(MoveMaker mm, int depth, BoardEvaluator evaluator) {
-				return new MinimaxAB(mm, depth, evaluator);
+			public MinimaxAlgorithm createNew(MoveExecutionListener meListener, Board board, int depth,
+					BoardEvaluator evaluator, boolean printOutData) {
+				return new MinimaxAB(meListener, board, depth, evaluator, printOutData);
 			}
 
 			@Override
@@ -91,8 +101,9 @@ public abstract class MinimaxAlgorithm implements Runnable {
 		},
 		MINIMAX_AB_MO(2) {
 			@Override
-			public MinimaxAlgorithm createNew(MoveMaker mm, int depth, BoardEvaluator evaluator) {
-				return new MinimaxABwMO(mm, depth, evaluator);
+			public MinimaxAlgorithm createNew(MoveExecutionListener meListener, Board board, int depth,
+					BoardEvaluator evaluator, boolean printOutData) {
+				return new MinimaxABwMO(meListener, board, depth, evaluator, printOutData);
 			}
 
 			@Override
@@ -107,8 +118,9 @@ public abstract class MinimaxAlgorithm implements Runnable {
 			this.number = number;
 		}
 
-		public abstract MinimaxAlgorithm createNew(MoveMaker mm, int depth, BoardEvaluator evaluator);
-		
+		public abstract MinimaxAlgorithm createNew(MoveExecutionListener meListener, Board board, int depth,
+				BoardEvaluator evaluator, boolean printOutData);
+
 		@Override
 		public abstract String toString();
 

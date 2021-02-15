@@ -11,7 +11,7 @@ import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIBoardPanel;
 import com.gui.objects.UIConsole;
 
-public class MoveMaker {
+public class MoveMaker implements MoveExecutionListener {
 	private PlayerType player1, player2;
 	private UIBoardPanel boardPanel;
 	private Board board;
@@ -31,7 +31,8 @@ public class MoveMaker {
 		makeNextMove();
 	}
 
-	public void moveExecuted(MoveTransition m) {
+	@Override
+	public void onMoveExecution(MoveTransition m) {
 		if (moveExecutionListener != null)
 			moveExecutionListener.onMoveExecution(m);
 
@@ -60,7 +61,8 @@ public class MoveMaker {
 				boardPanel.setMoveMaker(this);
 			} else {
 				boardPanel.setMoveMaker(null);
-				aiType.createNew(this, depth, evaluator);
+				aiType.createNew(this, board, depth, evaluator, true);
+//				new IterativeDeepening(aiType, this, board, evaluator, 5000, 3);
 			}
 		}
 

@@ -20,7 +20,6 @@ import com.chess.ai.evaluation.BoardEvaluator;
 import com.chess.ai.evaluation.PawnPositionBoardEvaluator;
 import com.chess.ai.evaluation.PositionBoardEvaluator;
 import com.chess.ai.evaluation.SimpleBoardEvaluator;
-import com.chess.ai.hashing.TranspositionTable;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.file.ColorSaver;

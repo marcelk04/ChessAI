@@ -130,7 +130,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 								if (meListener != null)
 									meListener.onMoveExecution(mt);
 
-								moveMaker.moveExecuted(mt);
+								moveMaker.onMoveExecution(mt);
 								lastMove = moveToExecute;
 								moveFound = true;
 

@@ -9,6 +9,7 @@ import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.Team;
 import com.chess.player.Player;
+import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIConsole;
 
 public class MinimaxAB extends MinimaxAlgorithm {
@@ -19,13 +20,13 @@ public class MinimaxAB extends MinimaxAlgorithm {
 	private Move bestMove;
 	private int bestEval;
 
-	public MinimaxAB(MoveMaker mm, int depth, BoardEvaluator evaluator) {
-		super(mm, depth, evaluator);
+	public MinimaxAB(MoveExecutionListener meListener, Board board, int depth, BoardEvaluator evaluator,
+			boolean printOutData) {
+		super(meListener, board, depth, evaluator, printOutData);
 	}
 
 	@Override
 	public Move findBestMove() {
-		final Board board = mm.getBoard();
 		final Player currentPlayer = board.getCurrentPlayer();
 		final List<Move> moves = currentPlayer.getLegalMoves();
 
@@ -68,6 +69,8 @@ public class MinimaxAB extends MinimaxAlgorithm {
 		double approxPrunedBoards = Math.round(this.prunedBoards);
 		double percentageOfPrunedBoards = Math.round(this.prunedBoards / (evaluatedBoards + this.prunedBoards) * 10000)
 				/ 100d;
+		double transpositionPercentage = Math
+				.round((double) evaluator.getTranspositions() / (double) evaluatedBoards * 10000) / 100d;
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Evaluated Boards:" + evaluatedBoards);
@@ -87,6 +90,8 @@ public class MinimaxAB extends MinimaxAlgorithm {
 		sb.append("in %:" + percentageOfPrunedBoards);
 		sb.append("|");
 		sb.append("Transpositions:" + evaluator.getTranspositions());
+		sb.append("|");
+		sb.append("in %:" + transpositionPercentage);
 
 		evaluator.resetTranspositions();
 
