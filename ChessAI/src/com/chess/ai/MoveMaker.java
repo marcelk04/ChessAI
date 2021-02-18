@@ -17,6 +17,7 @@ public class MoveMaker implements MoveExecutionListener {
 	private Board board;
 	private Team currentTeam;
 	private MoveExecutionListener moveExecutionListener;
+	private int round = 1;
 
 	private int depth = 3;
 	private AIType aiType = AIType.MINIMAX;
@@ -70,6 +71,7 @@ public class MoveMaker implements MoveExecutionListener {
 
 	public void reset() {
 		MinimaxAlgorithm.stopAll();
+		round++;
 	}
 
 	// ===== Getters ===== \\
@@ -107,6 +109,10 @@ public class MoveMaker implements MoveExecutionListener {
 
 	public BoardEvaluator getEvaluator() {
 		return evaluator;
+	}
+
+	public int getRound() {
+		return round;
 	}
 
 	// ===== Setters ===== \\

@@ -30,6 +30,7 @@ public class Board {
 	private final Player currentPlayer;
 	private final long zobristHash;
 	private final int halfmoveClock, halfmoveCounter;
+	private final List<Move> executedMoves;
 	private MoveTransition lastMoveTransition = null;
 
 	private Board(Builder builder) {
@@ -49,6 +50,8 @@ public class Board {
 		this.zobristHash = ZobristHashing.getZobristHash(this);
 		this.halfmoveClock = builder.halfmoveClock;
 		this.halfmoveCounter = builder.halfmoveCounter;
+		this.executedMoves = new ArrayList<Move>();
+		this.executedMoves.addAll(builder.executedMoves);
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public class Board {
 		String result = "";
 		result += "White:" + whitePieces.size();
 		result += ";Black:" + blackPieces.size();
-		result += "; Current Player:" + currentPlayer.getTeam();
+		result += ";Current:" + currentPlayer.getTeam();
 		return result;
 	}
 
@@ -102,6 +105,7 @@ public class Board {
 		b.setCastlingConfiguration(CastlingConfiguration.ALL_TRUE);
 		b.setHalfmoveClock(0);
 		b.setHalfmoveCounter(1);
+		b.setExecutedMoves(new ArrayList<Move>());
 
 		return b.build();
 	}
@@ -217,9 +221,7 @@ public class Board {
 		sb.append(" ");
 
 		// halfmove clock
-		sb.append(halfmoveClock);
-
-		sb.append(" ");
+		sb.append(halfmoveClock).append(" ");
 
 		// fullmove counter
 		sb.append(Math.round(halfmoveCounter / 2f));
@@ -325,9 +327,30 @@ public class Board {
 		return halfmoveCounter;
 	}
 
+	public List<Move> getExecutedMoves() {
+		return executedMoves;
+	}
+
+	public String getResult() {
+		if (!hasGameEnded())
+			return "*"; // game has not yet ended
+
+		Team winner = getWinner();
+
+		if (winner == null) // no winner
+			return "1/2-1/2";
+
+		if (winner == Team.BLACK)
+			return "0-1"; // black has won
+
+		return "1-0"; // white has won
+	}
+
 	// ===== Setters ===== \\
 	public void setLastMoveTransition(MoveTransition lastMoveTransition) {
 		this.lastMoveTransition = lastMoveTransition;
+
+		executedMoves.add(lastMoveTransition.getExecutedMove());
 	}
 
 	// ===== Inner classes ===== \\
@@ -338,6 +361,7 @@ public class Board {
 		CastlingConfiguration castlingConfiguration;
 		int halfmoveClock;
 		int halfmoveCounter;
+		List<Move> executedMoves;
 
 		public Builder() {
 			this.boardConfig = new HashMap<Integer, Piece>();
@@ -370,6 +394,11 @@ public class Board {
 
 		public Builder setHalfmoveCounter(int halfmoveCounter) {
 			this.halfmoveCounter = halfmoveCounter;
+			return this;
+		}
+
+		public Builder setExecutedMoves(List<Move> executedMoves) {
+			this.executedMoves = executedMoves;
 			return this;
 		}
 

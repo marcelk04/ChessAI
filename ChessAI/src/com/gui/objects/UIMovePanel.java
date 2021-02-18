@@ -24,26 +24,22 @@ public class UIMovePanel extends UITextArea {
 	}
 
 	private void convertList() {
-		String text = "";
-		Move m;
+		StringBuilder sb = new StringBuilder();
 
-		for (int i = moves.size() - 1; i >= 0; i--) {
-			m = moves.get(i);
-			text += m.getMovedPiece().getTeam().toString() + ": " + m.getNotation();
-
-			if (i > 0)
-				text += "\n";
+		for (int i = 0; i < moves.size(); i++) {
+			if (i % 2 == 0) {
+				sb.append(i / 2 + 1).append(". ").append(moves.get(i).getNotation());
+			} else {
+				sb.append(" ").append(moves.get(i).getNotation()).append("\n");
+			}
 		}
 
-		super.setText(text);
+		super.setText(sb.toString());
 	}
 
 	public void addMove(Move m) {
 		moves.add(m);
-		if (super.text != null && !super.text.equals(""))
-			super.setText(super.text + "\n" + m.getMovedPiece().getTeam().toString() + ": " + m.getNotation());
-		else
-			super.setText(m.getMovedPiece().getTeam().toString() + ": " + m.getNotation());
+		convertList();
 	}
 
 	public void removeMove(Move m) {

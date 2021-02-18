@@ -5,11 +5,15 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Date;
 
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
 import com.chess.Board;
 import com.chess.ai.MinimaxAlgorithm;
@@ -23,6 +27,7 @@ import com.chess.ai.evaluation.SimpleBoardEvaluator;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.file.ColorSaver;
+import com.file.PGNUtilities;
 import com.gfx.Assets;
 import com.gui.display.Display;
 import com.gui.objects.UIBoardPanel;
@@ -36,6 +41,7 @@ import com.gui.objects.UIPanel;
 import com.gui.objects.UISelectionBox;
 import com.gui.objects.UITakenPiecesPanel;
 import com.gui.objects.UITextButton;
+import com.gui.objects.UITextField;
 
 public class GUI {
 	private Board board;
@@ -100,13 +106,9 @@ public class GUI {
 				if (e.getExecutedMove().isAttackMove()) {
 					panelTakenPieces.addPiece(e.getExecutedMove().getAttackedPiece());
 				}
-				
-				UIConsole.log(board.convertToFEN());
 			}
 		});
 		boardPanel.setBoard(board = mm.getBoard());
-		
-		UIConsole.log(board.convertToFEN());
 
 		UITextButton btnConfigureAI = new UITextButton("Configure AI");
 		btnConfigureAI.setBounds(1100, 15, 160, 25);
@@ -135,6 +137,14 @@ public class GUI {
 		btnEditColors.setClickListener(e -> showColorDialog());
 		display.add(btnEditColors);
 
+		UITextButton btnFile = new UITextButton("Open/Save File");
+		btnFile.setBounds(1100, 120, 160, 25);
+		btnFile.setArcBounds(arc_width, arc_height);
+		btnFile.setTextColor(text_color);
+		btnFile.setBackground(button_background_color);
+		btnFile.setClickListener(e -> showFileDialog());
+		display.add(btnFile);
+
 		UIPanel panelUtilities = new UIPanel();
 		panelUtilities.setBounds(1090, 595, 180, 115);
 		panelUtilities.setArcBounds(arc_width, arc_height);
@@ -149,28 +159,29 @@ public class GUI {
 		btnUndo.setClickListener(e -> {
 			MoveTransition lastMoveTransition = board.getLastMoveTransition();
 
-			if (lastMoveTransition != null) {
-				MinimaxAlgorithm.stopAll();
+			if (lastMoveTransition == null)
+				return;
 
-				board = lastMoveTransition.getOldBoard();
-				mm.setBoard(board);
-				boardPanel.setBoard(board);
+			MinimaxAlgorithm.stopAll();
 
-				MoveTransition mtBeforeLastMt = lastMoveTransition.getOldBoard().getLastMoveTransition();
-				if (mtBeforeLastMt != null) {
-					boardPanel.setLastMove(mtBeforeLastMt.getExecutedMove());
-				} else {
-					boardPanel.setLastMove(null);
-				}
+			board = lastMoveTransition.getOldBoard();
+			mm.setBoard(board);
+			boardPanel.setBoard(board);
 
-				if (lastMoveTransition.getExecutedMove().isAttackMove()) {
-					panelTakenPieces.removePiece(lastMoveTransition.getExecutedMove().getAttackedPiece());
-				}
-
-				panelMoves.removeMove(lastMoveTransition.getExecutedMove());
-
-				mm.makeNextMove();
+			MoveTransition mtBeforeLastMt = lastMoveTransition.getOldBoard().getLastMoveTransition();
+			if (mtBeforeLastMt != null) {
+				boardPanel.setLastMove(mtBeforeLastMt.getExecutedMove());
+			} else {
+				boardPanel.setLastMove(null);
 			}
+
+			if (lastMoveTransition.getExecutedMove().isAttackMove()) {
+				panelTakenPieces.removePiece(lastMoveTransition.getExecutedMove().getAttackedPiece());
+			}
+
+			panelMoves.removeMove(lastMoveTransition.getExecutedMove());
+
+			mm.makeNextMove();
 		});
 		panelUtilities.add(btnUndo);
 
@@ -184,6 +195,7 @@ public class GUI {
 			mm.setBoard(board = Board.create());
 			boardPanel.setBoard(board);
 			boardPanel.setLastMove(null);
+			boardPanel.setMoveMaker(mm);
 			panelTakenPieces.clear();
 			panelMoves.clear();
 		});
@@ -446,6 +458,170 @@ public class GUI {
 		btnExit.setBackground(button_background_color);
 		btnExit.setClickListener(e -> display.removeLastDialog());
 		dialog.addRelative(btnExit);
+
+		display.showDialog(dialog);
+	}
+
+	private void showFileDialog() {
+		UIDialog dialog = new UIDialog();
+		dialog.setSize(180, 185);
+		dialog.setPositionRelativeTo(display.getObjects());
+		dialog.setArcBounds(arc_width, arc_height);
+		dialog.setBorder(border_color);
+
+		UITextButton btnLoadPGN = new UITextButton("Load PGN");
+		btnLoadPGN.setBounds(10, 10, 160, 25);
+		btnLoadPGN.setArcBounds(arc_width, arc_height);
+		btnLoadPGN.setTextColor(text_color);
+		btnLoadPGN.setBackground(button_background_color);
+		btnLoadPGN.setClickListener(e -> {
+		});
+		dialog.addRelative(btnLoadPGN);
+
+		UITextButton btnLoadFEN = new UITextButton("Load FEN");
+		btnLoadFEN.setBounds(10, 45, 160, 25);
+		btnLoadFEN.setArcBounds(arc_width, arc_height);
+		btnLoadFEN.setTextColor(text_color);
+		btnLoadFEN.setBackground(button_background_color);
+		btnLoadFEN.setClickListener(e -> {
+		});
+		dialog.addRelative(btnLoadFEN);
+
+		UITextButton btnSavePGN = new UITextButton("Save PGN");
+		btnSavePGN.setBounds(10, 80, 160, 25);
+		btnSavePGN.setArcBounds(arc_width, arc_height);
+		btnSavePGN.setTextColor(text_color);
+		btnSavePGN.setBackground(button_background_color);
+		btnSavePGN.setClickListener(e -> showSaveAsPGNDialog());
+		dialog.addRelative(btnSavePGN);
+
+		UITextButton btnPrintFEN = new UITextButton("Print FEN");
+		btnPrintFEN.setBounds(10, 115, 160, 25);
+		btnPrintFEN.setArcBounds(arc_width, arc_height);
+		btnPrintFEN.setTextColor(text_color);
+		btnPrintFEN.setBackground(button_background_color);
+		btnPrintFEN.setClickListener(e -> System.out.println(board.convertToFEN()));
+		dialog.addRelative(btnPrintFEN);
+
+		UITextButton btnExit = new UITextButton("Exit");
+		btnExit.setBounds(10, 150, 160, 25);
+		btnExit.setArcBounds(arc_width, arc_height);
+		btnExit.setTextColor(text_color);
+		btnExit.setBackground(button_background_color);
+		btnExit.setClickListener(e -> display.removeLastDialog());
+		dialog.addRelative(btnExit);
+
+		display.showDialog(dialog);
+	}
+
+	private void showSaveAsPGNDialog() {
+		UIDialog dialog = new UIDialog();
+		dialog.setSize(270, 255);
+		dialog.setPositionRelativeTo(display.getObjects());
+		dialog.setArcBounds(arc_width, arc_height);
+		dialog.setBorder(border_color);
+
+		UILabel lblTitle = new UILabel("Save as PGN");
+		lblTitle.setBounds(10, 10, 240, 25);
+		lblTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+		lblTitle.setHorizontalAlignment(UIObject.CENTER);
+		dialog.addRelative(lblTitle);
+
+		UILabel lblEvent = new UILabel("Event:");
+		lblEvent.setBounds(10, 45, 80, 25);
+		lblEvent.setFont(bold_font);
+		dialog.addRelative(lblEvent);
+
+		UITextField tfEvent = new UITextField();
+		tfEvent.setBounds(100, 45, 160, 20);
+		tfEvent.setArcBounds(arc_width, arc_height);
+		dialog.addRelative(tfEvent);
+
+		UILabel lblSite = new UILabel("Site:");
+		lblSite.setBounds(10, 80, 80, 25);
+		lblSite.setFont(bold_font);
+		dialog.addRelative(lblSite);
+
+		UITextField tfSite = new UITextField();
+		tfSite.setBounds(100, 80, 160, 20);
+		tfSite.setArcBounds(arc_width, arc_height);
+		dialog.addRelative(tfSite);
+
+		UILabel lblWhite = new UILabel("White:");
+		lblWhite.setBounds(10, 115, 80, 25);
+		lblWhite.setFont(bold_font);
+		dialog.addRelative(lblWhite);
+
+		UITextField tfWhite = new UITextField();
+		tfWhite.setBounds(100, 115, 160, 20);
+		tfWhite.setArcBounds(arc_width, arc_height);
+		dialog.addRelative(tfWhite);
+
+		UILabel lblBlack = new UILabel("Black:");
+		lblBlack.setBounds(10, 150, 80, 25);
+		lblBlack.setFont(bold_font);
+		dialog.addRelative(lblBlack);
+
+		UITextField tfBlack = new UITextField();
+		tfBlack.setBounds(100, 150, 160, 20);
+		tfBlack.setArcBounds(arc_width, arc_height);
+		dialog.addRelative(tfBlack);
+
+		UITextButton btnDefault = new UITextButton("Fill in default");
+		btnDefault.setBounds(10, 185, 250, 25);
+		btnDefault.setArcBounds(arc_width, arc_height);
+		btnDefault.setTextColor(text_color);
+		btnDefault.setBackground(button_background_color);
+		btnDefault.setClickListener(e -> {
+			tfEvent.setText("ChessAI Event");
+			tfSite.setText("Here");
+			tfWhite.setText(mm.getPlayer1().toString());
+			tfBlack.setText(mm.getPlayer2().toString());
+		});
+		dialog.addRelative(btnDefault);
+
+		UITextButton btnSave = new UITextButton("Save");
+		btnSave.setBounds(10, 220, 120, 25);
+		btnSave.setArcBounds(arc_width, arc_height);
+		btnSave.setTextColor(text_color);
+		btnSave.setBackground(button_background_color);
+		btnSave.setClickListener(e -> {
+			if (tfEvent.getText().equals("") || tfSite.getText().equals("") || tfWhite.getText().equals("")
+					|| tfBlack.getText().equals(""))
+				return;
+
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setFileFilter(new FileFilter() {
+				@Override
+				public String getDescription() {
+					return ".pgn";
+				}
+
+				@Override
+				public boolean accept(File file) {
+					return file.isDirectory() || file.getName().toLowerCase().endsWith(".pgn");
+				}
+			});
+			int option = fileChooser.showSaveDialog(display.getFrame());
+			if (option == JFileChooser.APPROVE_OPTION) {
+				try {
+					PGNUtilities.saveGameToPGN(fileChooser.getSelectedFile(), tfEvent.getText(), tfSite.getText(),
+							new Date(), mm.getRound(), tfWhite.getText(), tfBlack.getText(), board.getResult(),
+							board.getExecutedMoves());
+					display.removeLastDialog();
+				} catch (IOException e1) {
+				}
+			}
+		});
+		dialog.addRelative(btnSave);
+
+		UITextButton btnBack = new UITextButton("Back");
+		btnBack.setBounds(140, 220, 120, 25);
+		btnBack.setArcBounds(arc_width, arc_height);
+		btnBack.setTextColor(text_color);
+		btnBack.setBackground(button_background_color);
+		btnBack.setClickListener(e -> display.removeLastDialog());
+		dialog.addRelative(btnBack);
 
 		display.showDialog(dialog);
 	}

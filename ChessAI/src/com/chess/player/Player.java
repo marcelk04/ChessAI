@@ -49,7 +49,7 @@ public abstract class Player {
 		if (newBoard.getCurrentPlayer().getOpponent().isKingInCheck()) {
 			return new MoveTransition(board, board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK);
 		}
-
+		
 		return new MoveTransition(board, newBoard, move, MoveStatus.DONE);
 	}
 

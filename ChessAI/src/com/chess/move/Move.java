@@ -80,12 +80,14 @@ public abstract class Move {
 				&& !pieceAtWhiteKingPosition.equals(movedPiece)) {
 			// king has not been moved
 			Piece kingSideRook = board.getPiece(63);
-			c.canWhiteKingSideCastle = kingSideRook != null && !kingSideRook.gotMovedAtLeastOnce()
-					&& kingSideRook.getType() == PieceType.ROOK && !kingSideRook.equals(movedPiece);
+			c.canWhiteKingSideCastle = board.getWhitePlayer().canKingSideCastle() && kingSideRook != null
+					&& !kingSideRook.gotMovedAtLeastOnce() && kingSideRook.getType() == PieceType.ROOK
+					&& !kingSideRook.equals(movedPiece);
 
 			Piece queenSideRook = board.getPiece(56);
-			c.canWhiteQueenSideCastle = queenSideRook != null && !queenSideRook.gotMovedAtLeastOnce()
-					&& queenSideRook.getType() == PieceType.ROOK && !queenSideRook.equals(movedPiece);
+			c.canWhiteQueenSideCastle = board.getWhitePlayer().canQueenSideCastle() && queenSideRook != null
+					&& !queenSideRook.gotMovedAtLeastOnce() && queenSideRook.getType() == PieceType.ROOK
+					&& !queenSideRook.equals(movedPiece);
 		}
 
 		// black
@@ -95,12 +97,14 @@ public abstract class Move {
 				&& !pieceAtBlackKingPosition.equals(movedPiece)) {
 			// king has not been moved
 			Piece kingSideRook = board.getPiece(7);
-			c.canBlackKingSideCastle = kingSideRook != null && !kingSideRook.gotMovedAtLeastOnce()
-					&& kingSideRook.getType() == PieceType.ROOK && !kingSideRook.equals(movedPiece);
+			c.canBlackKingSideCastle = board.getBlackPlayer().canKingSideCastle() && kingSideRook != null
+					&& !kingSideRook.gotMovedAtLeastOnce() && kingSideRook.getType() == PieceType.ROOK
+					&& !kingSideRook.equals(movedPiece);
 
 			Piece queenSideRook = board.getPiece(0);
-			c.canBlackQueenSideCastle = queenSideRook != null && !queenSideRook.gotMovedAtLeastOnce()
-					&& queenSideRook.getType() == PieceType.ROOK && !queenSideRook.equals(movedPiece);
+			c.canBlackQueenSideCastle = board.getBlackPlayer().canQueenSideCastle() && queenSideRook != null
+					&& !queenSideRook.gotMovedAtLeastOnce() && queenSideRook.getType() == PieceType.ROOK
+					&& !queenSideRook.equals(movedPiece);
 		}
 
 		b.setCastlingConfiguration(c);
@@ -177,6 +181,7 @@ public abstract class Move {
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(board.getHalfmoveClock() + 1);
 			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+			b.setExecutedMoves(board.getExecutedMoves());
 
 			setCastlingConfiguration(b);
 
@@ -247,6 +252,7 @@ public abstract class Move {
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(0);
 			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+			b.setExecutedMoves(board.getExecutedMoves());
 
 			setCastlingConfiguration(b);
 
@@ -322,6 +328,7 @@ public abstract class Move {
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(0);
 			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+			b.setExecutedMoves(board.getExecutedMoves());
 
 			setCastlingConfiguration(b);
 
@@ -378,6 +385,7 @@ public abstract class Move {
 			b.setEnPassantPawn(movedPawn);
 			b.setHalfmoveClock(0);
 			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+			b.setExecutedMoves(board.getExecutedMoves());
 
 			setCastlingConfiguration(b);
 
@@ -413,6 +421,7 @@ public abstract class Move {
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(0);
 			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+			b.setExecutedMoves(board.getExecutedMoves());
 
 			setCastlingConfiguration(b);
 
@@ -482,6 +491,7 @@ public abstract class Move {
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(board.getHalfmoveClock() + 1);
 			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+			b.setExecutedMoves(board.getExecutedMoves());
 
 			CastlingConfiguration c = new CastlingConfiguration();
 

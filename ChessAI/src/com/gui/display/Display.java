@@ -123,9 +123,14 @@ public class Display {
 			objects.remove(topDialog);
 			topDialog.deactivate();
 			if (size > 0) {
+				objects.repaint();
+				g.setColor(new Color(63, 63, 63, 171));
+				g.fillRect(0, 0, width, height);
+
 				topDialog = activeDialogs.get(--size);
 				topDialog.setVisible(true);
 				topDialog.setEnabled(true);
+				return;
 			} else {
 				objects.getObjects().forEach(o -> o.setEnabled(true));
 			}
