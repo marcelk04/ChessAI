@@ -587,8 +587,23 @@ public class GUI {
 		btnSave.setBackground(button_background_color);
 		btnSave.setClickListener(e -> {
 			if (tfEvent.getText().equals("") || tfSite.getText().equals("") || tfWhite.getText().equals("")
-					|| tfBlack.getText().equals(""))
+					|| tfBlack.getText().equals("")) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("All textfields have to be filled! ").append(" \n");
+				sb.append("Not filled textfields: ");
+
+				if (tfEvent.getText().equals(""))
+					sb.append("-Event").append(" \n");
+				if (tfSite.getText().equals(""))
+					sb.append("-Site").append(" \n");
+				if (tfWhite.getText().equals(""))
+					sb.append("-White").append(" \n");
+				if (tfBlack.getText().equals(""))
+					sb.append("-Black").append(" \n");
+
+				UIDialog.showInformationDialog(display, sb.toString());
 				return;
+			}
 
 			JFileChooser fileChooser = new JFileChooser();
 			fileChooser.setFileFilter(new FileFilter() {

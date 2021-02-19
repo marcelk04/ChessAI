@@ -15,6 +15,7 @@ public class UIMovePanel extends UITextArea {
 	public UIMovePanel(int hgap, int vgap) {
 		super("", hgap, vgap);
 		moves = new ArrayList<Move>();
+		setLineWrap(false);
 	}
 
 	@Override
@@ -60,5 +61,9 @@ public class UIMovePanel extends UITextArea {
 
 	@Override
 	public void setText(String text) {
+	}
+
+	@Override
+	public void setLineWrap(boolean lineWrap) {
 	}
 }

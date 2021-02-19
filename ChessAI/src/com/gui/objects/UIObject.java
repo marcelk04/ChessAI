@@ -122,7 +122,7 @@ public abstract class UIObject {
 	public abstract void render(Graphics g);
 
 	public void repaint() {
-		if (g != null) {
+		if (g != null && visible) {
 			g.clearRect(x, y, width, height);
 			render(g);
 		}

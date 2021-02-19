@@ -10,6 +10,7 @@ import com.gui.interfaces.Clickable;
 import com.gui.interfaces.Typeable;
 
 public class UITextField extends UIObject implements Clickable, Typeable {
+	private String acceptedKeys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,;.:-_#'+*~!\"ß$%&/(){}[]=ﬂ?<>|‰ˆ¸ƒ÷‹";
 	private String text = "";
 	private String end = "";
 	private int textX, textY;
@@ -31,14 +32,18 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 
 	@Override
 	public void onKeyPress(KeyEvent e) {
-		if (selected) {
-			if ((44 <= e.getKeyCode() && e.getKeyCode() <= 126) || e.getKeyCode() == KeyEvent.VK_SPACE) {
-				text += e.getKeyChar();
-				propertyChanged();
-			} else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && !text.isEmpty()) {
-				text = text.substring(0, text.length() - 1);
-				propertyChanged();
-			}
+		if (!selected)
+			return;
+
+		if (acceptedKeys.indexOf(e.getKeyChar()) != -1) {
+			if (UIUtils.getStringWidth(text + e.getKeyChar() + end, font, g) > width - 4)
+				return;
+
+			text += e.getKeyChar();
+			propertyChanged();
+		} else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && !text.isEmpty()) {
+			text = text.substring(0, text.length() - 1);
+			propertyChanged();
 		}
 	}
 
@@ -68,7 +73,12 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 	}
 
 	protected void calculateTextPos() {
-		double textWidth = UIUtils.getStringWidth(text + end, font);
+		double textWidth;
+		if (g != null)
+			textWidth = UIUtils.getStringWidth(text + end, font, g);
+		else
+			textWidth = UIUtils.getStringWidth(text + end, font);
+
 		textX = (int) (x + textWidth / 2);
 		textY = y + height / 2;
 		if (border != null)
@@ -86,11 +96,19 @@ public class UITextField extends UIObject implements Clickable, Typeable {
 		return text;
 	}
 
+	public String getAcceptedKeys() {
+		return acceptedKeys;
+	}
+
 	// ===== Setter ===== \\
 	public void setText(String text) {
 		if (this.text == null || !this.text.equals(text)) {
 			this.text = text;
 			propertyChanged();
 		}
+	}
+
+	public void setAcceptedKeys(String acceptedKeys) {
+		this.acceptedKeys = acceptedKeys;
 	}
 }

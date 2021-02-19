@@ -123,7 +123,9 @@ public class UIPanel extends UIObject implements Clickable, Typeable, Scrollable
 
 	// ===== Setters ===== \\
 	public void setGraphics(Graphics g) {
-		objects.forEach(o -> o.setGraphics(g));
+		objects.forEach(o -> {
+			o.setGraphics(g);
+		});
 		super.setGraphics(g);
 	}
 }

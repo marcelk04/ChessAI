@@ -19,6 +19,7 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 	private int scrollBarY, scrollBarWidth, scrollBarHeight;
 	protected int hgap, vgap;
 	protected boolean hovering = false;
+	protected boolean lineWrap = true;
 	protected Color scrollBarColor;
 
 	public UITextArea() {
@@ -63,12 +64,20 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 	}
 
 	private void calculateTextPositions() {
-		if (text != null && !text.equals("")) {
-			float textHeight = (float) UIUtils.getStringHeight(text, font);
+		if (text != null && !text.equals("") && g != null) {
+			float textHeight = (float) UIUtils.getStringHeight(font, g);
 			int maxLines = (int) (height / (textHeight + vgap));
 			int maxTextWidth = width - hgap * 2;
 
-			displayText = text.split("\n");
+			if (lineWrap) {
+				displayText = UIUtils.splitStringWhole(text, maxTextWidth, " ", font, g);
+			} else {
+				displayText = text.split("\n");
+
+				for (int i = 0; i < displayText.length; i++) {
+					displayText[i] = UIUtils.shortenText(displayText[i], maxTextWidth, font, g);
+				}
+			}
 
 			beginIndex = Utils.clamp(beginIndex, 0, displayText.length - 1);
 
@@ -90,10 +99,6 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 				scrollBarY = Math.round((float) beginIndex / (float) displayText.length * (float) this.height) + this.y;
 			}
 
-			for (int i = 0; i < displayText.length; i++) {
-				displayText[i] = UIUtils.shortenText(displayText[i], maxTextWidth, font);
-			}
-
 			displayPositions = new Position[endIndex - beginIndex + 1];
 
 			for (int i = 0; i <= endIndex - beginIndex; i++) {
@@ -104,14 +109,15 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 					displayPositions[i] = new Position(x + hgap, y);
 					break;
 				case CENTER:
-					displayPositions[i] = new Position(
-							x + Math.round(
-									(width - (float) UIUtils.getStringWidth(displayText[i + beginIndex], font)) / 2f),
+					displayPositions[i] = new Position(x + Math
+							.round((width - (float) UIUtils.getStringWidth(displayText[i + beginIndex], font, g)) / 2f),
 							y);
 					break;
 				case RIGHT:
-					displayPositions[i] = new Position(x + width - hgap
-							- Math.round((float) UIUtils.getStringWidth(displayText[i + beginIndex], font)), y);
+					displayPositions[i] = new Position(
+							x + width - hgap
+									- Math.round((float) UIUtils.getStringWidth(displayText[i + beginIndex], font, g)),
+							y);
 					break;
 				}
 			}
@@ -178,6 +184,10 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 		return scrollBarColor;
 	}
 
+	public boolean lineWrap() {
+		return lineWrap;
+	}
+
 	// ===== Setters ===== \\
 	public void setHgap(int hgap) {
 		if (this.hgap != hgap) {
@@ -201,10 +211,23 @@ public class UITextArea extends UIObject implements Clickable, Scrollable {
 	}
 
 	public void setScrollBarWidth(int scrollBarWidth) {
-		this.scrollBarWidth = scrollBarWidth;
+		if (this.scrollBarWidth != scrollBarWidth) {
+			this.scrollBarWidth = scrollBarWidth;
+			propertyChanged();
+		}
 	}
 
 	public void setScrollBarColor(Color scrollBarColor) {
-		this.scrollBarColor = scrollBarColor;
+		if (!this.scrollBarColor.equals(scrollBarColor)) {
+			this.scrollBarColor = scrollBarColor;
+			propertyChanged();
+		}
+	}
+
+	public void setLineWrap(boolean lineWrap) {
+		if (this.lineWrap != lineWrap) {
+			this.lineWrap = lineWrap;
+			propertyChanged();
+		}
 	}
 }

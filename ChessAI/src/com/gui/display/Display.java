@@ -104,11 +104,14 @@ public class Display {
 			UIDialog topDialog = activeDialogs.get(--size);
 			topDialog.setVisible(false);
 			topDialog.setEnabled(false);
+			objects.repaint();
 		} else {
 			objects.getObjects().forEach(o -> o.setEnabled(false));
-			g.setColor(new Color(63, 63, 63, 171));
-			g.fillRect(0, 0, width, height);
 		}
+		
+		objects.repaint();
+		g.setColor(new Color(63, 63, 63, 171));
+		g.fillRect(0, 0, width, height);
 
 		dialog.activate();
 		activeDialogs.add(dialog);

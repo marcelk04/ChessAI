@@ -6,6 +6,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UIUtils {
 	private static final FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
@@ -41,7 +43,7 @@ public class UIUtils {
 	}
 
 	public static int getStringHeight(Font font, Graphics g) {
-		return g.getFontMetrics(font).getHeight();
+		return g.getFontMetrics(font).getAscent();
 	}
 
 	public static boolean contains(int x, int y, int width, int height, int pointX, int pointY) {
@@ -56,7 +58,19 @@ public class UIUtils {
 			return text;
 		} else {
 			while (getStringWidth(text, font) > length && text != "") {
-				text = text.substring(0, text.length() - 2);
+				text = text.substring(0, text.length() - 1);
+			}
+			return text;
+		}
+	}
+
+	public static String shortenText(String text, double length, Font font, Graphics g) {
+		double currentTextWidth = getStringWidth(text, font, g);
+		if (currentTextWidth <= length) {
+			return text;
+		} else {
+			while (getStringWidth(text, font, g) > length && text != "") {
+				text = text.substring(0, text.length() - 1);
 			}
 			return text;
 		}
@@ -117,5 +131,40 @@ public class UIUtils {
 
 	public static boolean inRange(int var, int min, int max) {
 		return var >= min && var <= max;
+	}
+
+	public static String[] splitStringWhole(String text, double maxLength, String regex, Font font, Graphics g) {
+		if (text == null || text.equals("") || maxLength <= 0 || regex == null || font == null || g == null)
+			return new String[0]; // return an empty String array
+
+		String[] splitText = text.split(regex);
+
+		List<String> resultList = new ArrayList<String>();
+		int currentLine = 0;
+
+		for (String s : splitText) {
+			if (resultList.isEmpty()) {
+				resultList.add(s); // add first word
+			} else if (getStringWidth(s, font, g) >= maxLength
+					|| getStringWidth(resultList.get(currentLine) + regex + s, font, g) > maxLength
+					|| resultList.get(currentLine).equals("")) {
+				// if the word is to long for the width or the word wouldn't fit with the text
+				// in the currentLine
+				resultList.add(s);
+				currentLine++; // add word in new line
+			} else {
+				resultList.set(currentLine, resultList.get(currentLine) + regex + s);
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < resultList.size(); i++) {
+			if (i > 0)
+				sb.append("\n");
+			sb.append(resultList.get(i));
+		}
+
+		return sb.toString().split("\n");
 	}
 }
