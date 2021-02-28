@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.chess.Board;
 import com.chess.Board.Builder;
-import com.chess.ai.PawnStructureAnalyzer;
+import com.chess.ai.evaluation.PawnStructureAnalyzer;
 import com.chess.pieces.King;
 import com.chess.pieces.Team;
 import com.main.Utils;

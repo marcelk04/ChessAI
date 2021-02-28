@@ -11,6 +11,7 @@ import com.chess.pieces.Team;
 import com.chess.player.Player;
 import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIConsole;
+import com.main.DataManager;
 
 public class MinimaxAB extends MinimaxAlgorithm {
 	private long evaluatedBoards, timesPruned, timeInMs;
@@ -92,6 +93,14 @@ public class MinimaxAB extends MinimaxAlgorithm {
 		sb.append("Transpositions:" + evaluator.getTranspositions());
 		sb.append("|");
 		sb.append("in %:" + transpositionPercentage);
+
+		DataManager.searchTimes.add((float) time);
+		DataManager.searchedBoards.add((float) evaluatedBoards);
+		DataManager.prunedBoardsPercent.add((float) percentageOfPrunedBoards);
+		DataManager.prunedBoards.add((float) approxPrunedBoards);
+		DataManager.timesPruned.add((float) timesPruned);
+		DataManager.transpositions.add((float) evaluator.getTranspositions());
+		DataManager.transpositionsPercent.add((float) transpositionPercentage);
 
 		evaluator.resetTranspositions();
 

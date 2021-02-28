@@ -36,20 +36,24 @@ public class Board {
 	private Board(Builder builder) {
 		this.boardConfig = builder.boardConfig;
 		this.enPassantPawn = builder.enPassantPawn;
-		this.whitePieces = getActivePieces(builder, Team.WHITE);
-		this.blackPieces = getActivePieces(builder, Team.BLACK);
+		this.halfmoveClock = builder.halfmoveClock;
+		this.halfmoveCounter = builder.halfmoveCounter;
+
+		this.whitePieces = getActivePieces(this, Team.WHITE, 16);
+		this.blackPieces = getActivePieces(this, Team.BLACK, 16);
+
 		List<Move> whiteMoves = getLegalMoves(whitePieces);
 		List<Move> blackMoves = getLegalMoves(blackPieces);
+
 		this.whitePlayer = new WhitePlayer(this, whiteMoves, blackMoves,
 				builder.castlingConfiguration.canWhiteKingSideCastle,
 				builder.castlingConfiguration.canWhiteQueenSideCastle);
 		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves,
 				builder.castlingConfiguration.canBlackKingSideCastle,
 				builder.castlingConfiguration.canBlackQueenSideCastle);
-		this.currentPlayer = builder.nextMoveMaker == Team.WHITE ? whitePlayer : blackPlayer;
+
+		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this);
 		this.zobristHash = ZobristHashing.getZobristHash(this);
-		this.halfmoveClock = builder.halfmoveClock;
-		this.halfmoveCounter = builder.halfmoveCounter;
 		this.executedMoves = new ArrayList<Move>();
 		this.executedMoves.addAll(builder.executedMoves);
 	}
@@ -230,11 +234,11 @@ public class Board {
 	}
 
 	// ===== Getters ===== \\
-	private static List<Piece> getActivePieces(Builder builder, Team team) {
+	private static List<Piece> getActivePieces(Board board, Team team, int maxPieces) {
 		final List<Piece> activePieces = new ArrayList<Piece>();
 
-		for (int i = 0; i < 64; i++) {
-			Piece p = builder.boardConfig.get(i);
+		for (int i = 0; i < 64 && activePieces.size() < maxPieces; i++) {
+			Piece p = board.getPiece(i);
 			if (p != null && p.getTeam() == team) {
 				activePieces.add(p);
 			}
@@ -244,7 +248,7 @@ public class Board {
 	}
 
 	private List<Move> getLegalMoves(List<Piece> pieces) {
-		List<Move> legalMoves = new ArrayList<Move>();
+		final List<Move> legalMoves = new ArrayList<Move>();
 		pieces.forEach(p -> legalMoves.addAll(p.getMoves(this)));
 		return legalMoves;
 	}
@@ -278,26 +282,27 @@ public class Board {
 	}
 
 	public List<Piece> getAllPieces() {
-		List<Piece> allPieces = new ArrayList<Piece>();
+		final List<Piece> allPieces = new ArrayList<Piece>();
 		allPieces.addAll(whitePieces);
 		allPieces.addAll(blackPieces);
 		return allPieces;
 	}
 
 	public List<Move> getPossibleMoves(Piece piece) {
-		List<Move> movesToSearch = piece.getTeam() == Team.WHITE ? whitePlayer.getLegalMoves()
-				: blackPlayer.getLegalMoves();
-		List<Move> possibleMoves = new ArrayList<Move>();
+		final List<Move> movesToSearch = piece.getTeam().choosePlayer(this).getLegalMoves();
+		final List<Move> possibleMoves = new ArrayList<Move>();
+
 		for (Move m : movesToSearch) {
 			if (m.getMovedPiece().equals(piece)) {
 				possibleMoves.add(m);
 			}
 		}
+
 		return possibleMoves;
 	}
 
 	public List<Move> getAllLegalMoves() {
-		List<Move> allLegalMoves = new ArrayList<Move>();
+		final List<Move> allLegalMoves = new ArrayList<Move>();
 		allLegalMoves.addAll(whitePlayer.getLegalMoves());
 		allLegalMoves.addAll(blackPlayer.getLegalMoves());
 		return allLegalMoves;

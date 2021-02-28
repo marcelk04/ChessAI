@@ -10,7 +10,7 @@ import com.gui.interfaces.Clickable;
 import com.gui.interfaces.Typeable;
 
 public class UITextField extends UIObject implements Clickable, Typeable {
-	private String acceptedKeys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,;.:-_#'+*~!\"ß$%&/(){}[]=ﬂ?<>|‰ˆ¸ƒ÷‹";
+	private String acceptedKeys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,;.:-_#'+*~!\"ß$%&/\\(){}[]=ﬂ?<>|‰ˆ¸ƒ÷‹";
 	private String text = "";
 	private String end = "";
 	private int textX, textY;

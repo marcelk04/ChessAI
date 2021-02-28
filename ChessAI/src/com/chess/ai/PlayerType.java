@@ -14,5 +14,6 @@ public enum PlayerType {
 		}
 	};
 
+	@Override
 	public abstract String toString();
 }

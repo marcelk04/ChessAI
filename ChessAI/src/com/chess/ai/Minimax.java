@@ -11,6 +11,7 @@ import com.chess.pieces.Team;
 import com.chess.player.Player;
 import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIConsole;
+import com.main.DataManager;
 
 public class Minimax extends MinimaxAlgorithm {
 	private long evaluatedBoards, timeInMs;
@@ -81,6 +82,11 @@ public class Minimax extends MinimaxAlgorithm {
 		sb.append("Transpositions:" + evaluator.getTranspositions());
 		sb.append("|");
 		sb.append("in %:" + transpositionPercentage);
+
+		DataManager.searchTimes.add((float) time);
+		DataManager.searchedBoards.add((float) evaluatedBoards);
+		DataManager.transpositions.add((float) evaluator.getTranspositions());
+		DataManager.transpositionsPercent.add((float) transpositionPercentage);
 
 		evaluator.resetTranspositions();
 

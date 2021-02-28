@@ -10,6 +10,7 @@ import com.chess.pieces.Team;
 import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIBoardPanel;
 import com.gui.objects.UIConsole;
+import com.main.DataManager;
 
 public class MoveMaker implements MoveExecutionListener {
 	private PlayerType player1, player2;
@@ -71,7 +72,10 @@ public class MoveMaker implements MoveExecutionListener {
 
 	public void reset() {
 		MinimaxAlgorithm.stopAll();
+		DataManager.clear();
+
 		round++;
+		makeNextMove();
 	}
 
 	// ===== Getters ===== \\

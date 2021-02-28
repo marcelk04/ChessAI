@@ -79,7 +79,6 @@ public class MoveOrdering {
 
 		simpleOrderTime += System.currentTimeMillis() - time;
 		simpleOrderCount++;
-
 		return orderedMoves;
 	}
 

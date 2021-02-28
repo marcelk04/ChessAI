@@ -1,4 +1,4 @@
-package com.chess.ai;
+package com.chess.ai.evaluation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,79 @@ import com.chess.pieces.Team;
 import com.main.Utils;
 
 public class PawnStructureAnalyzer {
-	public static PawnStructureAnalyzer INSTANCE = new PawnStructureAnalyzer();
+	public static final PawnStructureAnalyzer INSTANCE = new PawnStructureAnalyzer();
+
+	public Pawn[][] findPawns(Board board, int cutoff) {
+		Pawn[][] pawns = new Pawn[8][8];
+		int numPawns = 0;
+
+		for (Piece p : board.getAllPieces()) {
+			if (p.getType() == PieceType.PAWN) {
+				pawns[Utils.getX(p.getPosition())][Utils.getY(p.getPosition())] = (Pawn) p;
+				numPawns++;
+			}
+
+			if (numPawns >= cutoff)
+				break;
+		}
+
+		return pawns;
+	}
+
+	public int doubledPawns(Pawn[][] pawns, Team team) {
+		int doubledPawns = 0;
+
+		for (int x = 0; x < 8; x++) {
+			boolean pawnFound = false;
+			for (int y = 0; y < 8; y++) {
+				Pawn current = pawns[x][y];
+				if (current == null || current.getTeam() != team) {
+					pawnFound = false;
+					continue;
+				}
+
+				if (pawnFound) // doubledPawn
+					doubledPawns++;
+
+				pawnFound = true;
+			}
+		}
+
+		return doubledPawns;
+	}
+
+	public int isolatedPawns(Pawn[][] pawns, Team team) {
+		int isolatedPawns = 0;
+
+		int[] pawnsPerFile = new int[8];
+
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				Pawn current = pawns[x][y];
+				if (current == null || current.getTeam() != team)
+					continue;
+
+				pawnsPerFile[x]++;
+			}
+		}
+
+		int left = 0, middle = pawnsPerFile[0], right = pawnsPerFile[1];
+
+		for (int x = 0; x < 8; x++) {
+			if (left == 0 && right == 0 && middle > 0)
+				isolatedPawns += middle;
+
+			left = middle;
+			middle = right;
+
+			if (x < 6)
+				right = pawnsPerFile[x + 2];
+			else
+				right = 0;
+		}
+
+		return isolatedPawns;
+	}
 
 	public List<Pawn> findPassedPawns(Board board, Team team) {
 		List<Pawn> passedPawns = new ArrayList<Pawn>();

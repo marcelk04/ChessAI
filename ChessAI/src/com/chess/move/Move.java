@@ -61,10 +61,9 @@ public abstract class Move {
 		notation += 8 - Utils.getY(pieceDestination);
 
 		Player newPlayer = execute().getCurrentPlayer();
-		if (newPlayer.isKingInCheck())
-			notation += "+";
-
 		if (newPlayer.isInCheckMate())
+			notation += "#";
+		else if (newPlayer.isKingInCheck())
 			notation += "+";
 
 		return notation;

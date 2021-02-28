@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -33,6 +34,7 @@ import com.gui.display.Display;
 import com.gui.objects.UIBoardPanel;
 import com.gui.objects.UIConsole;
 import com.gui.objects.UIDialog;
+import com.gui.objects.UIGraphPanel;
 import com.gui.objects.UIImageButton;
 import com.gui.objects.UILabel;
 import com.gui.objects.UIMovePanel;
@@ -49,6 +51,7 @@ public class GUI {
 	private MoveMaker mm;
 	private UIBoardPanel boardPanel;
 	private ColorSaver colorSaver;
+	private List<Float> shownGraph;
 
 	private static Color text_color = Color.white, button_background_color = Color.black, border_color = Color.black;
 	@SuppressWarnings("unused")
@@ -145,14 +148,22 @@ public class GUI {
 		btnFile.setClickListener(e -> showFileDialog());
 		display.add(btnFile);
 
+		UITextButton btnGraphs = new UITextButton("Show Graphs");
+		btnGraphs.setBounds(1100, 155, 160, 25);
+		btnGraphs.setArcBounds(arc_width, arc_height);
+		btnGraphs.setTextColor(text_color);
+		btnGraphs.setBackground(button_background_color);
+		btnGraphs.setClickListener(e -> showGraphDialog());
+		display.add(btnGraphs);
+
 		UIPanel panelUtilities = new UIPanel();
-		panelUtilities.setBounds(1090, 595, 180, 115);
+		panelUtilities.setBounds(1090, 560, 180, 150);
 		panelUtilities.setArcBounds(arc_width, arc_height);
 		panelUtilities.setBorder(border_color);
 		display.add(panelUtilities);
 
 		UITextButton btnUndo = new UITextButton("Undo");
-		btnUndo.setBounds(1100, 605, 160, 25);
+		btnUndo.setBounds(10, 10, 160, 25);
 		btnUndo.setArcBounds(arc_width, arc_height);
 		btnUndo.setTextColor(text_color);
 		btnUndo.setBackground(button_background_color);
@@ -183,10 +194,10 @@ public class GUI {
 
 			mm.makeNextMove();
 		});
-		panelUtilities.add(btnUndo);
+		panelUtilities.addRelative(btnUndo);
 
 		UITextButton btnReset = new UITextButton("Reset");
-		btnReset.setBounds(1100, 640, 160, 25);
+		btnReset.setBounds(10, 45, 160, 25);
 		btnReset.setArcBounds(arc_width, arc_height);
 		btnReset.setTextColor(text_color);
 		btnReset.setBackground(button_background_color);
@@ -199,10 +210,10 @@ public class GUI {
 			panelTakenPieces.clear();
 			panelMoves.clear();
 		});
-		panelUtilities.add(btnReset);
+		panelUtilities.addRelative(btnReset);
 
 		UITextButton btnGitHub = new UITextButton("GitHub repository");
-		btnGitHub.setBounds(1100, 675, 160, 25);
+		btnGitHub.setBounds(10, 80, 160, 25);
 		btnGitHub.setArcBounds(arc_width, arc_height);
 		btnGitHub.setTextColor(text_color);
 		btnGitHub.setBackground(button_background_color);
@@ -213,7 +224,50 @@ public class GUI {
 				e1.printStackTrace();
 			}
 		});
-		panelUtilities.add(btnGitHub);
+		panelUtilities.addRelative(btnGitHub);
+
+		UITextButton btnHelp = new UITextButton("Help");
+		btnHelp.setBounds(10, 115, 160, 25);
+		btnHelp.setArcBounds(arc_width, arc_height);
+		btnHelp.setTextColor(text_color);
+		btnHelp.setBackground(button_background_color);
+		btnHelp.setClickListener(e -> {
+			StringBuilder sb = new StringBuilder();
+			sb.append("================================\nHELP\n================================\n\n");
+			sb.append("================\nConfigure AI\n================\n\n");
+			sb.append("When pressing the button \"Configure AI\", a dialog opens showing several buttons. "
+					+ "On the top you have two buttons next to eachother, directly under the labels "
+					+ "\"Player 1 (White)\" and \"Player 2 (Black)\". Initially, those should both "
+					+ "display the word \"Human\", meaning a human can play with these colors. However, "
+					+ "if you click on these buttons, their state changes between \"Human\" and \"AI\". "
+					+ "When \"AI\" is selected for a player, the computer is making the moves for that "
+					+ "color. If both players are set to \"AI\", the computer is playing against itself. "
+					+ "\nUnder these buttons you will find another buttons labeled \"Search Depth\". On "
+					+ "that button you can choose a number between one and five, which determines how "
+					+ "many moves the computer should look ahead. Generally speaking, the more moves, the "
+					+ "better plays the computer, but it will also take longer. \nUnder that there is a "
+					+ "button switching between the states \"Minimax\", \"Minimax + AlphaBeta\" and "
+					+ "\"Minimax + AlphaBeta + MoveOrdering\". This button changes, how efficiently the "
+					+ "algorithm should search moves. In this case, Minimax is the bare minimum, since it "
+					+ "is just the algorithm wihtout any optimisations. If you add AlphaBeta, the "
+					+ "algorithm will cut moves that will not lead to a good board off. With Move "
+					+ "Ordering, the moves are sorted causing betters cutoffs. \nFollowing is a button "
+					+ "where you can choose the type of evaluator you want. \"Simple Evaluator\" is here "
+					+ "also the minimum, with the other evaluators extending this one. \"Position "
+					+ "Evaluator\" is the best evaluator, since it is not too slow, but calculates good "
+					+ "results by also taking the position of pieces into account. The \"Pawn Position "
+					+ "Evaluator\" is an evaluator which also analyzes the pawn structure, however, "
+					+ "because it is very slow, it is not recommended to use. \nBy pressing \"Save & "
+					+ "Exit\", the changes will be saved and the dialog will close. The game will start "
+					+ "directly. \"If you do not want to save your changes, you can just press \"Exit\", "
+					+ "and immedeatly leave the dialog.\n\n");
+			sb.append("================\nStop AI\n================\n\n");
+			sb.append("The button \"Stop AI\" will stop the currently running algorithm and set both players "
+					+ "to \"Human\".");
+
+			UIDialog.showInformationDialog(display, sb.toString(), 600, 400);
+		});
+		panelUtilities.addRelative(btnHelp);
 
 		display.getObjects().repaint();
 	}
@@ -312,10 +366,10 @@ public class GUI {
 
 	private void saveSettings(PlayerType player1, PlayerType player2, int depth, AIType aiType,
 			BoardEvaluator evaluator) {
-		mm.setPlayers(player1, player2);
 		mm.setDepth(depth);
 		mm.setAIType(aiType);
 		mm.setEvaluator(evaluator);
+		mm.setPlayers(player1, player2);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Set WHITE to " + player1);
@@ -589,17 +643,17 @@ public class GUI {
 			if (tfEvent.getText().equals("") || tfSite.getText().equals("") || tfWhite.getText().equals("")
 					|| tfBlack.getText().equals("")) {
 				StringBuilder sb = new StringBuilder();
-				sb.append("All textfields have to be filled! ").append(" \n");
-				sb.append("Not filled textfields: ");
+				sb.append("All textfields have to be filled!").append("\n");
+				sb.append("Not filled textfields:").append("\n");
 
 				if (tfEvent.getText().equals(""))
-					sb.append("-Event").append(" \n");
+					sb.append("- Event").append("\n");
 				if (tfSite.getText().equals(""))
-					sb.append("-Site").append(" \n");
+					sb.append("- Site").append("\n");
 				if (tfWhite.getText().equals(""))
-					sb.append("-White").append(" \n");
+					sb.append("- White").append("\n");
 				if (tfBlack.getText().equals(""))
-					sb.append("-Black").append(" \n");
+					sb.append("- Black").append("\n");
 
 				UIDialog.showInformationDialog(display, sb.toString());
 				return;
@@ -637,6 +691,85 @@ public class GUI {
 		btnBack.setBackground(button_background_color);
 		btnBack.setClickListener(e -> display.removeLastDialog());
 		dialog.addRelative(btnBack);
+
+		display.showDialog(dialog);
+	}
+
+	private void showGraphDialog() {
+		UIDialog dialog = new UIDialog();
+		dialog.setSize(1220, 655);
+		dialog.setPositionRelativeTo(display.getObjects());
+		dialog.setBorder(border_color);
+
+		shownGraph = DataManager.searchedBoards;
+
+		UIGraphPanel graphPanel = new UIGraphPanel(shownGraph);
+		graphPanel.setBounds(10, 10, 1200, 600);
+		dialog.addRelative(graphPanel);
+
+		UISelectionBox<String> boxSwitchMode = new UISelectionBox<String>(new String[] { "Normal", "Average" ,"Derivative"});
+		boxSwitchMode.setBounds(700, 620, 160, 25);
+		boxSwitchMode.setArcBounds(arc_width, arc_height);
+		boxSwitchMode.setTextColor(text_color);
+		boxSwitchMode.setBackground(button_background_color);
+		boxSwitchMode.setClickListener(e -> {
+			switch (boxSwitchMode.getSelectedIndex()) {
+			case 0:
+				graphPanel.setValues(shownGraph);
+				break;
+			case 1:
+				graphPanel.setValues(DataManager.calculateAverage(shownGraph));
+				break;
+			case 2:
+				graphPanel.setValues(DataManager.calculateDerivative(shownGraph));
+			}
+		});
+		dialog.addRelative(boxSwitchMode);
+
+		UISelectionBox<String> boxSwitchGraph = new UISelectionBox<String>(
+				new String[] { "Searched Boards", "Search times", "Pruned Boards", "Times pruned", "Pruned Boards (%)",
+						"Transpositions", "Transpositions (%)" });
+		boxSwitchGraph.setBounds(360, 620, 160, 25);
+		boxSwitchGraph.setArcBounds(arc_width, arc_height);
+		boxSwitchGraph.setTextColor(text_color);
+		boxSwitchGraph.setBackground(button_background_color);
+		boxSwitchGraph.setClickListener(e -> {
+			boxSwitchMode.setSelectedIndex(0);
+
+			switch (boxSwitchGraph.getSelectedIndex()) {
+			case 0:
+				shownGraph = DataManager.searchedBoards;
+				break;
+			case 1:
+				shownGraph = DataManager.searchTimes;
+				break;
+			case 2:
+				shownGraph = DataManager.prunedBoards;
+				break;
+			case 3:
+				shownGraph = DataManager.timesPruned;
+				break;
+			case 4:
+				shownGraph = DataManager.prunedBoardsPercent;
+				break;
+			case 5:
+				shownGraph = DataManager.transpositions;
+				break;
+			case 6:
+				shownGraph = DataManager.transpositionsPercent;
+			}
+
+			graphPanel.setValues(shownGraph);
+		});
+		dialog.addRelative(boxSwitchGraph);
+
+		UITextButton btnOk = new UITextButton("Ok");
+		btnOk.setBounds(530, 620, 160, 25);
+		btnOk.setArcBounds(arc_width, arc_height);
+		btnOk.setTextColor(text_color);
+		btnOk.setBackground(button_background_color);
+		btnOk.setClickListener(e -> display.removeLastDialog());
+		dialog.addRelative(btnOk);
 
 		display.showDialog(dialog);
 	}

@@ -20,17 +20,13 @@ public class ColorSaver {
 	}
 
 	public void loadColors() {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(configPath));
-
+		try (BufferedReader br = new BufferedReader(new FileReader(configPath))) {
 			int i = 0;
 			String current;
 
 			while ((current = br.readLine()) != null) {
 				colors[i++] = new Color(Integer.parseInt(current));
 			}
-
-			br.close();
 		} catch (IOException | IllegalArgumentException e) {
 			e.printStackTrace();
 			System.err.println(
@@ -39,17 +35,13 @@ public class ColorSaver {
 	}
 
 	public void saveColors() {
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(configPath));
-
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(configPath))) {
 			for (int i = 0; i < colors.length; i++) {
 				bw.write(colors[i].getRGB() + "");
 
 				if (i < colors.length - 1)
 					bw.newLine();
 			}
-
-			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println(

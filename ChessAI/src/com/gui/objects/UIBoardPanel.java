@@ -12,6 +12,7 @@ import com.chess.move.Move.PawnPromotion;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.Piece;
+import com.chess.pieces.Team;
 import com.chess.pieces.Piece.PieceType;
 import com.gui.UIUtils;
 import com.gui.display.Display;

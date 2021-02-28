@@ -16,7 +16,7 @@ public enum Team {
 		}
 
 		@Override
-		public Player getPlayer(Board board) {
+		public Player choosePlayer(Board board) {
 			return board.getWhitePlayer();
 		}
 
@@ -62,7 +62,7 @@ public enum Team {
 		}
 
 		@Override
-		public Player getPlayer(Board board) {
+		public Player choosePlayer(Board board) {
 			return board.getBlackPlayer();
 		}
 		
@@ -102,7 +102,7 @@ public enum Team {
 	@Override
 	public abstract String toString();
 
-	public abstract Player getPlayer(Board board);
+	public abstract Player choosePlayer(Board board);
 
     public abstract int pawnBonus(int position);
 

@@ -1,9 +1,9 @@
 package com.chess.ai.evaluation;
 
 import com.chess.Board;
-import com.chess.ai.PawnStructureAnalyzer;
 import com.chess.ai.hashing.TranspositionTable;
 import com.chess.move.Move;
+import com.chess.pieces.Pawn;
 import com.chess.pieces.Piece;
 import com.chess.pieces.Team;
 import com.chess.player.Player;
@@ -90,7 +90,25 @@ public abstract class BoardEvaluator {
 	}
 
 	protected static int passedPawnScore(Board board, Team team, int passedPawnBonus) {
-		int score = PawnStructureAnalyzer.INSTANCE.findPassedPawns(board, team).size() * passedPawnBonus;
+//		int score = PawnStructureAnalyzer.INSTANCE.findPassedPawns(board, team).size() * passedPawnBonus;
+//
+//		score *= -team.moveDirection();
+//
+//		return score;
+
+		return 0;
+	}
+
+	protected static int doubledPawnScore(Pawn[][] pawns, Team team, int doubledPawnPenalty) {
+		int score = PawnStructureAnalyzer.INSTANCE.doubledPawns(pawns, team) * doubledPawnPenalty;
+
+		score *= -team.moveDirection();
+
+		return score;
+	}
+
+	protected static int isolatedPawnScore(Pawn[][] pawns, Team team, int isolatedPawnPenalty) {
+		int score = PawnStructureAnalyzer.INSTANCE.isolatedPawns(pawns, team) * isolatedPawnPenalty;
 
 		score *= -team.moveDirection();
 

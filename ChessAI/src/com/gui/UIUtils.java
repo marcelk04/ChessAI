@@ -6,8 +6,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UIUtils {
 	private static final FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
@@ -43,7 +41,7 @@ public class UIUtils {
 	}
 
 	public static int getStringHeight(Font font, Graphics g) {
-		return g.getFontMetrics(font).getAscent();
+		return g.getFontMetrics(font).getHeight();
 	}
 
 	public static boolean contains(int x, int y, int width, int height, int pointX, int pointY) {
@@ -137,32 +135,32 @@ public class UIUtils {
 		if (text == null || text.equals("") || maxLength <= 0 || regex == null || font == null || g == null)
 			return new String[0]; // return an empty String array
 
-		String[] splitText = text.split(regex);
-
-		List<String> resultList = new ArrayList<String>();
-		int currentLine = 0;
-
-		for (String s : splitText) {
-			if (resultList.isEmpty()) {
-				resultList.add(s); // add first word
-			} else if (getStringWidth(s, font, g) >= maxLength
-					|| getStringWidth(resultList.get(currentLine) + regex + s, font, g) > maxLength
-					|| resultList.get(currentLine).equals("")) {
-				// if the word is to long for the width or the word wouldn't fit with the text
-				// in the currentLine
-				resultList.add(s);
-				currentLine++; // add word in new line
-			} else {
-				resultList.set(currentLine, resultList.get(currentLine) + regex + s);
-			}
-		}
-
+		String[] splitText = text.split("\n");
+		String currentLine;
 		StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < resultList.size(); i++) {
-			if (i > 0)
-				sb.append("\n");
-			sb.append(resultList.get(i));
+		for (String part : splitText) {
+			String[] splitPart = part.split(regex);
+			currentLine = "";
+
+			for (String word: splitPart) {
+				if (currentLine.equals("")) {
+					sb.append(word);
+					currentLine = word;
+				} else if (getStringWidth(word, font, g) >= maxLength
+						|| getStringWidth(currentLine + regex + word, font, g) > maxLength) {
+					// if the word is to long for the width or the word wouldn't fit with the text
+					// in the currentLine
+					sb.append("\n").append(word);
+					currentLine = word;
+				} else {
+					sb.append(regex + word);
+					currentLine += regex + word;
+				}
+			}
+
+			sb.append("\n");
+
 		}
 
 		return sb.toString().split("\n");
