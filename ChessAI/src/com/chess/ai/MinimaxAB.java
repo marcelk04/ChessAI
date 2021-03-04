@@ -12,6 +12,7 @@ import com.chess.player.Player;
 import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIConsole;
 import com.main.DataManager;
+import com.main.Utils;
 
 public class MinimaxAB extends MinimaxAlgorithm {
 	private long evaluatedBoards, timesPruned, timeInMs;
@@ -66,12 +67,12 @@ public class MinimaxAB extends MinimaxAlgorithm {
 
 	@Override
 	public void printOutData() {
-		double time = (double) timeInMs / 1000d;
+		double time = Utils.round(timeInMs / 1000d, 4);
 		double approxPrunedBoards = Math.round(this.prunedBoards);
-		double percentageOfPrunedBoards = Math.round(this.prunedBoards / (evaluatedBoards + this.prunedBoards) * 10000)
-				/ 100d;
-		double transpositionPercentage = Math
-				.round((double) evaluator.getTranspositions() / (double) evaluatedBoards * 10000) / 100d;
+		double percentageOfPrunedBoards = Utils.round(this.prunedBoards / (evaluatedBoards + this.prunedBoards), 4)
+				* 100d;
+		double transpositionPercentage = Utils.round((double) evaluator.getTranspositions() / (double) evaluatedBoards,
+				4) * 100d;
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Evaluated Boards:" + evaluatedBoards);
@@ -104,7 +105,8 @@ public class MinimaxAB extends MinimaxAlgorithm {
 
 		evaluator.resetTranspositions();
 
-		UIConsole.log(sb.toString());
+		if (running)
+			UIConsole.log(sb.toString());
 	}
 
 	private int min(Board board, int depth, int alpha, int beta) {
@@ -128,8 +130,7 @@ public class MinimaxAB extends MinimaxAlgorithm {
 
 				if (minEval <= alpha) {
 					timesPruned++;
-					if (depth > 1)
-						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
+					prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}
 			}
@@ -159,8 +160,7 @@ public class MinimaxAB extends MinimaxAlgorithm {
 
 				if (maxEval >= beta) {
 					timesPruned++;
-					if (depth > 1)
-						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
+					prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}
 			}

@@ -11,6 +11,7 @@ public class DataManager {
 	public static final List<Float> prunedBoardsPercent = new ArrayList<Float>();
 	public static final List<Float> transpositions = new ArrayList<Float>();
 	public static final List<Float> transpositionsPercent = new ArrayList<Float>();
+	public static final List<Float> moveOrderTimes = new ArrayList<Float>();
 
 	public static List<Float> calculateAverage(List<Float> data) {
 		final List<Float> averageData = new ArrayList<Float>();
@@ -40,5 +41,8 @@ public class DataManager {
 		prunedBoards.clear();
 		timesPruned.clear();
 		prunedBoardsPercent.clear();
+		transpositions.clear();
+		transpositionsPercent.clear();
+		moveOrderTimes.clear();
 	}
 }

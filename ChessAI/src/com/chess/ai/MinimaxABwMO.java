@@ -12,6 +12,7 @@ import com.chess.player.Player;
 import com.gui.listeners.MoveExecutionListener;
 import com.gui.objects.UIConsole;
 import com.main.DataManager;
+import com.main.Utils;
 
 public class MinimaxABwMO extends MinimaxAlgorithm {
 	private long evaluatedBoards, timesPruned, timeInMs;
@@ -66,13 +67,13 @@ public class MinimaxABwMO extends MinimaxAlgorithm {
 
 	@Override
 	public void printOutData() {
-		double time = (double) timeInMs / 1000d;
+		double time = Utils.round(timeInMs / 1000d, 4);
 		double approxPrunedBoards = Math.round(this.prunedBoards);
-		double percentageOfPrunedBoards = Math.round(this.prunedBoards / (evaluatedBoards + this.prunedBoards) * 10000)
-				/ 100d;
-		double moveOrderTime = Math.round(MoveOrdering.getSimpleOrderTime() * 1000) / 1000d;
-		double transpositionPercentage = Math
-				.round((double) evaluator.getTranspositions() / (double) evaluatedBoards * 10000) / 100d;
+		double percentageOfPrunedBoards = Utils.round(this.prunedBoards / (evaluatedBoards + this.prunedBoards), 4)
+				* 100d;
+		double moveOrderTime = Utils.round(MoveOrderingNew.getOrderTime(), 4);
+		double transpositionPercentage = Utils.round((double) evaluator.getTranspositions() / (double) evaluatedBoards,
+				4) * 100d;
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Evaluated Boards:" + evaluatedBoards);
@@ -104,11 +105,13 @@ public class MinimaxABwMO extends MinimaxAlgorithm {
 		DataManager.timesPruned.add((float) timesPruned);
 		DataManager.transpositions.add((float) evaluator.getTranspositions());
 		DataManager.transpositionsPercent.add((float) transpositionPercentage);
+		DataManager.moveOrderTimes.add((float) moveOrderTime);
 
-		MoveOrdering.reset();
+		MoveOrderingNew.reset();
 		evaluator.resetTranspositions();
 
-		UIConsole.log(sb.toString());
+		if (running)
+			UIConsole.log(sb.toString());
 	}
 
 	private int min(Board board, int depth, int alpha, int beta) {
@@ -117,9 +120,9 @@ public class MinimaxABwMO extends MinimaxAlgorithm {
 			return evaluator.evaluate(board, depth);
 		}
 
-		final List<Move> moves = MoveOrdering.calculateSimpleMoveOrder(board.getCurrentPlayer().getLegalMoves());
+		final List<Move> moves = MoveOrderingNew.orderMoves(board.getCurrentPlayer().getLegalMoves());
 
-		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
+		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / (double) (++movesPerBoardCount);
 		int minEval = beta;
 
 		for (int i = 0; i < moves.size(); i++) {
@@ -132,7 +135,6 @@ public class MinimaxABwMO extends MinimaxAlgorithm {
 
 				if (minEval <= alpha) {
 					timesPruned++;
-					if (depth > 1)
 						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}
@@ -148,7 +150,7 @@ public class MinimaxABwMO extends MinimaxAlgorithm {
 			return evaluator.evaluate(board, depth);
 		}
 
-		final List<Move> moves = MoveOrdering.calculateSimpleMoveOrder(board.getCurrentPlayer().getLegalMoves());
+		final List<Move> moves = MoveOrderingNew.orderMoves(board.getCurrentPlayer().getLegalMoves());
 
 		movesPerBoard = (movesPerBoard * movesPerBoardCount + moves.size()) / ++movesPerBoardCount;
 		int maxEval = alpha;
@@ -163,7 +165,6 @@ public class MinimaxABwMO extends MinimaxAlgorithm {
 
 				if (maxEval >= beta) {
 					timesPruned++;
-					if (depth > 1)
 						prunedBoards += Math.pow(movesPerBoard, depth - 1) * (moves.size() - i - 1);
 					break;
 				}

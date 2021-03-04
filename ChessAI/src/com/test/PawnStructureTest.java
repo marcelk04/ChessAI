@@ -15,8 +15,8 @@ class PawnStructureTest {
 	@Test
 	void passedPawnTest() {
 		Builder b = new Builder();
-		b.setPiece(new King(0, Team.BLACK, false));
-		b.setPiece(new King(7, Team.WHITE, false));
+		b.setPiece(new King(0, Team.BLACK));
+		b.setPiece(new King(7, Team.WHITE));
 		b.setPiece(Utils.getMovedPawn(Team.WHITE, 33));
 		b.setPiece(Utils.getMovedPawn(Team.BLACK, 34));
 		b.setPiece(Utils.getMovedPawn(Team.WHITE, 42));

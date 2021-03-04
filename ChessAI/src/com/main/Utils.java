@@ -44,6 +44,11 @@ public class Utils {
 		return x + y * 8;
 	}
 
+	public static double round(double number, int decimalPlaces) {
+		double factor = Math.pow(10, decimalPlaces);
+		return Math.round(number * factor) / factor;
+	}
+
 	public static Queen getMovedQueen(Team team, int position) {
 		return ALL_POSSIBLE_QUEENS.get(team).get(position);
 	}

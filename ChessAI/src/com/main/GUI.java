@@ -87,7 +87,6 @@ public class GUI {
 		panelMoves.setBounds(830, 10, 250, 600);
 		panelMoves.setArcBounds(arc_width, arc_height);
 		panelMoves.setBorder(border_color);
-		panelMoves.setHorizontalAlignment(UIObject.CENTER);
 		display.add(panelMoves);
 
 		boardPanel = new UIBoardPanel(display);
@@ -707,7 +706,8 @@ public class GUI {
 		graphPanel.setBounds(10, 10, 1200, 600);
 		dialog.addRelative(graphPanel);
 
-		UISelectionBox<String> boxSwitchMode = new UISelectionBox<String>(new String[] { "Normal", "Average" ,"Derivative"});
+		UISelectionBox<String> boxSwitchMode = new UISelectionBox<String>(
+				new String[] { "Normal", "Average", "Derivative" });
 		boxSwitchMode.setBounds(700, 620, 160, 25);
 		boxSwitchMode.setArcBounds(arc_width, arc_height);
 		boxSwitchMode.setTextColor(text_color);
@@ -722,13 +722,14 @@ public class GUI {
 				break;
 			case 2:
 				graphPanel.setValues(DataManager.calculateDerivative(shownGraph));
+				break;
 			}
 		});
 		dialog.addRelative(boxSwitchMode);
 
 		UISelectionBox<String> boxSwitchGraph = new UISelectionBox<String>(
 				new String[] { "Searched Boards", "Search times", "Pruned Boards", "Times pruned", "Pruned Boards (%)",
-						"Transpositions", "Transpositions (%)" });
+						"Transpositions", "Transpositions (%)", "Move Order Times" });
 		boxSwitchGraph.setBounds(360, 620, 160, 25);
 		boxSwitchGraph.setArcBounds(arc_width, arc_height);
 		boxSwitchGraph.setTextColor(text_color);
@@ -757,6 +758,10 @@ public class GUI {
 				break;
 			case 6:
 				shownGraph = DataManager.transpositionsPercent;
+				break;
+			case 7:
+				shownGraph = DataManager.moveOrderTimes;
+				break;
 			}
 
 			graphPanel.setValues(shownGraph);

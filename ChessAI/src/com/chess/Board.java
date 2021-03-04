@@ -74,7 +74,7 @@ public class Board {
 		b.setPiece(new Knight(1, Team.BLACK));
 		b.setPiece(new Bishop(2, Team.BLACK));
 		b.setPiece(new Queen(3, Team.BLACK));
-		b.setPiece(new King(4, Team.BLACK, true));
+		b.setPiece(new King(4, Team.BLACK));
 		b.setPiece(new Bishop(5, Team.BLACK));
 		b.setPiece(new Knight(6, Team.BLACK));
 		b.setPiece(new Rook(7, Team.BLACK));
@@ -99,7 +99,7 @@ public class Board {
 		b.setPiece(new Knight(57, Team.WHITE));
 		b.setPiece(new Bishop(58, Team.WHITE));
 		b.setPiece(new Queen(59, Team.WHITE));
-		b.setPiece(new King(60, Team.WHITE, true));
+		b.setPiece(new King(60, Team.WHITE));
 		b.setPiece(new Bishop(61, Team.WHITE));
 		b.setPiece(new Knight(62, Team.WHITE));
 		b.setPiece(new Rook(63, Team.WHITE));

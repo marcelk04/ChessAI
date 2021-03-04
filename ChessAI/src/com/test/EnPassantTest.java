@@ -22,10 +22,10 @@ class EnPassantTest {
 		Pawn p;
 
 		b.setPiece(new Pawn(27, Team.WHITE));
-		b.setPiece(new King(60, Team.WHITE, true));
+		b.setPiece(new King(60, Team.WHITE));
 
 		b.setPiece(p = new Pawn(12, Team.BLACK));
-		b.setPiece(new King(4, Team.BLACK, true));
+		b.setPiece(new King(4, Team.BLACK));
 
 		b.setMoveMaker(Team.BLACK);
 
@@ -47,10 +47,10 @@ class EnPassantTest {
 		Pawn p;
 
 		b.setPiece(p = new Pawn(51, Team.WHITE));
-		b.setPiece(new King(60, Team.WHITE, true));
+		b.setPiece(new King(60, Team.WHITE));
 
 		b.setPiece(new Pawn(36, Team.BLACK));
-		b.setPiece(new King(4, Team.BLACK, true));
+		b.setPiece(new King(4, Team.BLACK));
 
 		b.setMoveMaker(Team.WHITE);
 

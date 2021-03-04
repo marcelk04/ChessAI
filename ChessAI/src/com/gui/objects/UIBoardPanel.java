@@ -12,7 +12,6 @@ import com.chess.move.Move.PawnPromotion;
 import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.chess.pieces.Piece;
-import com.chess.pieces.Team;
 import com.chess.pieces.Piece.PieceType;
 import com.gui.UIUtils;
 import com.gui.display.Display;
@@ -158,6 +157,7 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	}
 
 	private void fillColorArray() {
+
 		for (int i = 0; i < 64; i++) {
 			if ((Utils.getX(i) + Utils.getY(i)) % 2 == 0)
 				colors[i] = lightColor;

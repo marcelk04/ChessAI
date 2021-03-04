@@ -14,16 +14,14 @@ public class King extends Piece {
 	private static final int[] CANDIDATE_MOVE_COORDINATES = { -9, -8, -7, -1, 1, 7, 8, 9 };
 
 	private final boolean isCastled;
-	private final boolean canCastle;
 
-	public King(int position, Team team, boolean canCastle) {
-		this(position, team, false, canCastle, false);
+	public King(int position, Team team) {
+		this(position, team, false, false);
 	}
 
-	private King(int position, Team team, boolean movedAtLeastOnce, boolean canCastle, boolean isCastled) {
+	private King(int position, Team team, boolean movedAtLeastOnce, boolean isCastled) {
 		super(position, team, PieceType.KING, movedAtLeastOnce);
 		this.isCastled = isCastled;
-		this.canCastle = canCastle;
 		this.texture = team == Team.WHITE ? Assets.white_king : Assets.black_king;
 	}
 
@@ -43,7 +41,7 @@ public class King extends Piece {
 				continue;
 
 			final Piece pieceAtDestination = board.getPiece(currentDestination);
-			
+
 			if (pieceAtDestination == null) {
 				moves.add(new NormalMove(board, this, currentDestination));
 				continue;
@@ -58,7 +56,7 @@ public class King extends Piece {
 
 	@Override
 	public Piece movePiece(Move move) {
-		return new King(move.getPieceDestination(), team, true, false, move.isCastlingMove());
+		return new King(move.getPieceDestination(), team, true, move.isCastlingMove());
 	}
 
 	@Override
@@ -71,6 +69,6 @@ public class King extends Piece {
 	}
 
 	public boolean canCastle() {
-		return canCastle;
+		return !movedAtLeastOnce;
 	}
 }

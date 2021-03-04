@@ -69,7 +69,7 @@ public abstract class Move {
 		return notation;
 	}
 
-	public CastlingConfiguration setCastlingConfiguration(Builder b) {
+	protected CastlingConfiguration setCastlingConfiguration(Builder b) {
 		CastlingConfiguration c = new CastlingConfiguration();
 
 		// white
@@ -133,6 +133,14 @@ public abstract class Move {
 
 	public boolean isAttackMove() {
 		return false;
+	}
+
+	public boolean isPawnPromotion() {
+		return false;
+	}
+
+	public Piece getPromotionPiece() {
+		return null;
 	}
 
 	public static class NullMove extends Move {
@@ -442,16 +450,22 @@ public abstract class Move {
 			return executedMove.isAttackMove();
 		}
 
+		@Override
+		public boolean isPawnPromotion() {
+			return true;
+		}
+
+		@Override
+		public Piece getPromotionPiece() {
+			return promotionPiece;
+		}
+
 		public Move getExecutedMove() {
 			return executedMove;
 		}
 
 		public Pawn getPromotedPawn() {
 			return promotedPawn;
-		}
-
-		public Piece getPromotionPiece() {
-			return promotionPiece;
 		}
 	}
 

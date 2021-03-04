@@ -16,12 +16,12 @@ public class FENUtilities {
 
 		if (fenParts.length != 6)
 			return null;
-		
+
 		parseBoardConfig(b, fenParts[0]);
 
 		return null;
 	}
-	
+
 	public static Builder parseBoardConfig(Builder builder, String boardConfig) {
 		String[] board = boardConfig.split("/");
 
@@ -44,7 +44,7 @@ public class FENUtilities {
 
 					switch (Character.toLowerCase(currentPiece)) {
 					case 'k':
-						builder.setPiece(new King(position, team, true));
+						builder.setPiece(new King(position, team));
 						break;
 					case 'q':
 						break;
@@ -67,7 +67,7 @@ public class FENUtilities {
 			if (currentX != 8)
 				return null;
 		}
-		
+
 		return builder;
 	}
 }

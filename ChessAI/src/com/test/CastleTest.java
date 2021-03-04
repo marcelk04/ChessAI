@@ -20,11 +20,11 @@ class CastleTest {
 		Builder b = new Builder();
 
 		b.setPiece(new Rook(0, Team.BLACK));
-		b.setPiece(new King(4, Team.BLACK, true));
+		b.setPiece(new King(4, Team.BLACK));
 		b.setPiece(new Rook(7, Team.BLACK));
 
 		b.setPiece(new Rook(56, Team.WHITE));
-		b.setPiece(new King(60, Team.WHITE, true));
+		b.setPiece(new King(60, Team.WHITE));
 		b.setPiece(new Rook(63, Team.WHITE));
 
 		b.setMoveMaker(Team.WHITE);
