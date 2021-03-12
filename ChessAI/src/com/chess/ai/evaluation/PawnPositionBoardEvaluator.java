@@ -7,6 +7,7 @@ import com.chess.player.Player;
 public class PawnPositionBoardEvaluator extends PositionBoardEvaluator {
 	public static final PawnPositionBoardEvaluator INSTANCE = new PawnPositionBoardEvaluator();
 
+	@SuppressWarnings("unused")
 	private static final int PASSED_PAWN_BONUS = 10;
 	private static final int DOUBLED_PAWN_PENALTY = -50;
 	private static final int ISOLATED_PAWN_PENALTY = -50;

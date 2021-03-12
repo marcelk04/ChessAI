@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.chess.move.Move;
-import com.chess.move.Move.PawnPromotion;
 
 public class MoveOrderingNew {
 	private static double orderTime, orderCount;
@@ -13,9 +12,7 @@ public class MoveOrderingNew {
 		long time = System.currentTimeMillis();
 		List<Move> orderedMoves = new ArrayList<Move>();
 		orderedMoves.addAll(moves);
-		orderedMoves.sort((m1, m2) -> {
-			return guessMoveScore(m2) - guessMoveScore(m1);
-		});
+		orderedMoves.sort((m1, m2) -> guessMoveScore(m2) - guessMoveScore(m1));
 		orderTime += System.currentTimeMillis() - time;
 		orderCount++;
 		return orderedMoves;
@@ -29,7 +26,7 @@ public class MoveOrderingNew {
 		}
 
 		if (move.isPawnPromotion()) {
-			guess += ((PawnPromotion) move).getPromotionPiece().getValue();
+			guess += move.getPromotionPiece().getValue();
 		}
 
 		return guess;

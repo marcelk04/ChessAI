@@ -16,6 +16,8 @@ public class ImageLoader {
 		try {
 			return ImageIO.read(ImageLoader.class.getResource(path));
 		} catch (IOException e) {
+			System.err.println(
+					"Images could not be loaded! Please check if the file \"sheet.png\" is intact! Exception:");
 			e.printStackTrace();
 			System.exit(0);
 			return null;

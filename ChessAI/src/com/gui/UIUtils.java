@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
@@ -143,7 +145,7 @@ public class UIUtils {
 			String[] splitPart = part.split(regex);
 			currentLine = "";
 
-			for (String word: splitPart) {
+			for (String word : splitPart) {
 				if (currentLine.equals("")) {
 					sb.append(word);
 					currentLine = word;
@@ -164,5 +166,30 @@ public class UIUtils {
 		}
 
 		return sb.toString().split("\n");
+	}
+
+	public static Rectangle fitImage(Image image, int x, int y, int width, int height, boolean stretchImage) {
+		if (stretchImage)
+			return new Rectangle(x, y, width, height);
+
+		float originalImageWidth = image.getWidth(null);
+		float originalImageHeight = image.getHeight(null);
+
+		float widthDiff = width - originalImageWidth;
+		float heightDiff = height - originalImageHeight;
+
+		float factor;
+
+		if (widthDiff < heightDiff)
+			factor = widthDiff / originalImageWidth + 1;
+		else
+			factor = heightDiff / originalImageHeight + 1;
+
+		int imageWidth = Math.round(originalImageWidth * factor);
+		int imageHeight = Math.round(originalImageHeight * factor);
+		int imageX = Math.round(x + (width - imageWidth) / 2f);
+		int imageY = Math.round(y + (height - imageHeight) / 2f);
+
+		return new Rectangle(imageX, imageY, imageWidth, imageHeight);
 	}
 }

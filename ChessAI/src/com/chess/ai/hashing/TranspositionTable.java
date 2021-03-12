@@ -22,16 +22,11 @@ public class TranspositionTable {
 	}
 
 	public static void dumpTableIntoFile(String path) {
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
-
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
 			for (long key : table.keySet()) {
 				bw.write(key + " " + get(key));
 				bw.newLine();
 			}
-
-			bw.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

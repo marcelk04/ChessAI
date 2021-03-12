@@ -11,17 +11,17 @@ import com.chess.pieces.Piece.PieceType;
 import com.main.Utils;
 
 public class ZobristHashing {
+	static {
+		initialiseRandoms();
+	}
+
 	public static Map<PieceType, long[]> whitePiecesRandoms;
 	public static Map<PieceType, long[]> blackPiecesRandoms;
 	public static long blackToMove;
 	public static long[] castlingRandoms;
 	public static long[] enPassantFiles;
-	
-	private static long key = 233414022021L;
 
-	static {
-		initialiseRandoms();
-	}
+	private static long key = 233414022021L;
 
 	public static void initialiseRandoms() {
 		Random rnd = new Random(key);
@@ -69,13 +69,13 @@ public class ZobristHashing {
 
 		if (board.getWhitePlayer().canKingSideCastle())
 			hash ^= castlingRandoms[0];
-		
+
 		if (board.getWhitePlayer().canQueenSideCastle())
 			hash ^= castlingRandoms[1];
-		
+
 		if (board.getBlackPlayer().canKingSideCastle())
 			hash ^= castlingRandoms[2];
-		
+
 		if (board.getBlackPlayer().canQueenSideCastle())
 			hash ^= castlingRandoms[3];
 

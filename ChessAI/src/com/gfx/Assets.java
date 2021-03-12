@@ -7,7 +7,7 @@ public class Assets {
 		Assets.init();
 	}
 
-	private static final int WIDTH = 80, HEIGHT = 80;
+	public static final int WIDTH = 160, HEIGHT = 160;
 
 	// white pieces
 	public static BufferedImage white_king, white_queen, white_rook, white_bishop, white_knight, white_pawn;

@@ -39,7 +39,7 @@ public abstract class MinimaxAlgorithm implements Runnable {
 	@Override
 	public void run() {
 		Move bestMove = findBestMove();
-		if (printOutData)
+		if (printOutData && running)
 			printOutData();
 		if (running)
 			meListener.onMoveExecution(board.getCurrentPlayer().makeMove(bestMove));
@@ -65,7 +65,7 @@ public abstract class MinimaxAlgorithm implements Runnable {
 	}
 
 	public static void stopAll() {
-		if (allActiveThreads.size() == 0)
+		if (allActiveThreads.isEmpty())
 			return;
 
 		UIConsole.log("Stopping " + allActiveThreads.size() + " thread(s)!");

@@ -49,6 +49,15 @@ public class Utils {
 		return Math.round(number * factor) / factor;
 	}
 
+	public static <E> E[] reverseArray(E[] arr) {
+		for (int i = 0; i < arr.length / 2; i++) {
+			E temp = arr[i];
+			arr[i] = arr[arr.length - i - 1];
+			arr[arr.length - i - 1] = temp;
+		}
+		return arr;
+	}
+
 	public static Queen getMovedQueen(Team team, int position) {
 		return ALL_POSSIBLE_QUEENS.get(team).get(position);
 	}

@@ -8,9 +8,14 @@ import com.chess.Board;
 import com.chess.move.Move;
 import com.main.Utils;
 
+/**
+ * All valid pieces on the board must extends the Piece class. It can contain
+ * almost all relevant data about all the pieces with getters and important
+ * abstract methods already in place.
+ * 
+ * @author DefensivLord
+ */
 public abstract class Piece {
-	public static final int PIECE_WIDTH = 80, PIECE_HEIGHT = 80;
-
 	protected final int position;
 	protected final int x, y;
 	protected final Team team;
@@ -18,6 +23,14 @@ public abstract class Piece {
 	protected final PieceType type;
 	protected BufferedImage texture;
 
+	/**
+	 * The default constructor for instances of the class Piece.
+	 * 
+	 * @param position         the position of the piece.
+	 * @param team             the team of the piece.
+	 * @param type             the type of the piece.
+	 * @param movedAtLeastOnce whether the piece has already been moved.
+	 */
 	public Piece(int position, Team team, PieceType type, boolean movedAtLeastOnce) {
 		this.position = position;
 		this.x = Utils.getX(position);
@@ -54,14 +67,41 @@ public abstract class Piece {
 		return type.toString() + ";pos=" + position + ";" + team.toString() + ";movedAtLeastOnce=" + movedAtLeastOnce;
 	}
 
+	/**
+	 * Draws the piece.
+	 * 
+	 * @param g      the graphics object.
+	 * @param x      the x coordinate.
+	 * @param y      the y coordinate.
+	 * @param width  the width.
+	 * @param height the height.
+	 */
 	public void render(Graphics g, int x, int y, int width, int height) {
 		g.drawImage(texture, x, y, width, height, null);
 	}
 
+	/**
+	 * Generates a {@link List} of all possible moves for this specific piece.
+	 * 
+	 * @param board the board used for generating the moves.
+	 * @return a {@link List} of all possible moves.
+	 */
 	public abstract List<Move> getMoves(Board board);
 
+	/**
+	 * Moves the piece to the location specified by the {@link Move}.
+	 * 
+	 * @param move the executed move.
+	 * @return the moved piece.
+	 */
 	public abstract Piece movePiece(Move move);
 
+	/**
+	 * Returns the position bonus for this piece of this specific team on this
+	 * specific coordinate.
+	 * 
+	 * @return the position bonus.
+	 */
 	public abstract int positionBonus();
 
 	// ===== Getters ===== \\
@@ -87,8 +127,8 @@ public abstract class Piece {
 
 	// ===== Inner Classes ===== \\
 	public enum PieceType {
-		KING('K', "King", 9000), QUEEN('Q', "Queen", 900), ROOK('R', "Rook", 460), BISHOP('B', "Bishop", 320),
-		KNIGHT('N', "Knight", 310), PAWN('P', "Pawn", 100);
+		KING('K', "King", 90000), QUEEN('Q', "Queen", 1000), ROOK('R', "Rook", 500), BISHOP('B', "Bishop", 325),
+		KNIGHT('N', "Knight", 325), PAWN('P', "Pawn", 100);
 
 		private final char letter;
 		private final String name;

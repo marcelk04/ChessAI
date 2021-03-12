@@ -19,6 +19,7 @@ import com.chess.pieces.Team;
 import com.chess.player.BlackPlayer;
 import com.chess.player.Player;
 import com.chess.player.WhitePlayer;
+import com.file.FENUtilities;
 import com.main.Utils;
 
 public class Board {
@@ -67,6 +68,11 @@ public class Board {
 		return result;
 	}
 
+	/**
+	 * Creates a new chess board with the standard layout.
+	 * 
+	 * @return the standard board.
+	 */
 	public static Board create() {
 		Builder b = new Builder();
 
@@ -114,6 +120,15 @@ public class Board {
 		return b.build();
 	}
 
+	/**
+	 * Searches all moves and returns the first move with the specific current piece
+	 * position and piece destination. Returns {@link Move#NULL_MOVE} if no move
+	 * matching the parameters could be found.
+	 * 
+	 * @param currentPiecePosition the current position of the piece.
+	 * @param pieceDestination     the destination of the piece.
+	 * @return the first move matching the parameters.
+	 */
 	public Move findMove(int currentPiecePosition, int pieceDestination) {
 		for (Move m : getAllLegalMoves()) {
 			if (m.getCurrentPiecePosition() == currentPiecePosition && m.getPieceDestination() == pieceDestination) {
@@ -123,6 +138,14 @@ public class Board {
 		return Move.NULL_MOVE;
 	}
 
+	/**
+	 * Searches all moves and returns a {@link List} of all moves with the specific
+	 * current piece position and peice destination.
+	 * 
+	 * @param currentPiecePosition the current position of the piece.
+	 * @param pieceDestination     the destination of the piece.
+	 * @return a {@link List} of all moves matching the parameters.
+	 */
 	public List<Move> findMoves(int currentPiecePosition, int pieceDestination) {
 		List<Move> moves = new ArrayList<Move>();
 		for (Move m : getAllLegalMoves()) { // search through all moves
@@ -133,14 +156,38 @@ public class Board {
 		return moves;
 	}
 
+	/**
+	 * Searches all moves and returns a {@link List} of all moves with the specific
+	 * piece and peice destination.
+	 * 
+	 * @param movedPiece       the moved piece.
+	 * @param pieceDestination the destination of the piece.
+	 * @return a {@link List} of all moves matching the parameters.
+	 * @see Board#findMoves(int, int)
+	 */
 	public List<Move> findMoves(Piece movedPiece, int pieceDestination) {
 		return findMoves(movedPiece.getPosition(), pieceDestination);
 	}
 
+	/**
+	 * Checks whether the game has ended. This can be throught checkmate or
+	 * stalemate.
+	 * <p>
+	 * TODO implement draw after 3 equal moves or 50 halfmoves
+	 * 
+	 * @return {@code true} if the game has ended.
+	 */
 	public boolean hasGameEnded() {
-		return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate();
+		return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate() || halfmoveClock >= 50;
 	}
 
+	/**
+	 * Converts the board into a {@link String} matching the FEN file format.
+	 * <p>
+	 * TODO possibly move method to {@link FENUtilities}
+	 * 
+	 * @return a {@link String} representation of the board in the FEN format.
+	 */
 	public String convertToFEN() {
 		StringBuilder sb = new StringBuilder();
 
@@ -209,7 +256,7 @@ public class Board {
 
 		sb.append(" ");
 
-		// en passant
+		// append en passant pawn
 		if (enPassantPawn != null) {
 			sb.append(Utils.columns[Utils.getX(enPassantPawn.getPosition())]);
 
@@ -224,10 +271,10 @@ public class Board {
 
 		sb.append(" ");
 
-		// halfmove clock
+		// append halfmove clock
 		sb.append(halfmoveClock).append(" ");
 
-		// fullmove counter
+		// append fullmove counter
 		sb.append(Math.round(halfmoveCounter / 2f));
 
 		return sb.toString();

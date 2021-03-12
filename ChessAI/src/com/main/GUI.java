@@ -25,7 +25,6 @@ import com.chess.ai.evaluation.BoardEvaluator;
 import com.chess.ai.evaluation.PawnPositionBoardEvaluator;
 import com.chess.ai.evaluation.PositionBoardEvaluator;
 import com.chess.ai.evaluation.SimpleBoardEvaluator;
-import com.chess.move.MoveStatus;
 import com.chess.move.MoveTransition;
 import com.file.ColorSaver;
 import com.file.PGNUtilities;
@@ -40,8 +39,8 @@ import com.gui.objects.UILabel;
 import com.gui.objects.UIMovePanel;
 import com.gui.objects.UIObject;
 import com.gui.objects.UIPanel;
+import com.gui.objects.UIPiecesPanel;
 import com.gui.objects.UISelectionBox;
-import com.gui.objects.UITakenPiecesPanel;
 import com.gui.objects.UITextButton;
 import com.gui.objects.UITextField;
 
@@ -70,7 +69,7 @@ public class GUI {
 
 		colorSaver = new ColorSaver("res/colorConfig.txt");
 
-		UITakenPiecesPanel panelTakenPieces = new UITakenPiecesPanel(0, 0);
+		UIPiecesPanel panelTakenPieces = new UIPiecesPanel(0, 0, 4);
 		panelTakenPieces.setBounds(10, 10, 200, 600);
 		panelTakenPieces.setArcBounds(arc_width, arc_height);
 		panelTakenPieces.setBorder(border_color);
@@ -101,7 +100,7 @@ public class GUI {
 
 		mm = new MoveMaker(PlayerType.HUMAN, PlayerType.HUMAN, boardPanel);
 		mm.setMoveExecutionListener(e -> {
-			if (e.getMoveStatus() == MoveStatus.DONE) {
+			if (e.getMoveStatus().isDone()) {
 				boardPanel.setBoard(board = e.getNewBoard());
 				boardPanel.setLastMove(e.getExecutedMove());
 				panelMoves.addMove(e.getExecutedMove());
