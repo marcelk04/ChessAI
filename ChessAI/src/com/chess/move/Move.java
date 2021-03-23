@@ -1,5 +1,6 @@
 package com.chess.move;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,14 +70,14 @@ public abstract class Move {
 		return notation;
 	}
 
-	protected CastlingConfiguration setCastlingConfiguration(Builder b) {
+	protected Builder fillDefaultValues(Builder b) {
 		CastlingConfiguration c = new CastlingConfiguration();
 
 		// white
 		Piece pieceAtWhiteKingPosition = board.getPiece(60);
-		if (pieceAtWhiteKingPosition != null && !pieceAtWhiteKingPosition.gotMovedAtLeastOnce()
+		if (board.getWhitePlayer().canCastle() && pieceAtWhiteKingPosition != null
 				&& pieceAtWhiteKingPosition.getType() == PieceType.KING
-				&& !pieceAtWhiteKingPosition.equals(movedPiece)) {
+				&& (!pieceAtWhiteKingPosition.equals(movedPiece) && !isCastlingMove())) {
 			// king has not been moved
 			Piece kingSideRook = board.getPiece(63);
 			c.canWhiteKingSideCastle = board.getWhitePlayer().canKingSideCastle() && kingSideRook != null
@@ -91,9 +92,9 @@ public abstract class Move {
 
 		// black
 		Piece pieceAtBlackKingPosition = board.getPiece(4);
-		if (pieceAtBlackKingPosition != null && !pieceAtBlackKingPosition.gotMovedAtLeastOnce()
+		if (board.getBlackPlayer().canCastle() && pieceAtBlackKingPosition != null
 				&& pieceAtBlackKingPosition.getType() == PieceType.KING
-				&& !pieceAtBlackKingPosition.equals(movedPiece)) {
+				&& (!pieceAtBlackKingPosition.equals(movedPiece) && !isCastlingMove())) {
 			// king has not been moved
 			Piece kingSideRook = board.getPiece(7);
 			c.canBlackKingSideCastle = board.getBlackPlayer().canKingSideCastle() && kingSideRook != null
@@ -107,8 +108,17 @@ public abstract class Move {
 		}
 
 		b.setCastlingConfiguration(c);
+		b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
+		b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
+		b.setExecutedMoves(board.getExecutedMoves());
 
-		return c;
+		ArrayList<Long> previousBoards = new ArrayList<Long>();
+		if (board.getPreviousBoards() != null)
+			previousBoards.addAll(board.getPreviousBoards());
+		previousBoards.add(board.getZobristHash());
+		b.setPreviousBoards(previousBoards);
+
+		return b;
 	}
 
 	public Board getBoard() {
@@ -132,6 +142,10 @@ public abstract class Move {
 	}
 
 	public boolean isAttackMove() {
+		return false;
+	}
+
+	public boolean isPawnMove() {
 		return false;
 	}
 
@@ -184,13 +198,9 @@ public abstract class Move {
 			}
 
 			b.setPiece(movedPiece.movePiece(this));
-			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(board.getHalfmoveClock() + 1);
-			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
-			b.setExecutedMoves(board.getExecutedMoves());
-
-			setCastlingConfiguration(b);
+			fillDefaultValues(b);
 
 			return b.build();
 		}
@@ -255,13 +265,9 @@ public abstract class Move {
 			}
 
 			b.setPiece(movedPiece.movePiece(this));
-			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(0);
-			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
-			b.setExecutedMoves(board.getExecutedMoves());
-
-			setCastlingConfiguration(b);
+			fillDefaultValues(b);
 
 			return b.build();
 		}
@@ -331,15 +337,16 @@ public abstract class Move {
 			}
 
 			b.setPiece(movedPiece.movePiece(this));
-			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(0);
-			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
-			b.setExecutedMoves(board.getExecutedMoves());
-
-			setCastlingConfiguration(b);
+			fillDefaultValues(b);
 
 			return b.build();
+		}
+
+		@Override
+		public boolean isPawnMove() {
+			return true;
 		}
 	}
 
@@ -354,6 +361,11 @@ public abstract class Move {
 			String notation = "";
 			notation += Utils.columns[Utils.getX(movedPiece.getPosition())] + "x";
 			return notation + standardNotation();
+		}
+
+		@Override
+		public boolean isPawnMove() {
+			return true;
 		}
 	}
 
@@ -388,13 +400,9 @@ public abstract class Move {
 			Pawn movedPawn = (Pawn) movedPiece.movePiece(this);
 
 			b.setPiece(movedPawn);
-			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(movedPawn);
 			b.setHalfmoveClock(0);
-			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
-			b.setExecutedMoves(board.getExecutedMoves());
-
-			setCastlingConfiguration(b);
+			fillDefaultValues(b);
 
 			return b.build();
 		}
@@ -424,13 +432,9 @@ public abstract class Move {
 			}
 
 			b.setPiece(promotionPiece);
-			b.setMoveMaker(pawnMovedBoard.getCurrentPlayer().getTeam());
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(0);
-			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
-			b.setExecutedMoves(board.getExecutedMoves());
-
-			setCastlingConfiguration(b);
+			fillDefaultValues(b);
 
 			return b.build();
 		}
@@ -500,11 +504,9 @@ public abstract class Move {
 
 			b.setPiece(movedPiece.movePiece(this));
 			b.setPiece(new Rook(castleRookDestination, castleRook.getTeam(), true));
-			b.setMoveMaker(board.getCurrentPlayer().getOpponent().getTeam());
 			b.setEnPassantPawn(null);
 			b.setHalfmoveClock(board.getHalfmoveClock() + 1);
-			b.setHalfmoveCounter(board.getHalfmoveCounter() + 1);
-			b.setExecutedMoves(board.getExecutedMoves());
+			fillDefaultValues(b);
 
 			CastlingConfiguration c = new CastlingConfiguration();
 

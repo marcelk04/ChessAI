@@ -87,6 +87,31 @@ public class Pawn extends Piece {
 		return moves;
 	}
 
+	public List<Move> calculateAttackMoves(Board board) {
+		final List<Move> attackMoves = new ArrayList<Move>();
+
+		if (y == 0 && team == Team.WHITE || y == 7 && team == Team.BLACK)
+			return attackMoves;
+
+		// check left
+		if (!(x == 0 && team == Team.WHITE || x == 7 && team == Team.BLACK)) {
+			int currentDestination = this.position + 9 * team.moveDirection();
+			Piece pieceAtDestination = board.getPiece(currentDestination);
+			if (pieceAtDestination == null || team != pieceAtDestination.getTeam())
+				attackMoves.add(new PawnMove(board, this, this.position + 9 * team.moveDirection()));
+		}
+
+		// check right
+		if (!(x == 7 && team == Team.WHITE || x == 0 && team == Team.BLACK)) {
+			int currentDestination = this.position + 7 * team.moveDirection();
+			Piece pieceAtDestination = board.getPiece(currentDestination);
+			if (pieceAtDestination == null || team != pieceAtDestination.getTeam())
+				attackMoves.add(new PawnMove(board, this, this.position + 7 * team.moveDirection()));
+		}
+
+		return attackMoves;
+	}
+
 	@Override
 	public Piece movePiece(Move move) {
 		return Utils.getMovedPawn(team, move.getPieceDestination());

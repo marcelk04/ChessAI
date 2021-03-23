@@ -27,6 +27,7 @@ import com.chess.ai.evaluation.PositionBoardEvaluator;
 import com.chess.ai.evaluation.SimpleBoardEvaluator;
 import com.chess.move.MoveTransition;
 import com.file.ColorSaver;
+import com.file.FENUtilities;
 import com.file.PGNUtilities;
 import com.gfx.Assets;
 import com.gui.display.Display;
@@ -535,8 +536,7 @@ public class GUI {
 		btnLoadFEN.setArcBounds(arc_width, arc_height);
 		btnLoadFEN.setTextColor(text_color);
 		btnLoadFEN.setBackground(button_background_color);
-		btnLoadFEN.setClickListener(e -> {
-		});
+		btnLoadFEN.setClickListener(e -> showOpenFENDialog());
 		dialog.addRelative(btnLoadFEN);
 
 		UITextButton btnSavePGN = new UITextButton("Save PGN");
@@ -552,7 +552,7 @@ public class GUI {
 		btnPrintFEN.setArcBounds(arc_width, arc_height);
 		btnPrintFEN.setTextColor(text_color);
 		btnPrintFEN.setBackground(button_background_color);
-		btnPrintFEN.setClickListener(e -> System.out.println(board.convertToFEN()));
+		btnPrintFEN.setClickListener(e -> System.out.println(FENUtilities.convertToFEN(board)));
 		dialog.addRelative(btnPrintFEN);
 
 		UITextButton btnExit = new UITextButton("Exit");
@@ -562,6 +562,38 @@ public class GUI {
 		btnExit.setBackground(button_background_color);
 		btnExit.setClickListener(e -> display.removeLastDialog());
 		dialog.addRelative(btnExit);
+
+		display.showDialog(dialog);
+	}
+
+	private void showOpenFENDialog() {
+		UIDialog dialog = new UIDialog();
+		dialog.setSize(340, 110);
+		dialog.setPositionRelativeTo(display.getObjects());
+		dialog.setArcBounds(arc_width, arc_height);
+		dialog.setBorder(border_color);
+
+		UILabel lblTitle = new UILabel("Please enter FEN");
+		lblTitle.setBounds(10, 10, 320, 20);
+		dialog.addRelative(lblTitle);
+
+		UITextField tfFen = new UITextField();
+		tfFen.setBounds(10, 40, 320, 25);
+		tfFen.setAcceptedKeys("0123456789/kqrbnpKQRBNP-abcdefgh w");
+		dialog.addRelative(tfFen);
+
+		UITextButton btnOk = new UITextButton("Ok");
+		btnOk.setBounds(90, 75, 160, 25);
+		btnOk.setArcBounds(arc_width, arc_height);
+		btnOk.setTextColor(text_color);
+		btnOk.setBackground(button_background_color);
+		btnOk.setClickListener(e -> {
+			String fen = tfFen.getText();
+			Board b = FENUtilities.loadBoardFromFEN(fen);
+			mm.setBoard(board = b);
+			display.removeLastDialog();
+		});
+		dialog.addRelative(btnOk);
 
 		display.showDialog(dialog);
 	}

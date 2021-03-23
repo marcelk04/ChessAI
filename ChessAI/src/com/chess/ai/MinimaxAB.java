@@ -75,24 +75,15 @@ public class MinimaxAB extends MinimaxAlgorithm {
 				4) * 100d;
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("Evaluated Boards:" + evaluatedBoards);
-		sb.append("|");
-		sb.append("Depth:" + depth);
-		sb.append("|");
-		sb.append("Best Move:" + bestMove.getNotation());
-		sb.append("|");
-		sb.append("Best Eval:" + bestEval);
-		sb.append("|");
-		sb.append("Time:" + time + "s");
-		sb.append("|");
-		sb.append("Times pruned:" + timesPruned);
-		sb.append("|");
-		sb.append("Approx pruned boards:" + approxPrunedBoards);
-		sb.append("|");
-		sb.append("in %:" + percentageOfPrunedBoards);
-		sb.append("|");
-		sb.append("Transpositions:" + evaluator.getTranspositions());
-		sb.append("|");
+		sb.append("Evaluated Boards:" + evaluatedBoards).append("|");
+		sb.append("Depth:" + depth).append("|");
+		sb.append("Best Move:" + bestMove.getNotation()).append("|");
+		sb.append("Best Eval:" + bestEval).append("|");
+		sb.append("Time:" + time + "s").append("|");
+		sb.append("Times pruned:" + timesPruned).append("|");
+		sb.append("Approx pruned boards:" + approxPrunedBoards).append("|");
+		sb.append("in %:" + percentageOfPrunedBoards).append("|");
+		sb.append("Transpositions:" + evaluator.getTranspositions()).append("|");
 		sb.append("in %:" + transpositionPercentage);
 
 		DataManager.searchTimes.add((float) time);

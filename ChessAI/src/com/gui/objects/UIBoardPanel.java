@@ -157,7 +157,6 @@ public class UIBoardPanel extends UIObject implements Clickable {
 	}
 
 	private void fillColorArray() {
-
 		for (int i = 0; i < 64; i++) {
 			if ((Utils.getX(i) + Utils.getY(i)) % 2 == 0)
 				colors[i] = lightColor;

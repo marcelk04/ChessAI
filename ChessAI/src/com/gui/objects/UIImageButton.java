@@ -2,6 +2,9 @@ package com.gui.objects;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
+
+import com.gui.UIUtils;
 
 /**
  * The UIImageButton is a button, which displays an image instead of text. The
@@ -58,32 +61,11 @@ public class UIImageButton extends UIButton {
 	 * or not.
 	 */
 	private void calculateImageBounds() {
-		if (stretchingImage) {
-			imageX = x;
-			imageY = y;
-			imageWidth = width;
-			imageHeight = height;
-		} else {
-			double originalImageWidth = buttonImage.getWidth(null);
-			double originalImageHeight = buttonImage.getHeight(null);
-
-			double widthDiff = width - originalImageWidth;
-			double heightDiff = height - originalImageHeight;
-
-			double factor;
-
-			if (widthDiff < heightDiff) {
-				factor = widthDiff / originalImageWidth + 1;
-			} else {
-				factor = heightDiff / originalImageHeight + 1;
-			}
-
-			imageWidth = (int) (originalImageWidth * factor);
-			imageHeight = (int) (originalImageHeight * factor);
-
-			imageX = x + (width - imageWidth) / 2;
-			imageY = y + (height - imageHeight) / 2;
-		}
+		Rectangle imagePos = UIUtils.fitImage(buttonImage, x, y, width, height, stretchingImage);
+		imageX = imagePos.x;
+		imageY = imagePos.y;
+		imageWidth = imagePos.width;
+		imageHeight = imagePos.height;
 	}
 
 	@Override

@@ -16,18 +16,21 @@ public abstract class Player {
 	protected final Board board;
 	protected final King playerKing;
 	protected final List<Move> legalMoves;
-	protected final boolean kingInCheck;
+	protected final boolean[] attackedSquares;
+	protected boolean kingInCheck;
 	protected final boolean canKingSideCastle, canQueenSideCastle;
 
-	public Player(final Board board, final List<Move> playerLegals, final List<Move> opponentLegals,
-			final boolean canKingSideCastle, final boolean canQueenSideCastle) {
+	public Player(final Board board, final List<Move> playerLegals, final boolean[] playerAttackedSquares,
+			final boolean[] opponentAttackedSquares, final boolean canKingSideCastle,
+			final boolean canQueenSideCastle) {
 		this.board = board;
 		this.playerKing = findKing();
 		this.canKingSideCastle = canKingSideCastle;
 		this.canQueenSideCastle = canQueenSideCastle;
-		playerLegals.addAll(calculateCastleMoves(opponentLegals));
 		this.legalMoves = playerLegals;
-		this.kingInCheck = !calculateAttacksOnTile(playerKing.getPosition(), opponentLegals).isEmpty();
+		this.attackedSquares = playerAttackedSquares;
+		this.kingInCheck = opponentAttackedSquares[playerKing.getPosition()];
+		this.legalMoves.addAll(calculateCastleMoves(opponentAttackedSquares));
 	}
 
 	public static List<Move> calculateAttacksOnTile(int position, List<Move> moves) {
@@ -37,6 +40,10 @@ public abstract class Player {
 				attackMoves.add(m);
 		}
 		return attackMoves;
+	}
+
+	public boolean canAttack(int position) {
+		return attackedSquares[position];
 	}
 
 	public MoveTransition makeMove(Move move) {
@@ -49,7 +56,7 @@ public abstract class Player {
 		if (newBoard.getCurrentPlayer().getOpponent().isKingInCheck()) {
 			return new MoveTransition(board, board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK);
 		}
-		
+
 		return new MoveTransition(board, newBoard, move, MoveStatus.DONE);
 	}
 
@@ -77,7 +84,7 @@ public abstract class Player {
 
 	public abstract Player getOpponent();
 
-	protected abstract List<Move> calculateCastleMoves(List<Move> opponentLegals);
+	protected abstract List<Move> calculateCastleMoves(boolean[] opponentAttackedSquares);
 
 	// ===== Getters ===== \\
 	public boolean isKingInCheck() {
@@ -110,5 +117,9 @@ public abstract class Player {
 
 	public boolean canQueenSideCastle() {
 		return canQueenSideCastle;
+	}
+
+	public boolean[] getAttackedSquares() {
+		return attackedSquares;
 	}
 }

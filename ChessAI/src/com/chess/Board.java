@@ -8,19 +8,14 @@ import java.util.Map;
 import com.chess.ai.hashing.ZobristHashing;
 import com.chess.move.Move;
 import com.chess.move.MoveTransition;
-import com.chess.pieces.Bishop;
-import com.chess.pieces.King;
-import com.chess.pieces.Knight;
 import com.chess.pieces.Pawn;
 import com.chess.pieces.Piece;
-import com.chess.pieces.Queen;
-import com.chess.pieces.Rook;
+import com.chess.pieces.Piece.PieceType;
 import com.chess.pieces.Team;
 import com.chess.player.BlackPlayer;
 import com.chess.player.Player;
 import com.chess.player.WhitePlayer;
 import com.file.FENUtilities;
-import com.main.Utils;
 
 public class Board {
 	private final Map<Integer, Piece> boardConfig;
@@ -32,6 +27,7 @@ public class Board {
 	private final long zobristHash;
 	private final int halfmoveClock, halfmoveCounter;
 	private final List<Move> executedMoves;
+	private final List<Long> previousBoards;
 	private MoveTransition lastMoveTransition = null;
 
 	private Board(Builder builder) {
@@ -46,17 +42,22 @@ public class Board {
 		List<Move> whiteMoves = getLegalMoves(whitePieces);
 		List<Move> blackMoves = getLegalMoves(blackPieces);
 
-		this.whitePlayer = new WhitePlayer(this, whiteMoves, blackMoves,
+		boolean[] whiteAttackedSquares = calculateAttackedSquares(this, whiteMoves, whitePieces);
+		boolean[] blackAttackedSquares = calculateAttackedSquares(this, blackMoves, blackPieces);
+
+		this.whitePlayer = new WhitePlayer(this, whiteMoves, whiteAttackedSquares, blackAttackedSquares,
 				builder.castlingConfiguration.canWhiteKingSideCastle,
 				builder.castlingConfiguration.canWhiteQueenSideCastle);
-		this.blackPlayer = new BlackPlayer(this, blackMoves, whiteMoves,
+		this.blackPlayer = new BlackPlayer(this, blackMoves, blackAttackedSquares, whiteAttackedSquares,
 				builder.castlingConfiguration.canBlackKingSideCastle,
 				builder.castlingConfiguration.canBlackQueenSideCastle);
 
 		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this);
 		this.zobristHash = ZobristHashing.getZobristHash(this);
 		this.executedMoves = new ArrayList<Move>();
-		this.executedMoves.addAll(builder.executedMoves);
+		if (builder.executedMoves != null)
+			this.executedMoves.addAll(builder.executedMoves);
+		this.previousBoards = builder.previousBoards;
 	}
 
 	@Override
@@ -74,50 +75,52 @@ public class Board {
 	 * @return the standard board.
 	 */
 	public static Board create() {
-		Builder b = new Builder();
+//		Builder b = new Builder();
+//
+//		b.setPiece(new Rook(0, Team.BLACK));
+//		b.setPiece(new Knight(1, Team.BLACK));
+//		b.setPiece(new Bishop(2, Team.BLACK));
+//		b.setPiece(new Queen(3, Team.BLACK));
+//		b.setPiece(new King(4, Team.BLACK));
+//		b.setPiece(new Bishop(5, Team.BLACK));
+//		b.setPiece(new Knight(6, Team.BLACK));
+//		b.setPiece(new Rook(7, Team.BLACK));
+//		b.setPiece(new Pawn(8, Team.BLACK));
+//		b.setPiece(new Pawn(9, Team.BLACK));
+//		b.setPiece(new Pawn(10, Team.BLACK));
+//		b.setPiece(new Pawn(11, Team.BLACK));
+//		b.setPiece(new Pawn(12, Team.BLACK));
+//		b.setPiece(new Pawn(13, Team.BLACK));
+//		b.setPiece(new Pawn(14, Team.BLACK));
+//		b.setPiece(new Pawn(15, Team.BLACK));
+//
+//		b.setPiece(new Pawn(48, Team.WHITE));
+//		b.setPiece(new Pawn(49, Team.WHITE));
+//		b.setPiece(new Pawn(50, Team.WHITE));
+//		b.setPiece(new Pawn(51, Team.WHITE));
+//		b.setPiece(new Pawn(52, Team.WHITE));
+//		b.setPiece(new Pawn(53, Team.WHITE));
+//		b.setPiece(new Pawn(54, Team.WHITE));
+//		b.setPiece(new Pawn(55, Team.WHITE));
+//		b.setPiece(new Rook(56, Team.WHITE));
+//		b.setPiece(new Knight(57, Team.WHITE));
+//		b.setPiece(new Bishop(58, Team.WHITE));
+//		b.setPiece(new Queen(59, Team.WHITE));
+//		b.setPiece(new King(60, Team.WHITE));
+//		b.setPiece(new Bishop(61, Team.WHITE));
+//		b.setPiece(new Knight(62, Team.WHITE));
+//		b.setPiece(new Rook(63, Team.WHITE));
+//
+//		b.setMoveMaker(Team.WHITE);
+//		b.setEnPassantPawn(null);
+//		b.setCastlingConfiguration(CastlingConfiguration.ALL_TRUE);
+//		b.setHalfmoveClock(0);
+//		b.setHalfmoveCounter(1);
+//		b.setExecutedMoves(new ArrayList<Move>());
+//
+//		return b.build();
 
-		b.setPiece(new Rook(0, Team.BLACK));
-		b.setPiece(new Knight(1, Team.BLACK));
-		b.setPiece(new Bishop(2, Team.BLACK));
-		b.setPiece(new Queen(3, Team.BLACK));
-		b.setPiece(new King(4, Team.BLACK));
-		b.setPiece(new Bishop(5, Team.BLACK));
-		b.setPiece(new Knight(6, Team.BLACK));
-		b.setPiece(new Rook(7, Team.BLACK));
-		b.setPiece(new Pawn(8, Team.BLACK));
-		b.setPiece(new Pawn(9, Team.BLACK));
-		b.setPiece(new Pawn(10, Team.BLACK));
-		b.setPiece(new Pawn(11, Team.BLACK));
-		b.setPiece(new Pawn(12, Team.BLACK));
-		b.setPiece(new Pawn(13, Team.BLACK));
-		b.setPiece(new Pawn(14, Team.BLACK));
-		b.setPiece(new Pawn(15, Team.BLACK));
-
-		b.setPiece(new Pawn(48, Team.WHITE));
-		b.setPiece(new Pawn(49, Team.WHITE));
-		b.setPiece(new Pawn(50, Team.WHITE));
-		b.setPiece(new Pawn(51, Team.WHITE));
-		b.setPiece(new Pawn(52, Team.WHITE));
-		b.setPiece(new Pawn(53, Team.WHITE));
-		b.setPiece(new Pawn(54, Team.WHITE));
-		b.setPiece(new Pawn(55, Team.WHITE));
-		b.setPiece(new Rook(56, Team.WHITE));
-		b.setPiece(new Knight(57, Team.WHITE));
-		b.setPiece(new Bishop(58, Team.WHITE));
-		b.setPiece(new Queen(59, Team.WHITE));
-		b.setPiece(new King(60, Team.WHITE));
-		b.setPiece(new Bishop(61, Team.WHITE));
-		b.setPiece(new Knight(62, Team.WHITE));
-		b.setPiece(new Rook(63, Team.WHITE));
-
-		b.setMoveMaker(Team.WHITE);
-		b.setEnPassantPawn(null);
-		b.setCastlingConfiguration(CastlingConfiguration.ALL_TRUE);
-		b.setHalfmoveClock(0);
-		b.setHalfmoveCounter(1);
-		b.setExecutedMoves(new ArrayList<Move>());
-
-		return b.build();
+		return FENUtilities.loadBoardFromFEN(FENUtilities.standardFEN);
 	}
 
 	/**
@@ -172,112 +175,40 @@ public class Board {
 	/**
 	 * Checks whether the game has ended. This can be throught checkmate or
 	 * stalemate.
-	 * <p>
-	 * TODO implement draw after 3 equal moves or 50 halfmoves
 	 * 
 	 * @return {@code true} if the game has ended.
 	 */
 	public boolean hasGameEnded() {
-		return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate() || halfmoveClock >= 50;
+		int timesBoardSeen = 1;
+		if (previousBoards != null) {
+			for (long l : previousBoards) {
+				if (l == zobristHash)
+					timesBoardSeen++;
+			}
+		}
+
+		return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate() || halfmoveClock >= 50
+				|| timesBoardSeen >= 3;
 	}
 
-	/**
-	 * Converts the board into a {@link String} matching the FEN file format.
-	 * <p>
-	 * TODO possibly move method to {@link FENUtilities}
-	 * 
-	 * @return a {@link String} representation of the board in the FEN format.
-	 */
-	public String convertToFEN() {
-		StringBuilder sb = new StringBuilder();
+	public static boolean[] calculateAttackedSquares(Board board, List<Move> moves, List<Piece> pieces) {
+		final boolean[] attackedSquares = new boolean[64];
 
-		// append piece positions
-		for (int y = 0; y < 8; y++) {
-			int squaresSincePiece = 0;
+		for (Move m : moves) {
+			if (!m.isPawnMove()) {
+				attackedSquares[m.getPieceDestination()] = true;
+			}
+		}
 
-			for (int x = 0; x < 8; x++) {
-				Piece p = getPiece(Utils.getIndex(x, y));
-				if (p != null) {
-					if (squaresSincePiece != 0)
-						sb.append(squaresSincePiece);
-
-					sb.append(p.getTeam() == Team.WHITE ? p.getType().getLetter()
-							: (p.getType().getLetter() + "").toLowerCase());
-
-					squaresSincePiece = 0;
-				} else {
-					squaresSincePiece++;
-
-					if (x == 7)
-						sb.append(squaresSincePiece);
+		for (Piece p : pieces) {
+			if (p.getType() == PieceType.PAWN) {
+				for (Move m : ((Pawn) p).calculateAttackMoves(board)) {
+					attackedSquares[m.getPieceDestination()] = true;
 				}
 			}
-
-			if (y != 7)
-				sb.append("/");
 		}
 
-		sb.append(" ");
-
-		// append current side to move
-		if (currentPlayer.getTeam() == Team.WHITE)
-			sb.append("w");
-		else
-			sb.append("b");
-
-		sb.append(" ");
-
-		// append castling rights
-		int castlingRights = 0;
-
-		if (whitePlayer.canKingSideCastle()) {
-			sb.append("K");
-			castlingRights++;
-		}
-
-		if (whitePlayer.canQueenSideCastle()) {
-			sb.append("Q");
-			castlingRights++;
-		}
-
-		if (blackPlayer.canKingSideCastle()) {
-			sb.append("k");
-			castlingRights++;
-		}
-
-		if (blackPlayer.canQueenSideCastle()) {
-			sb.append("q");
-			castlingRights++;
-		}
-
-		if (castlingRights == 0) {
-			sb.append("-");
-		}
-
-		sb.append(" ");
-
-		// append en passant pawn
-		if (enPassantPawn != null) {
-			sb.append(Utils.columns[Utils.getX(enPassantPawn.getPosition())]);
-
-			if (enPassantPawn.getTeam() == Team.WHITE) {
-				sb.append(7 - Utils.getY(enPassantPawn.getPosition()));
-			} else {
-				sb.append(9 - Utils.getY(enPassantPawn.getPosition()));
-			}
-		} else {
-			sb.append("-");
-		}
-
-		sb.append(" ");
-
-		// append halfmove clock
-		sb.append(halfmoveClock).append(" ");
-
-		// append fullmove counter
-		sb.append(Math.round(halfmoveCounter / 2f));
-
-		return sb.toString();
+		return attackedSquares;
 	}
 
 	// ===== Getters ===== \\
@@ -383,6 +314,10 @@ public class Board {
 		return executedMoves;
 	}
 
+	public List<Long> getPreviousBoards() {
+		return previousBoards;
+	}
+
 	public String getResult() {
 		if (!hasGameEnded())
 			return "*"; // game has not yet ended
@@ -414,6 +349,7 @@ public class Board {
 		int halfmoveClock;
 		int halfmoveCounter;
 		List<Move> executedMoves;
+		List<Long> previousBoards;
 
 		public Builder() {
 			this.boardConfig = new HashMap<Integer, Piece>();
@@ -451,6 +387,11 @@ public class Board {
 
 		public Builder setExecutedMoves(List<Move> executedMoves) {
 			this.executedMoves = executedMoves;
+			return this;
+		}
+
+		public Builder setPreviousBoards(List<Long> previousBoards) {
+			this.previousBoards = previousBoards;
 			return this;
 		}
 

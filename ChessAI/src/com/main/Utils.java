@@ -1,6 +1,8 @@
 package com.main;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.chess.pieces.Bishop;
@@ -56,6 +58,20 @@ public class Utils {
 			arr[arr.length - i - 1] = temp;
 		}
 		return arr;
+	}
+
+	public static <E> List<E> copyList(List<E> list) {
+		List<E> copy = new ArrayList<E>();
+		copy.addAll(list);
+		return copy;
+	}
+
+	public static int getFile(char file) {
+		for (int i = 0; i < columns.length; i++) {
+			if (file == columns[i])
+				return i;
+		}
+		return -1;
 	}
 
 	public static Queen getMovedQueen(Team team, int position) {

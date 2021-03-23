@@ -13,9 +13,10 @@ import com.chess.pieces.Team;
 import com.chess.pieces.Piece.PieceType;
 
 public class BlackPlayer extends Player {
-	public BlackPlayer(Board board, List<Move> playerLegals, List<Move> opponentLegals, boolean canKingSideCastle,
-			boolean canQueenSideCastle) {
-		super(board, playerLegals, opponentLegals, canKingSideCastle, canKingSideCastle);
+	public BlackPlayer(Board board, List<Move> playerLegals, boolean[] playerAttackedSquares,
+			boolean[] opponentAttackedSquares, boolean canKingSideCastle, boolean canQueenSideCastle) {
+		super(board, playerLegals, playerAttackedSquares, opponentAttackedSquares, canKingSideCastle,
+				canKingSideCastle);
 	}
 
 	@Override
@@ -34,8 +35,8 @@ public class BlackPlayer extends Player {
 	}
 
 	@Override
-	protected List<Move> calculateCastleMoves(List<Move> opponentLegals) {
-		List<Move> kingCastles = new ArrayList<Move>();
+	protected List<Move> calculateCastleMoves(boolean[] opponentAttackedSquares) {
+		final List<Move> kingCastles = new ArrayList<Move>();
 
 		if (canCastle()) {
 			Piece castleRook;
@@ -43,8 +44,7 @@ public class BlackPlayer extends Player {
 			// king side castles
 			if (canKingSideCastle && board.getPiece(5) == null && board.getPiece(6) == null) {
 				castleRook = board.getPiece(7);
-				if (calculateAttacksOnTile(5, opponentLegals).isEmpty()
-						&& calculateAttacksOnTile(6, opponentLegals).isEmpty() && castleRook != null
+				if (!opponentAttackedSquares[5] && !opponentAttackedSquares[6] && castleRook != null
 						&& castleRook.getType() == PieceType.ROOK) {
 					kingCastles.add(new KingSideCastleMove(board, playerKing, 6, (Rook) castleRook, 5));
 				}
@@ -54,10 +54,8 @@ public class BlackPlayer extends Player {
 			if (canQueenSideCastle && board.getPiece(1) == null && board.getPiece(2) == null
 					&& board.getPiece(3) == null) {
 				castleRook = board.getPiece(0);
-				if (calculateAttacksOnTile(1, opponentLegals).isEmpty()
-						&& calculateAttacksOnTile(2, opponentLegals).isEmpty()
-						&& calculateAttacksOnTile(3, opponentLegals).isEmpty() && castleRook != null
-						&& castleRook.getType() == PieceType.ROOK) {
+				if (!opponentAttackedSquares[1] && !opponentAttackedSquares[2] && !opponentAttackedSquares[3]
+						&& castleRook != null && castleRook.getType() == PieceType.ROOK) {
 					kingCastles.add(new QueenSideCastleMove(board, playerKing, 2, (Rook) castleRook, 3));
 				}
 			}
