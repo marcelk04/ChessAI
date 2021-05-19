@@ -150,7 +150,7 @@ public class Board {
 	 * @return a {@link List} of all moves matching the parameters.
 	 */
 	public List<Move> findMoves(int currentPiecePosition, int pieceDestination) {
-		List<Move> moves = new ArrayList<Move>();
+		final List<Move> moves = new ArrayList<Move>();
 		for (Move m : getAllLegalMoves()) { // search through all moves
 			if (m.getCurrentPiecePosition() != currentPiecePosition || m.getPieceDestination() != pieceDestination)
 				continue; // if not equal, skip

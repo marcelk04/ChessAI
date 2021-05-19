@@ -42,7 +42,7 @@ public class BlackPlayer extends Player {
 			Piece castleRook;
 
 			// king side castles
-			if (canKingSideCastle && board.getPiece(5) == null && board.getPiece(6) == null) {
+			if (board.getPiece(5) == null && board.getPiece(6) == null) {
 				castleRook = board.getPiece(7);
 				if (!opponentAttackedSquares[5] && !opponentAttackedSquares[6] && castleRook != null
 						&& castleRook.getType() == PieceType.ROOK) {
@@ -51,7 +51,7 @@ public class BlackPlayer extends Player {
 			}
 
 			// queen side castles
-			if (canQueenSideCastle && board.getPiece(1) == null && board.getPiece(2) == null
+			if (board.getPiece(1) == null && board.getPiece(2) == null
 					&& board.getPiece(3) == null) {
 				castleRook = board.getPiece(0);
 				if (!opponentAttackedSquares[1] && !opponentAttackedSquares[2] && !opponentAttackedSquares[3]

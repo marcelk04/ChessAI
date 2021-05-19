@@ -14,9 +14,10 @@ public class PawnPositionBoardEvaluator extends PositionBoardEvaluator {
 
 	@Override
 	public int evaluateWithoutHashing(Board board, int depth) {
+		if (board.getWinner() != null)
+			return winScore(board, depth, WIN_BONUS);
 		Pawn[][] pawns = PawnStructureAnalyzer.INSTANCE.findPawns(board, 16);
-		return score(board.getWhitePlayer(), board, depth, pawns) + score(board.getBlackPlayer(), board, depth, pawns)
-				+ winScore(board, depth, WIN_BONUS);
+		return score(board.getWhitePlayer(), board, depth, pawns) + score(board.getBlackPlayer(), board, depth, pawns);
 	}
 
 	protected static int score(Player player, Board board, int depth, Pawn[][] pawns) {

@@ -71,10 +71,7 @@ public abstract class BoardEvaluator {
 	}
 
 	protected static int winScore(Board board, int depth, int winBonus) {
-		if (board.getWinner() == null)
-			return 0;
-
-		return (winBonus - depth) * -board.getWinner().moveDirection();
+		return (winBonus + depth) * -board.getWinner().moveDirection();
 	}
 
 	protected static int piecePositionScore(Player player, int positionBonus) {

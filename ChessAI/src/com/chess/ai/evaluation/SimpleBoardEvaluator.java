@@ -12,8 +12,9 @@ public class SimpleBoardEvaluator extends BoardEvaluator {
 
 	@Override
 	public int evaluateWithoutHashing(Board board, int depth) {
-		return score(board.getWhitePlayer(), board, depth) + score(board.getBlackPlayer(), board, depth)
-				+ winScore(board, depth, WIN_BONUS);
+		if (board.getWinner() != null)
+			return winScore(board, depth, WIN_BONUS);
+		return score(board.getWhitePlayer(), board, depth) + score(board.getBlackPlayer(), board, depth);
 	}
 
 	protected static int score(Player player, Board board, int depth) {
